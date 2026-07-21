@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>My Cart - Artisan Coffee</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fe7e57",
+                        "primary-container": "#4a2c1e",
+                        "inverse-on-surface": "#f4f0eb",
+                        "inverse-primary": "#ecbca8",
+                        "surface-dim": "#ddd9d5",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fdf9f4",
+                        "accent-container": "#FBE3DA",
+                        "on-surface": "#1c1c19",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-tint": "#7a5646",
+                        "on-tertiary-fixed": "#022100",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-secondary-container": "#6f1a00",
+                        "secondary-fixed-dim": "#ffb5a0",
+                        "tertiary": "#022400",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#c0f0ad",
+                        "on-surface-variant": "#6E5B4E",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdbcc",
+                        "on-secondary-fixed": "#3b0a00",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#7aa76b",
+                        "primary": "#31170b",
+                        "surface": "#FFFFFF",
+                        "tertiary-fixed-dim": "#a4d393",
+                        "tertiary-container": "#143b0b",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#a53c1b",
+                        "on-primary-container": "#be927f",
+                        "on-primary-fixed-variant": "#603f30",
+                        "background": "#fdf9f4",
+                        "on-background": "#1c1c19",
+                        "outline-variant": "#d4c3bc",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed": "#2e1508",
+                        "outline": "#E4D6C9",
+                        "primary-fixed-dim": "#ecbca8",
+                        "on-tertiary-fixed-variant": "#28501e",
+                        "surface-container-highest": "#e5e2dd",
+                        "surface-container": "#f1ede8",
+                        "inverse-surface": "#31302d",
+                        "on-secondary-fixed-variant": "#842504",
+                        "surface-variant": "#e5e2dd",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "margin": "16px",
+                        "xs": "8px",
+                        "gutter": "12px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "display-hero": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "price-display": ["18px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-hero": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-md": ["17px", { "lineHeight": "22px", "fontWeight": "500" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-14 pb-[160px] md:pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background dark:bg-on-background w-full">
+<div class="flex justify-between items-center w-full px-margin h-14 bg-background dark:bg-on-background">
+<button aria-label="Close" class="w-12 h-12 flex items-center justify-center text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-primary-container rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+<h1 class="font-display-hero text-display-hero text-primary dark:text-primary-fixed font-bold">My Cart</h1>
+<div class="w-12"></div> <!-- Spacer for center alignment -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-margin pt-lg max-w-2xl mx-auto w-full flex flex-col gap-sm">
+<!-- Cart Item 1 -->
+<div class="relative bg-surface rounded-xl overflow-hidden border border-outline flex items-center p-sm">
+<!-- Background swipe-to-remove affordance (visual only) -->
+<div class="absolute inset-y-0 right-0 w-20 bg-error flex items-center justify-center opacity-0">
+<span class="material-symbols-outlined text-on-error">delete</span>
+</div>
+<div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-surface-container-low mr-md">
+<img alt="Cappuccino" class="w-full h-full object-cover" data-alt="A top-down shot of a beautifully crafted artisanal cappuccino in a white ceramic cup. The cappuccino features intricate latte art of a rosetta on top of rich, dark crema. It sits on a warm wooden cafe table next to a silver spoon. Soft, natural morning light filters in, creating a cozy and inviting atmosphere typical of a high-end specialty coffee shop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTl9QIbLwjkcrVCakfc5Il2e_JerG6Vs6pCzn4UepL8cO6AueEYc5qtvRKKGWpyALzYyNEii2ZP6mN7IgdcPyoWR78v8Admiiua_frccPS3RqWEnjNMNF1jZOigzJvG6wjILfRwxpfCyJm7DhGiSWXnW6FkjDeE8luP7vDz16rnLuiZbUT99a-_IK8PvbEbOJGPOmZhX5WAADMgAlTMEOW-foqmH96lRubTd5unaiuR7InQqo1doAf"/>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h3 class="font-title-md text-title-md text-on-surface">Oat Milk Cappuccino</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-xs">Medium, Double Shot, Extra Hot</p>
+<div class="flex items-center justify-between mt-sm">
+<span class="font-price-display text-price-display text-primary">$5.50</span>
+<div class="flex items-center bg-surface-container-low rounded-full px-xs py-1 border border-outline">
+<button aria-label="Decrease quantity" class="w-8 h-8 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<span class="font-title-md text-title-md text-on-surface w-8 text-center">1</span>
+<button aria-label="Increase quantity" class="w-8 h-8 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item 2 -->
+<div class="relative bg-surface rounded-xl overflow-hidden border border-outline flex items-center p-sm">
+<div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-surface-container-low mr-md">
+<img alt="Croissant" class="w-full h-full object-cover" data-alt="A macro shot of a flaky, golden-brown butter croissant resting on a minimalist white ceramic plate. The pastry is beautifully layered, showing off its crisp texture. The setting is a bright, modern artisan cafe with a light, airy aesthetic. The background is softly blurred to emphasize the tactile quality of the croissant, lit by gentle, diffused daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8nv2ztB4oBJ0Lb4f3QGPQ4PwqcIpQbY8PcFibDZmfEHvGpT1VpRUlDSbfj0_aWHh3iW7ydsR9wXFhi18xY8O4WfZk8xPOybAkw0k-xpfyjh0FfIcOoqM14txLyBzOptQhrgTrD47EDbxnwyJRDCfKLFxF9Cr5nsCIY-6Pb17GVD-HtZVjiM8tID4thxFOHwm7hXEunT1zkalVpGbhd80tLDOs2ByfJ8zHE8TJ1qHzw5_cR-pwpys3"/>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h3 class="font-title-md text-title-md text-on-surface">Butter Croissant</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-xs">Warmed</p>
+<div class="flex items-center justify-between mt-sm">
+<span class="font-price-display text-price-display text-primary">$3.75</span>
+<div class="flex items-center bg-surface-container-low rounded-full px-xs py-1 border border-outline">
+<button aria-label="Decrease quantity" class="w-8 h-8 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<span class="font-title-md text-title-md text-on-surface w-8 text-center">2</span>
+<button aria-label="Increase quantity" class="w-8 h-8 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Checkout Area -->
+<div class="fixed bottom-0 left-0 right-0 bg-surface rounded-t-xl shadow-[0_-4px_16px_rgba(49,23,11,0.05)] border-t border-outline px-margin py-md pb-[calc(16px+env(safe-area-inset-bottom))] z-40 max-w-2xl mx-auto w-full">
+<div class="flex justify-between items-center mb-md">
+<span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
+<span class="font-price-display text-price-display text-primary">$13.00</span>
+</div>
+<button class="w-full bg-secondary hover:bg-secondary-container text-on-secondary font-title-md text-title-md py-4 rounded-full flex items-center justify-center gap-sm transition-colors active:scale-[0.98]">
+            Checkout
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+</button>
+</div>
+</body></html>

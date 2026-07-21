@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rewards - Artisan Coffee</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fe7e57",
+                        "primary-container": "#4a2c1e",
+                        "inverse-on-surface": "#f4f0eb",
+                        "inverse-primary": "#ecbca8",
+                        "surface-dim": "#ddd9d5",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fdf9f4",
+                        "accent-container": "#FBE3DA",
+                        "on-surface": "#1c1c19",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-tint": "#7a5646",
+                        "on-tertiary-fixed": "#022100",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-secondary-container": "#6f1a00",
+                        "secondary-fixed-dim": "#ffb5a0",
+                        "tertiary": "#022400",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#c0f0ad",
+                        "on-surface-variant": "#6E5B4E",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdbcc",
+                        "on-secondary-fixed": "#3b0a00",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#7aa76b",
+                        "primary": "#31170b",
+                        "surface": "#FFFFFF",
+                        "tertiary-fixed-dim": "#a4d393",
+                        "tertiary-container": "#143b0b",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#a53c1b",
+                        "on-primary-container": "#be927f",
+                        "on-primary-fixed-variant": "#603f30",
+                        "background": "#fdf9f4",
+                        "on-background": "#1c1c19",
+                        "outline-variant": "#d4c3bc",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed": "#2e1508",
+                        "outline": "#E4D6C9",
+                        "primary-fixed-dim": "#ecbca8",
+                        "on-tertiary-fixed-variant": "#28501e",
+                        "surface-container-highest": "#e5e2dd",
+                        "surface-container": "#f1ede8",
+                        "inverse-surface": "#31302d",
+                        "on-secondary-fixed-variant": "#842504",
+                        "surface-variant": "#e5e2dd",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "margin": "16px",
+                        "xs": "8px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "display-hero": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "price-display": ["18px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-hero": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-md": ["17px", { "lineHeight": "22px", "fontWeight": "500" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .stamp-slot {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+        }
+        .stamp-filled {
+            background-color: #4F7942;
+            color: white;
+        }
+        .stamp-empty {
+            border: 2px dashed #E4D6C9;
+            background-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(228, 214, 201, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md pb-24 min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-on-background flex justify-between items-center w-full px-margin h-14 sticky top-0 z-40">
+<button aria-label="Menu" class="text-primary dark:text-primary-fixed p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-primary-container transition-transform duration-150 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-display-hero text-display-hero text-primary dark:text-primary-fixed">Artisan Coffee</h1>
+<button aria-label="Shopping Bag" class="text-primary dark:text-primary-fixed p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-primary-container transition-transform duration-150 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+</button>
+</header>
+<main class="px-margin pt-lg space-y-lg max-w-2xl mx-auto">
+<!-- Loyalty Card -->
+<section class="bg-surface rounded-xl border outline p-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary opacity-10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Free Coffee Awaits</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Buy 8 coffees, get 1 free.</p>
+</div>
+<div class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded-full font-label-md text-label-md shadow-sm border border-secondary/20">
+                    5/8 stamps
+                </div>
+</div>
+<div class="grid grid-cols-4 gap-sm md:gap-md place-items-center mt-lg">
+<!-- Stamps 1-5 (Filled) -->
+<div class="stamp-slot stamp-filled shadow-sm"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span></div>
+<div class="stamp-slot stamp-filled shadow-sm"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span></div>
+<div class="stamp-slot stamp-filled shadow-sm"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span></div>
+<div class="stamp-slot stamp-filled shadow-sm"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span></div>
+<div class="stamp-slot stamp-filled shadow-sm"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span></div>
+<!-- Stamps 6-8 (Empty) -->
+<div class="stamp-slot stamp-empty"></div>
+<div class="stamp-slot stamp-empty"></div>
+<!-- Final Free Coffee Slot -->
+<div class="stamp-slot border-2 border-secondary bg-surface-bright flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">local_cafe</span>
+</div>
+</div>
+<p class="text-center font-caption text-caption text-on-surface-variant mt-md">Only 3 more coffees to go!</p>
+</section>
+<!-- Points Total -->
+<section class="grid grid-cols-2 gap-sm">
+<div class="glass-card rounded-xl p-md flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-secondary mb-xs text-3xl" style="font-variation-settings: 'FILL' 1;">stars</span>
+<h3 class="font-title-md text-title-md text-primary">Points Balance</h3>
+<p class="font-display-hero text-display-hero text-secondary mt-1">120</p>
+</div>
+<div class="glass-card rounded-xl p-md flex flex-col justify-center gap-xs">
+<button class="w-full bg-secondary text-white font-title-md text-title-md py-2 rounded-lg hover:opacity-90 transition-opacity active:scale-95">Redeem</button>
+<button class="w-full bg-primary-container text-white font-title-md text-title-md py-2 rounded-lg hover:opacity-90 transition-opacity active:scale-95">Learn More</button>
+</div>
+</section>
+<!-- Points History -->
+<section>
+<h3 class="font-title-md text-title-md text-primary mb-md px-1">Recent Activity</h3>
+<div class="space-y-sm">
+<!-- History Item 1 -->
+<div class="bg-surface rounded-lg p-md border outline flex justify-between items-center hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Artisan Blend Pour Over</p>
+<p class="font-caption text-caption text-on-surface-variant">Today, 8:42 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-price-display text-price-display text-secondary">+15 pts</p>
+<p class="font-caption text-caption text-on-surface-variant">Stamp Earned</p>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="bg-surface rounded-lg p-md border outline flex justify-between items-center hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">redeem</span>
+</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Redeemed Reward</p>
+<p class="font-caption text-caption text-on-surface-variant">Yesterday</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-price-display text-price-display text-primary">-50 pts</p>
+</div>
+</div>
+<!-- History Item 3 -->
+<div class="bg-surface rounded-lg p-md border outline flex justify-between items-center hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Iced Latte &amp; Pastry</p>
+<p class="font-caption text-caption text-on-surface-variant">Oct 24, 2023</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-price-display text-price-display text-secondary">+25 pts</p>
+<p class="font-caption text-caption text-on-surface-variant">Stamp Earned</p>
+</div>
+</div>
+</div>
+<button class="w-full text-center py-md text-secondary font-title-md text-title-md mt-sm hover:underline">View All History</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-gutter py-2 pb-safe shadow-md bg-surface dark:bg-surface-container rounded-t-xl md:hidden">
+<!-- Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<!-- Orders (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="font-label-md text-label-md mt-1">Orders</span>
+</a>
+<!-- Rewards (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-md text-label-md mt-1 font-bold">Rewards</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</a>
+</nav>
+<!-- Desktop Nav Fallback (Hidden on Mobile) -->
+<nav class="hidden md:flex fixed top-0 right-0 h-14 items-center pr-margin space-x-lg z-50 text-on-surface-variant">
+<a class="font-title-md hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-title-md hover:text-primary transition-colors" href="#">Orders</a>
+<a class="font-title-md text-secondary font-bold" href="#">Rewards</a>
+<a class="font-title-md hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+</body></html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vanilla Oat Latte - Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#fe7e57",
+                      "primary-container": "#4a2c1e",
+                      "inverse-on-surface": "#f4f0eb",
+                      "inverse-primary": "#ecbca8",
+                      "surface-dim": "#ddd9d5",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fdf9f4",
+                      "accent-container": "#FBE3DA",
+                      "on-surface": "#1c1c19",
+                      "surface-container-low": "#f7f3ee",
+                      "surface-tint": "#7a5646",
+                      "on-tertiary-fixed": "#022100",
+                      "secondary-fixed": "#ffdbd1",
+                      "on-secondary-container": "#6f1a00",
+                      "secondary-fixed-dim": "#ffb5a0",
+                      "tertiary": "#022400",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#c0f0ad",
+                      "on-surface-variant": "#6E5B4E",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#ffdbcc",
+                      "on-secondary-fixed": "#3b0a00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#7aa76b",
+                      "primary": "#31170b",
+                      "surface": "#FFFFFF",
+                      "tertiary-fixed-dim": "#a4d393",
+                      "tertiary-container": "#143b0b",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "secondary": "#a53c1b",
+                      "on-primary-container": "#be927f",
+                      "on-primary-fixed-variant": "#603f30",
+                      "background": "#fdf9f4",
+                      "on-background": "#1c1c19",
+                      "outline-variant": "#d4c3bc",
+                      "surface-container-high": "#ebe8e3",
+                      "on-primary-fixed": "#2e1508",
+                      "outline": "#E4D6C9",
+                      "primary-fixed-dim": "#ecbca8",
+                      "on-tertiary-fixed-variant": "#28501e",
+                      "surface-container-highest": "#e5e2dd",
+                      "surface-container": "#f1ede8",
+                      "inverse-surface": "#31302d",
+                      "on-secondary-fixed-variant": "#842504",
+                      "surface-variant": "#e5e2dd",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "4px",
+                      "lg": "24px",
+                      "sm": "12px",
+                      "md": "16px",
+                      "xl": "32px",
+                      "margin": "16px",
+                      "xs": "8px",
+                      "gutter": "12px"
+              },
+              "fontFamily": {
+                      "price-display": [
+                              "Poppins"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "caption": [
+                              "Inter"
+                      ],
+                      "display-hero": [
+                              "Poppins"
+                      ],
+                      "title-md": [
+                              "Poppins"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "price-display": [
+                              "18px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "15px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-hero": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-md": [
+                              "17px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "13px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .chip-selected {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary');
+            border-color: theme('colors.primary-container');
+        }
+        .chip-unselected {
+            background-color: transparent;
+            color: theme('colors.on-surface-variant');
+            border-color: theme('colors.outline');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased pb-32">
+<!-- Header -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md flex justify-between items-center px-margin h-14">
+<button aria-label="Go back" class="w-12 h-12 flex items-center justify-center text-primary rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="font-headline-lg text-headline-lg text-primary truncate max-w-[200px]">Details</div>
+<div aria-label="Favorite" class="w-12 h-12 flex items-center justify-center text-primary rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</div>
+</header>
+<!-- Hero Image -->
+<div class="w-full h-80 mt-14 bg-surface-container-low relative">
+<img alt="Vanilla Oat Latte" class="w-full h-full object-cover object-center" data-alt="A beautifully crafted Vanilla Oat Latte in a clear glass mug, showcasing the rich espresso layered over creamy oat milk. The lighting is bright and natural, highlighting the condensation on the glass and the smooth texture of the drink. The setting is a minimalist cafe table with a warm, artisanal aesthetic, utilizing subtle paper and cream tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2QKo5zCjPzkFeSzYQOcnWCS2Le8373puR9O1DAhCZ-L8ChpTmi3PVmdgX_7uRFJi8LG1p4A3KXfH3eJbcHCnoDWgBzM9D0s2qdhauQn-moktGBCGCBb6N8EbvxQIHpm-xHUCwsb47t47RJqpq9guTCVW-YjRvvYs8mhfmj5j3GfKxfUdtG3uvjaDK1dNAZKk3pe4YdVwRAYVFMiLi0iuNDVj8jRKNx_e8uETLM_O3YaLEpEeF_teT"/>
+</div>
+<!-- Product Info -->
+<main class="px-margin py-lg max-w-2xl mx-auto">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h1 class="font-display-hero text-display-hero text-on-surface mb-base">Vanilla Oat Latte</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Smooth espresso with creamy oat milk and a touch of real vanilla bean syrup.</p>
+</div>
+</div>
+<div class="h-px w-full bg-outline-variant my-lg"></div>
+<!-- Customization: Size -->
+<section class="mb-lg">
+<h2 class="font-title-md text-title-md text-on-surface mb-sm">Size</h2>
+<div class="flex gap-sm">
+<button class="flex-1 py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'size')">Small (8oz)</button>
+<button class="flex-1 py-sm px-md rounded-full border border-solid chip-selected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'size')">Medium (12oz)</button>
+<button class="flex-1 py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'size')">Large (16oz)</button>
+</div>
+</section>
+<!-- Customization: Espresso Shots -->
+<section class="mb-lg">
+<h2 class="font-title-md text-title-md text-on-surface mb-sm">Espresso Shots</h2>
+<div class="flex gap-sm flex-wrap">
+<button class="py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'shots')">Single</button>
+<button class="py-sm px-md rounded-full border border-solid chip-selected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'shots')">Double</button>
+<button class="py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'shots')">Triple (+$0.80)</button>
+</div>
+</section>
+<!-- Customization: Ice Level -->
+<section class="mb-lg">
+<h2 class="font-title-md text-title-md text-on-surface mb-sm">Ice Level</h2>
+<div class="flex gap-sm flex-wrap">
+<button class="py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'ice')">No Ice</button>
+<button class="py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'ice')">Light Ice</button>
+<button class="py-sm px-md rounded-full border border-solid chip-selected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'ice')">Regular Ice</button>
+<button class="py-sm px-md rounded-full border border-solid chip-unselected font-label-md text-label-md transition-colors" onclick="selectChip(this, 'ice')">Extra Ice</button>
+</div>
+</section>
+<!-- Quantity -->
+<section class="mb-lg flex justify-between items-center bg-surface p-md rounded-xl border border-outline">
+<span class="font-title-md text-title-md text-on-surface">Quantity</span>
+<div class="flex items-center gap-md">
+<button aria-label="Decrease quantity" class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors" onclick="updateQuantity(-1)">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+<span class="font-title-md text-title-md text-on-surface w-4 text-center" id="quantity-display">1</span>
+<button aria-label="Increase quantity" class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors" onclick="updateQuantity(1)">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-0 w-full bg-surface border-t border-outline-variant p-margin shadow-[0_-4px_16px_rgba(74,44,30,0.05)] z-40 pb-safe">
+<div class="max-w-2xl mx-auto flex gap-md items-center justify-between">
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-variant">Total Price</span>
+<span class="font-price-display text-price-display text-on-surface" id="price-display">$5.50</span>
+</div>
+<button class="flex-1 bg-[#C1502E] text-white py-sm px-lg rounded-full font-title-md text-title-md shadow-sm hover:opacity-90 transition-opacity active:scale-95 flex items-center justify-center gap-xs">
+<span>Add to Cart</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+</button>
+</div>
+</div>
+<script>
+        const basePrice = 5.50;
+        let quantity = 1;
+
+        function updateQuantity(change) {
+            const newQuantity = quantity + change;
+            if (newQuantity >= 1 && newQuantity <= 10) {
+                quantity = newQuantity;
+                document.getElementById('quantity-display').innerText = quantity;
+                updatePrice();
+            }
+        }
+
+        function updatePrice() {
+            // In a real app, this would calculate based on selected options too (e.g. triple shot)
+            const total = (basePrice * quantity).toFixed(2);
+            document.getElementById('price-display').innerText = `$${total}`;
+        }
+
+        function selectChip(clickedBtn, groupName) {
+            // Find all buttons in the same container (group)
+            const container = clickedBtn.parentElement;
+            const buttons = container.querySelectorAll('button');
+            
+            // Deselect all
+            buttons.forEach(btn => {
+                btn.classList.remove('chip-selected');
+                btn.classList.add('chip-unselected');
+            });
+            
+            // Select clicked
+            clickedBtn.classList.remove('chip-unselected');
+            clickedBtn.classList.add('chip-selected');
+        }
+    </script>
+</body></html>

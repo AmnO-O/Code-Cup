@@ -12,7 +12,28 @@ class CartRepository {
 
     fun addToCart(item: CartItem) {
         _cartItems.update { currentItems ->
-            currentItems + item
+            val existingItemIndex = currentItems.indexOfFirst {
+                it.product.id == item.product.id &&
+                        it.size == item.size &&
+                        it.shots == item.shots &&
+                        it.iceLevel == item.iceLevel
+            }
+
+            if (existingItemIndex != -1) {
+                currentItems.mapIndexed { index, cartItem ->
+                    if (index == existingItemIndex) {
+                        val newQuantity = cartItem.quantity + item.quantity
+                        cartItem.copy(
+                            quantity = newQuantity,
+                            totalPrice = (cartItem.totalPrice / cartItem.quantity) * newQuantity
+                        )
+                    } else {
+                        cartItem
+                    }
+                }
+            } else {
+                currentItems + item
+            }
         }
     }
 

@@ -1,8 +1,7 @@
-# Task: Category Filtering & Navigation Fix
+# Task: Cart Grouping & Order Success Celebration
 
-- [x] Update `Product` model with categories `[x]`
-- [x] Update `HomeViewModel` for filtering logic `[x]`
-- [x] Make `CategoryChips` interactive in `HomeScreen` `[x]`
-- [x] Fix navigation logic in `NavGraph` `[x]`
-- [x] Verify Rewards -> Home navigation `[x]`
-- [x] Final verification of filtering `[x]`
+- [x] Update `CartRepository` with grouping logic `[x]`
+- [x] Create `ConfettiEffect` component `[x]`
+- [x] Integrate `ConfettiEffect` into `OrderSuccessScreen` `[x]`
+- [x] Verification of cart grouping `[x]`
+- [x] Verification of confetti animation `[x]`

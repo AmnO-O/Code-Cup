@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import com.example.codecup.ui.home.HomeScreen
 import com.example.codecup.ui.screens.*
 
+import androidx.navigation.NavGraph.Companion.findStartDestination
+
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
@@ -28,7 +30,11 @@ fun NavGraph() {
                     navController.navigate("details/$productId")
                 },
                 onNavigateToRewards = {
-                    navController.navigate("rewards")
+                    navController.navigate("rewards") {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 onNavigateToCart = {
                     navController.navigate("cart")
@@ -36,7 +42,7 @@ fun NavGraph() {
                 onNavigate = { route ->
                     if (route != "home") {
                         navController.navigate(route) {
-                            popUpTo("home") { saveState = true }
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
                         }
@@ -88,7 +94,7 @@ fun NavGraph() {
                 onNavigate = { route ->
                     if (route != "orders") {
                         navController.navigate(route) {
-                            popUpTo("home") { saveState = true }
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
                         }
@@ -101,10 +107,14 @@ fun NavGraph() {
             RewardsScreen(
                 onNavigate = { route ->
                     if (route != "rewards") {
-                        navController.navigate(route) {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
+                        if (route == "home") {
+                            navController.popBackStack("home", inclusive = false)
+                        } else {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 },
@@ -124,10 +134,14 @@ fun NavGraph() {
             ProfileScreen(
                 onNavigate = { route ->
                     if (route != "profile") {
-                        navController.navigate(route) {
-                            popUpTo("home") { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
+                        if (route == "home") {
+                            navController.popBackStack("home", inclusive = false)
+                        } else {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 }

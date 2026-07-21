@@ -1,6 +1,7 @@
 package com.example.codecup.ui.home
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -82,7 +83,11 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     LoyaltyCard(stampsEarned = 5, onClick = onNavigateToRewards)
                     Spacer(modifier = Modifier.height(24.dp))
-                    CategoryChips()
+                    CategoryChips(
+                        categories = uiState.categories,
+                        selectedCategory = uiState.selectedCategory,
+                        onCategorySelected = { viewModel.selectCategory(it) }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -105,20 +110,25 @@ fun HomeScreen(
 }
 
 @Composable
-fun CategoryChips() {
-    val categories = listOf("All Coffee", "Espresso", "Cold Brew", "Pastries", "Beans")
+fun CategoryChips(
+    categories: List<String>,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit
+) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(end = 16.dp)
     ) {
         items(categories) { category ->
-            val isSelected = category == "All Coffee"
+            val isSelected = category == selectedCategory
             Surface(
                 color = if (isSelected) CoffeePrimaryContainer else Color.Transparent,
                 contentColor = if (isSelected) Color.White else CoffeeOnSurface,
                 shape = CircleShape,
                 border = if (isSelected) null else BorderStroke(1.dp, CoffeeOutline),
-                modifier = Modifier.height(40.dp)
+                modifier = Modifier
+                    .height(40.dp)
+                    .clickable { onCategorySelected(category) }
             ) {
                 Box(
                     modifier = Modifier.padding(horizontal = 16.dp),

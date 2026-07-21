@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val products: List<Product> = emptyList(),
+    val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Pastries"),
+    val selectedCategory: String = "All Coffee",
     val cartItemsCount: Int = 0,
     val isLoading: Boolean = false
 )
@@ -23,6 +25,8 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    private val _allProducts = MutableStateFlow<List<Product>>(emptyList())
+
     init {
         loadProducts()
         observeCart()
@@ -32,7 +36,8 @@ class HomeViewModel(
         productRepository.getProducts()
             .onStart { _uiState.update { it.copy(isLoading = true) } }
             .onEach { products ->
-                _uiState.update { it.copy(products = products, isLoading = false) }
+                _allProducts.value = products
+                filterProducts(_uiState.value.selectedCategory)
             }
             .launchIn(viewModelScope)
     }
@@ -41,6 +46,20 @@ class HomeViewModel(
         cartRepository.cartItems.onEach { items ->
             _uiState.update { it.copy(cartItemsCount = items.size) }
         }.launchIn(viewModelScope)
+    }
+
+    fun selectCategory(category: String) {
+        _uiState.update { it.copy(selectedCategory = category) }
+        filterProducts(category)
+    }
+
+    private fun filterProducts(category: String) {
+        val filtered = if (category == "All Coffee") {
+            _allProducts.value
+        } else {
+            _allProducts.value.filter { it.category == category }
+        }
+        _uiState.update { it.copy(products = filtered, isLoading = false) }
     }
 
     fun quickAddToCart(product: Product) {

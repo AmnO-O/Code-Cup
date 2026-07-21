@@ -1,11 +1,8 @@
-# Task: Fixes and UI Responsiveness
+# Task: Category Filtering & Navigation Fix
 
-- [x] Infrastructure: Update `ViewModelFactory` `[x]`
-- [x] Home: Create `HomeViewModel` `[x]`
-- [x] Home: Refactor `HomeScreen` for scrollability and "add" logic `[x]`
-- [x] Cart: Create `CartViewModel` `[x]`
-- [x] Cart: Update `CartScreen` to use real data `[x]`
-- [x] Details: Adjust image height and check scrolling `[x]`
-- [x] Rewards: Add back button to header `[x]`
-- [x] Final verification `[x]`
-
+- [x] Update `Product` model with categories `[x]`
+- [x] Update `HomeViewModel` for filtering logic `[x]`
+- [x] Make `CategoryChips` interactive in `HomeScreen` `[x]`
+- [x] Fix navigation logic in `NavGraph` `[x]`
+- [x] Verify Rewards -> Home navigation `[x]`
+- [x] Final verification of filtering `[x]`

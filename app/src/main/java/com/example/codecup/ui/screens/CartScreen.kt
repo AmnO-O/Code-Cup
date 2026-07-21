@@ -17,19 +17,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.codecup.models.CartItem
-import com.example.codecup.models.sampleCartItems
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
+import com.example.codecup.ui.viewmodels.CartViewModel
+import com.example.codecup.ui.viewmodels.ViewModelFactory
 
 @Composable
 fun CartScreen(
     onBackClick: () -> Unit,
-    onCheckoutClick: () -> Unit
+    onCheckoutClick: () -> Unit,
+    viewModel: CartViewModel = viewModel(factory = ViewModelFactory())
 ) {
-    var cartItems by remember { mutableStateOf(sampleCartItems) }
-    val total = cartItems.sumOf { it.product.price * it.quantity }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -39,7 +41,7 @@ fun CartScreen(
             )
         },
         bottomBar = {
-            if (cartItems.isNotEmpty()) {
+            if (uiState.cartItems.isNotEmpty()) {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -54,7 +56,7 @@ fun CartScreen(
                         ) {
                             Text("Total", style = MaterialTheme.typography.titleMedium, color = CoffeeOnSurface)
                             Text(
-                                "$${"%.2f".format(total)}",
+                                "$${"%.2f".format(uiState.totalPrice)}",
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = CoffeePrimary
                             )
@@ -69,7 +71,7 @@ fun CartScreen(
         },
         containerColor = CoffeeBackground
     ) { innerPadding ->
-        if (cartItems.isEmpty()) {
+        if (uiState.cartItems.isEmpty()) {
             EmptyState(
                 title = "Your cart is empty",
                 description = "Browse our menu and add some delicious coffee to your cart!",
@@ -87,17 +89,11 @@ fun CartScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(cartItems) { item ->
+                items(uiState.cartItems, key = { it.id }) { item ->
                     CartItemRow(
                         item = item,
-                        onQuantityChange = { newQty ->
-                            cartItems = cartItems.map { 
-                                if (it.id == item.id) it.copy(quantity = newQty) else it 
-                            }
-                        },
-                        onRemove = {
-                            cartItems = cartItems.filter { it.id != item.id }
-                        }
+                        onQuantityChange = { viewModel.updateQuantity(item.id, it) },
+                        onRemove = { viewModel.removeItem(item.id) }
                     )
                 }
             }
@@ -134,7 +130,7 @@ fun CartItemRow(
                 color = CoffeeOnSurface
             )
             Text(
-                text = item.customization,
+                text = item.customizationSummary,
                 style = MaterialTheme.typography.bodySmall,
                 color = CoffeeOnSurfaceVariant
             )
@@ -149,7 +145,7 @@ fun CartItemRow(
                     onQuantityChange = onQuantityChange
                 )
                 Text(
-                    text = "$${"%.2f".format(item.product.price * item.quantity)}",
+                    text = "$${"%.2f".format(item.totalPrice)}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = CoffeePrimary
                 )

@@ -1,13 +1,18 @@
 package com.example.codecup.models
 
+import java.util.UUID
+
 data class CartItem(
-    val id: Int,
+    val id: String = UUID.randomUUID().toString(),
     val product: Product,
     val quantity: Int,
-    val customization: String
-)
+    val size: String,
+    val shots: String,
+    val iceLevel: String,
+    val totalPrice: Double
+) {
+    val customizationSummary: String
+        get() = "$size, $shots Shots, $iceLevel"
+}
 
-val sampleCartItems = listOf(
-    CartItem(1, sampleProducts[0], 1, "Double shot · Medium · Light ice"),
-    CartItem(2, sampleProducts[3], 2, "Baked fresh")
-)
+val sampleCartItems = listOf<CartItem>() // Empty for now to fix build

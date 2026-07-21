@@ -24,6 +24,7 @@ import com.example.codecup.ui.theme.CoffeeSecondary
 fun AppHeader(
     title: String,
     onBackClick: (() -> Unit)? = null,
+    navigationIcon: @Composable (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     centerTitle: Boolean = true
 ) {
@@ -38,7 +39,9 @@ fun AppHeader(
             )
         },
         navigationIcon = {
-            if (onBackClick != null) {
+            if (navigationIcon != null) {
+                navigationIcon()
+            } else if (onBackClick != null) {
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

@@ -21,23 +21,31 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import com.example.codecup.data.CartRepository
 import com.example.codecup.models.Product
-import com.example.codecup.models.sampleProducts
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
+import com.example.codecup.ui.viewmodels.ProductDetailsViewModel
+import com.example.codecup.ui.viewmodels.ViewModelFactory
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(
     productId: Int,
     onBackClick: () -> Unit,
-    onAddToCartClick: () -> Unit
+    onAddToCartClick: () -> Unit,
+    viewModel: ProductDetailsViewModel = viewModel(factory = ViewModelFactory(productId = productId))
 ) {
-    val product = sampleProducts.find { it.id == productId } ?: sampleProducts[0]
-    var quantity by remember { mutableStateOf(1) }
-    var selectedSize by remember { mutableStateOf("Medium (12oz)") }
-    var selectedShots by remember { mutableStateOf("Double") }
-    var selectedIce by remember { mutableStateOf("Regular Ice") }
+    val uiState by viewModel.uiState.collectAsState()
+    val product = uiState.product ?: return // Handle null product if not found
+
+    var showCartPreview by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val cartItems by CartRepository.getInstance().cartItems.collectAsState()
 
     Scaffold(
         topBar = {
@@ -45,6 +53,17 @@ fun ProductDetailsScreen(
                 title = "Details",
                 onBackClick = onBackClick,
                 actions = {
+                    BadgedBox(
+                        badge = {
+                            if (uiState.cartItemsCount > 0) {
+                                Badge { Text(uiState.cartItemsCount.toString()) }
+                            }
+                        }
+                    ) {
+                        IconButton(onClick = { showCartPreview = true }) {
+                            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart", tint = CoffeePrimary)
+                        }
+                    }
                     IconButton(onClick = { }) {
                         Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorite", tint = CoffeePrimary)
                     }
@@ -74,13 +93,16 @@ fun ProductDetailsScreen(
                             color = CoffeeOnSurfaceVariant
                         )
                         Text(
-                            text = "$${"%.2f".format(product.price * quantity)}",
+                            text = "$${"%.2f".format(uiState.totalPrice)}",
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             color = CoffeeOnSurface
                         )
                     }
                     PrimaryButton(
-                        onClick = onAddToCartClick,
+                        onClick = {
+                            viewModel.addToCart()
+                            onAddToCartClick()
+                        },
                         modifier = Modifier.width(200.dp)
                     ) {
                         Text("Add to Cart")
@@ -104,7 +126,7 @@ fun ProductDetailsScreen(
                 contentDescription = product.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(240.dp)
                     .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)),
                 contentScale = ContentScale.Crop
             )
@@ -130,8 +152,8 @@ fun ProductDetailsScreen(
                 CustomizationSection(
                     title = "Size",
                     options = listOf("Small (8oz)", "Medium (12oz)", "Large (16oz)"),
-                    selectedOption = selectedSize,
-                    onOptionSelected = { selectedSize = it }
+                    selectedOption = uiState.selectedSize,
+                    onOptionSelected = { viewModel.updateSize(it) }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -140,8 +162,8 @@ fun ProductDetailsScreen(
                 CustomizationSection(
                     title = "Espresso Shots",
                     options = listOf("Single", "Double", "Triple (+$0.80)"),
-                    selectedOption = selectedShots,
-                    onOptionSelected = { selectedShots = it }
+                    selectedOption = uiState.selectedShots,
+                    onOptionSelected = { viewModel.updateShots(it) }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -150,8 +172,8 @@ fun ProductDetailsScreen(
                 CustomizationSection(
                     title = "Ice Level",
                     options = listOf("No Ice", "Light Ice", "Regular Ice", "Extra Ice"),
-                    selectedOption = selectedIce,
-                    onOptionSelected = { selectedIce = it }
+                    selectedOption = uiState.selectedIce,
+                    onOptionSelected = { viewModel.updateIce(it) }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -172,13 +194,87 @@ fun ProductDetailsScreen(
                         color = CoffeeOnSurface
                     )
                     QuantityStepper(
-                        quantity = quantity,
-                        onQuantityChange = { quantity = it }
+                        quantity = uiState.quantity,
+                        onQuantityChange = { viewModel.updateQuantity(it) }
                     )
                 }
                 
                 Spacer(modifier = Modifier.height(32.dp))
             }
+        }
+    }
+
+    if (showCartPreview) {
+        ModalBottomSheet(
+            onDismissRequest = { showCartPreview = false },
+            sheetState = sheetState,
+            containerColor = CoffeeSurface
+        ) {
+            CartPreviewContent(
+                cartItems = cartItems,
+                onClose = { showCartPreview = false }
+            )
+        }
+    }
+}
+
+@Composable
+fun CartPreviewContent(
+    cartItems: List<com.example.codecup.models.CartItem>,
+    onClose: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .padding(bottom = 32.dp)
+    ) {
+        Text(
+            "Cart Preview",
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            color = CoffeeOnSurface
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        if (cartItems.isEmpty()) {
+            Text(
+                "Your cart is empty.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CoffeeOnSurfaceVariant
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(cartItems) { item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(CoffeeBackground, RoundedCornerShape(8.dp))
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = item.product.imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(item.product.name, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(item.customizationSummary, style = MaterialTheme.typography.labelSmall, color = CoffeeOnSurfaceVariant)
+                        }
+                        Text("$${"%.2f".format(item.totalPrice)}", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        PrimaryButton(onClick = onClose) {
+            Text("Continue Browsing")
         }
     }
 }

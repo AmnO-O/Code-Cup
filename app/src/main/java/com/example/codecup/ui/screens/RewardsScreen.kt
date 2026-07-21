@@ -24,7 +24,10 @@ fun RewardsScreen(
 ) {
     Scaffold(
         topBar = {
-            AppHeader(title = "Rewards")
+            AppHeader(
+                title = "Rewards",
+                onBackClick = { onNavigate("home") }
+            )
         },
         bottomBar = {
             BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)

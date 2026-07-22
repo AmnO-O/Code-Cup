@@ -28,7 +28,7 @@ import com.example.codecup.ui.viewmodels.ViewModelFactory
 @Composable
 fun CartScreen(
     onBackClick: () -> Unit,
-    onCheckoutClick: () -> Unit,
+    onCheckoutClick: (String) -> Unit,
     viewModel: CartViewModel = viewModel(factory = ViewModelFactory())
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -62,7 +62,9 @@ fun CartScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        PrimaryButton(onClick = onCheckoutClick) {
+                        PrimaryButton(onClick = { 
+                            viewModel.checkout(onCheckoutClick)
+                        }) {
                             Text("Checkout")
                         }
                     }

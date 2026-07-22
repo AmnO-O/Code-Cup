@@ -1,19 +1,21 @@
 package com.example.codecup.models
 
-enum class OrderStatus {
-    Preparing, Ready, PickedUp
+enum class OrderStatus(val label: String) {
+    Received("Received"),
+    Preparing("Preparing"),
+    Ready("Ready"),
+    PickedUp("Picked Up")
 }
 
 data class Order(
     val id: String,
     val date: String,
-    val itemsSummary: String,
+    val items: List<CartItem>,
     val totalPrice: Double,
-    val status: OrderStatus
-)
+    var status: OrderStatus
+) {
+    val itemsSummary: String
+        get() = items.joinToString(", ") { "${it.quantity}x ${it.product.name}" }
+}
 
-val sampleOrders = listOf(
-    Order("1042", "21 July, 21:15", "Artisan Cappuccino, Butter Croissant", 8.00, OrderStatus.Preparing),
-    Order("1041", "20 July, 09:30", "Nitro Cold Brew", 5.00, OrderStatus.PickedUp),
-    Order("1039", "19 July, 10:15", "Caramel Macchiato", 5.50, OrderStatus.PickedUp)
-)
+val sampleOrders = listOf<Order>() // Empty now, will be filled by repository

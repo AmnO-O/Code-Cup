@@ -3,12 +3,14 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.codecup.data.CartRepository
+import com.example.codecup.data.OrderRepository
 import com.example.codecup.data.ProductRepository
 
 class ViewModelFactory(
     private val productId: Int = -1,
     private val productRepository: ProductRepository = ProductRepository(),
-    private val cartRepository: CartRepository = CartRepository.getInstance()
+    private val cartRepository: CartRepository = CartRepository.getInstance(),
+    private val orderRepository: OrderRepository = OrderRepository.getInstance()
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -20,7 +22,10 @@ class ViewModelFactory(
                 HomeViewModel(productRepository, cartRepository) as T
             }
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
-                CartViewModel(cartRepository) as T
+                CartViewModel(cartRepository, orderRepository) as T
+            }
+            modelClass.isAssignableFrom(MyOrdersViewModel::class.java) -> {
+                MyOrdersViewModel(orderRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

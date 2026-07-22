@@ -68,14 +68,19 @@ fun NavGraph() {
         composable("cart") {
             CartScreen(
                 onBackClick = { navController.popBackStack() },
-                onCheckoutClick = {
-                    navController.navigate("success")
+                onCheckoutClick = { orderId ->
+                    navController.navigate("success/$orderId")
                 }
             )
         }
         
-        composable("success") {
+        composable(
+            route = "success/{orderId}",
+            arguments = listOf(navArgument("orderId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
             OrderSuccessScreen(
+                orderId = orderId,
                 onTrackOrderClick = {
                     navController.navigate("orders") {
                         popUpTo("home") { saveState = true }

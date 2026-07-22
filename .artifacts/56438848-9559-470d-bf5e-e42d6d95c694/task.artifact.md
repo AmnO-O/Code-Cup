@@ -1,7 +1,9 @@
-# Task: Cart Grouping & Order Success Celebration
+# Task Checklist - Order Persistence and UI Redesign
 
-- [x] Update `CartRepository` with grouping logic `[x]`
-- [x] Create `ConfettiEffect` component `[x]`
-- [x] Integrate `ConfettiEffect` into `OrderSuccessScreen` `[x]`
-- [x] Verification of cart grouping `[x]`
-- [x] Verification of confetti animation `[x]`
+- [x] Implement `MyOrdersViewModel` `[x]`
+- [x] Update `ViewModelFactory` `[x]`
+- [x] Update `CartViewModel` with `checkout()` logic `[x]`
+- [x] Redesign `OrderSuccessScreen` UI `[x]`
+- [x] Redesign `MyOrdersScreen` UI `[x]`
+- [x] Update `CartScreen` to trigger checkout `[x]`
+- [x] Final Verification `[x]`

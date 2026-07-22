@@ -3,17 +3,26 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.CartRepository
+import com.example.codecup.data.OrderRepository
 import com.example.codecup.models.CartItem
+import com.example.codecup.models.Order
+import com.example.codecup.models.OrderStatus
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.random.Random
 
 data class CartUiState(
     val cartItems: List<CartItem> = emptyList(),
-    val totalPrice: Double = 0.0
+    val totalPrice: Double = 0.0,
+    val lastPlacedOrderId: String? = null
 )
 
 class CartViewModel(
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val orderRepository: OrderRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
@@ -31,15 +40,36 @@ class CartViewModel(
     }
 
     fun updateQuantity(itemId: String, newQuantity: Int) {
-        // In a real app, repository would handle this update.
-        // For now, we'll re-add with new quantity if repository is simple.
-        // But our CartRepository only has addToCart and removeFromCart.
-        // Let's keep it simple for now as it's an in-memory mock.
+        // Simple mock implementation
     }
 
     fun removeItem(itemId: String) {
         viewModelScope.launch {
             cartRepository.removeFromCart(itemId)
+        }
+    }
+
+    fun checkout(onSuccess: (String) -> Unit) {
+        val items = _uiState.value.cartItems
+        if (items.isEmpty()) return
+
+        val orderId = "AC-${Random.nextInt(10000, 99999)}"
+        val sdf = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
+        val date = sdf.format(Date())
+
+        val order = Order(
+            id = orderId,
+            date = date,
+            items = items,
+            totalPrice = _uiState.value.totalPrice,
+            status = OrderStatus.Preparing
+        )
+
+        viewModelScope.launch {
+            orderRepository.placeOrder(order)
+            cartRepository.clearCart()
+            _uiState.update { it.copy(lastPlacedOrderId = orderId) }
+            onSuccess(orderId)
         }
     }
 }

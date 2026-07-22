@@ -26,12 +26,37 @@ I have successfully implemented order persistence and redesigned the **Order Suc
     - **History Tab**: Displays completed orders with a quick "Reorder" option.
     - Uses `MyOrdersViewModel` to reactively update the UI when order statuses change.
 
+---
+
+# Walkthrough - Profile Screen Redesign
+
+I have successfully redesigned the Profile screen to align with the Artisan Coffee theme, incorporating your feedback for better aesthetics and functionality.
+
+## Changes Made
+
+### 1. User Interface Redesign
+- **Avatar:** Replaced the generic icon with an `AsyncImage`. Added a professional circular border and a **Camera Button** overlay, providing a clear UI trigger for avatar editing.
+- **Bento Stats Grid:** Transformed the stats into stylized cards with icons (`ReceiptLong`, `Stars`, `CalendarMonth`). This layout is modern, clean, and highly scannable.
+- **Personal Information Card:**
+    - Grouped all user details into a elevated white surface with a "Personal Information" header.
+    - Added **Icons** to every field (Name, Email, Phone) to improve visual hierarchy and professional feel.
+    - Enhanced the **Edit Mode**: When editing, icons remain visible inside the text fields, and the background subtly changes to indicate interactivity.
+
+### 2. Functional Additions
+- **Sign Out Button:** Integrated a prominent "Sign Out" button at the bottom of the information card, styled with a coffee-themed secondary color and a logout icon.
+- **MVVM Integration:**
+    - **[ProfileViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ProfileViewModel.kt)**: Manages profile state, edit-mode toggling, and data updates.
+    - **[ProfileRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt)**: Centralizes user data management.
+
+### 3. Shared Component Updates
+- **[CoffeeButtons.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/CoffeeButtons.kt)**: Upgraded the `PrimaryButton` to support custom background and content colors, allowing for specialized buttons like the "Sign Out" action while maintaining consistent styling.
+
 ## Verification Results
 
-### End-to-End Flow
-1.  **Checkout**: Added items to cart and clicked "Checkout". A confetti animation appeared, and order `#AC-XXXXX` was displayed.
-2.  **Tracking**: Clicked "Track My Order". The order appeared correctly in the "Ongoing" tab of the My Orders screen.
-3.  **Picking Up**: Clicked "Mark as Picked Up". The order successfully moved from "Ongoing" to the "History" tab.
+- [x] **Visual Consistency:** The profile now matches the provided HTML/CSS design closely.
+- [x] **Information Icons:** All fields (Name, Email, Phone) have appropriate leading icons.
+- [x] **Edit Flow:** Successfully toggle between read-only and edit modes. Changes are persisted via the ViewModel.
+- [x] **Sign Out:** The button is visible and correctly styled.
 
 ---
-Hệ thống đặt hàng giờ đây đã hoạt động với dữ liệu thực tế và giao diện chuyên nghiệp theo đúng bản thiết kế. Bạn có thể thử đặt một đơn hàng mới và theo dõi tiến trình của nó ngay lập tức!
+Giao diện Profile mới giờ đây đã chuyên nghiệp và đầy đủ tính năng hơn! Bạn có thể thử thay đổi thông tin cá nhân và xem các biểu tượng mới cập nhật sống động trên màn hình nhé.

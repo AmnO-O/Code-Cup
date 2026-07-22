@@ -18,6 +18,8 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    containerColor: Color = CoffeeSecondary,
+    contentColor: Color = Color.White,
     content: @Composable RowScope.() -> Unit
 ) {
     Button(
@@ -28,10 +30,10 @@ fun PrimaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(999.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = CoffeeSecondary,
-            contentColor = Color.White,
-            disabledContainerColor = CoffeeSecondary.copy(alpha = 0.38f),
-            disabledContentColor = Color.White.copy(alpha = 0.38f)
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = containerColor.copy(alpha = 0.38f),
+            disabledContentColor = contentColor.copy(alpha = 0.38f)
         ),
         contentPadding = PaddingValues(horizontal = 24.dp),
         content = content

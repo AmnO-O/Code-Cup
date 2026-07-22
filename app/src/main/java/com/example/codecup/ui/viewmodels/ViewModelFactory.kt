@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.codecup.data.CartRepository
 import com.example.codecup.data.OrderRepository
 import com.example.codecup.data.ProductRepository
+import com.example.codecup.data.ProfileRepository
 
 class ViewModelFactory(
     private val productId: Int = -1,
     private val productRepository: ProductRepository = ProductRepository(),
     private val cartRepository: CartRepository = CartRepository.getInstance(),
-    private val orderRepository: OrderRepository = OrderRepository.getInstance()
+    private val orderRepository: OrderRepository = OrderRepository.getInstance(),
+    private val profileRepository: ProfileRepository = ProfileRepository.getInstance()
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -26,6 +28,9 @@ class ViewModelFactory(
             }
             modelClass.isAssignableFrom(MyOrdersViewModel::class.java) -> {
                 MyOrdersViewModel(orderRepository) as T
+            }
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
+                ProfileViewModel(profileRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

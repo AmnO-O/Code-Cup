@@ -40,7 +40,9 @@ class CartViewModel(
     }
 
     fun updateQuantity(itemId: String, newQuantity: Int) {
-        // Simple mock implementation
+        viewModelScope.launch {
+            cartRepository.updateQuantity(itemId, newQuantity)
+        }
     }
 
     fun removeItem(itemId: String) {

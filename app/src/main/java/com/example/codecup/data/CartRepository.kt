@@ -43,6 +43,23 @@ class CartRepository {
         }
     }
 
+    fun updateQuantity(itemId: String, newQuantity: Int) {
+        if (newQuantity < 1) return
+        _cartItems.update { currentItems ->
+            currentItems.map { item ->
+                if (item.id == itemId) {
+                    val unitPrice = item.totalPrice / item.quantity
+                    item.copy(
+                        quantity = newQuantity,
+                        totalPrice = unitPrice * newQuantity
+                    )
+                } else {
+                    item
+                }
+            }
+        }
+    }
+
     fun clearCart() {
         _cartItems.value = emptyList()
     }

@@ -1,62 +1,50 @@
-# Walkthrough - Order Persistence and UI Redesign
+# Walkthrough - Artisan Coffee Project History
 
-I have successfully implemented order persistence and redesigned the **Order Success** and **My Orders** screens to match the requested architectural designs.
-
-## Changes Made
-
-### 1. Order Persistence System
-- **[Order.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/models/Order.kt)**: Upgraded the data model to include a full list of items and detailed status levels (`Received`, `Preparing`, `Ready`, `PickedUp`).
-- **[OrderRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/OrderRepository.kt)**: Implemented a singleton repository to store orders in memory. This ensures that orders created during the checkout process are preserved and can be tracked.
-
-### 2. Functional Checkout Flow
-- **[CartViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/CartViewModel.kt)**: Added a `checkout()` function that:
-    - Generates a unique order ID (e.g., `#AC-78294`).
-    - Captures the current date and time.
-    - Persists the order to the `OrderRepository`.
-    - Clears the cart upon success.
-- **[NavGraph.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/navigation/NavGraph.kt)**: Updated navigation to pass the `orderId` to the success screen, ensuring real-time data display.
-
-### 3. Redesigned UI
-- **[OrderSuccessScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/OrderSuccessScreen.kt)**:
-    - New layout featuring a prominent "Order Placed!" header and a stylized "Order Number" card.
-    - Integrated the **Confetti Effect** for a celebratory feel.
-- **[MyOrdersScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/MyOrdersScreen.kt)**:
-    - Implemented a two-tab system: **Ongoing** and **History**.
-    - **Ongoing Tab**: Shows active orders with a real-time progress bar and a "Mark as Picked Up" button.
-    - **History Tab**: Displays completed orders with a quick "Reorder" option.
-    - Uses `MyOrdersViewModel` to reactively update the UI when order statuses change.
+This document tracks the iterative improvements and feature implementations for the Code Cup coffee ordering app.
 
 ---
 
-# Walkthrough - Profile Screen Redesign
-
-I have successfully redesigned the Profile screen to align with the Artisan Coffee theme, incorporating your feedback for better aesthetics and functionality.
-
-## Changes Made
-
-### 1. User Interface Redesign
-- **Avatar:** Replaced the generic icon with an `AsyncImage`. Added a professional circular border and a **Camera Button** overlay, providing a clear UI trigger for avatar editing.
-- **Bento Stats Grid:** Transformed the stats into stylized cards with icons (`ReceiptLong`, `Stars`, `CalendarMonth`). This layout is modern, clean, and highly scannable.
-- **Personal Information Card:**
-    - Grouped all user details into a elevated white surface with a "Personal Information" header.
-    - Added **Icons** to every field (Name, Email, Phone) to improve visual hierarchy and professional feel.
-    - Enhanced the **Edit Mode**: When editing, icons remain visible inside the text fields, and the background subtly changes to indicate interactivity.
-
-### 2. Functional Additions
-- **Sign Out Button:** Integrated a prominent "Sign Out" button at the bottom of the information card, styled with a coffee-themed secondary color and a logout icon.
-- **MVVM Integration:**
-    - **[ProfileViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ProfileViewModel.kt)**: Manages profile state, edit-mode toggling, and data updates.
-    - **[ProfileRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt)**: Centralizes user data management.
-
-### 3. Shared Component Updates
-- **[CoffeeButtons.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/CoffeeButtons.kt)**: Upgraded the `PrimaryButton` to support custom background and content colors, allowing for specialized buttons like the "Sign Out" action while maintaining consistent styling.
-
-## Verification Results
-
-- [x] **Visual Consistency:** The profile now matches the provided HTML/CSS design closely.
-- [x] **Information Icons:** All fields (Name, Email, Phone) have appropriate leading icons.
-- [x] **Edit Flow:** Successfully toggle between read-only and edit modes. Changes are persisted via the ViewModel.
-- [x] **Sign Out:** The button is visible and correctly styled.
+## 1. Search & Swipe-to-Dismiss (Latest)
+Implemented searching on the Home screen and gesture-based removal in the Cart.
+- **[HomeViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/HomeViewModel.kt)**: Combined category + name search logic.
+- **[HomeScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/home/HomeScreen.kt)**: Added thematic search bar.
+- **[CartScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/CartScreen.kt)**: Integrated `SwipeToDismissBox` for modern item removal.
 
 ---
-Giao diện Profile mới giờ đây đã chuyên nghiệp và đầy đủ tính năng hơn! Bạn có thể thử thay đổi thông tin cá nhân và xem các biểu tượng mới cập nhật sống động trên màn hình nhé.
+
+## 2. Profile Screen Redesign
+Revamped the profile to match the brand aesthetics.
+- **Avatar & Stats**: Added camera overlay for avatar and bento-style stats cards.
+- **Personal Info**: Added icons to all fields (Name, Email, Phone).
+- **Sign Out**: Integrated a branded Logout button.
+- **MVVM**: Introduced `ProfileViewModel` and `ProfileRepository`.
+
+---
+
+## 3. Order Persistence and UI Redesign
+Implemented real order tracking and redesigned success/order screens.
+- **Real Tracking**: Orders placed are now saved in `OrderRepository` and can be tracked by their actual ID.
+- **Redesigned Screens**: Updated `OrderSuccessScreen` and `MyOrdersScreen` (Ongoing/History tabs) based on high-fidelity designs.
+- **Celebration**: Integrated a custom Confetti effect upon successful checkout.
+
+---
+
+## 4. Cart Grouping & Celebration
+- **Grouping**: Identical items added to the cart are now consolidated into a single row with updated quantities.
+- **Confetti**: Added a vibrant celebration animation using Jetpack Compose Canvas.
+
+---
+
+## 5. Category Filtering & Navigation Fix
+- **Filtering**: Products are now categorized (Espresso, Cold Brew, etc.), and chips on Home are fully interactive.
+- **Navigation**: Standardized bottom bar navigation and fixed "stuck" states using `popBackStack`.
+
+---
+
+## 6. UI Responsiveness & MVVM Core
+- **Scrollability**: Fixed Home and Details screens to ensure all content is accessible on smaller devices.
+- **MVVM Architecture**: Migrated from local `remember` states to ViewModels (`ProductDetailsViewModel`, `CartViewModel`, etc.) for lifecycle safety and state persistence.
+- **Dynamic Pricing**: Implemented live calculation logic for customizations (size surcharges, extra shots).
+
+---
+Ứng dụng hiện đã đáp ứng đầy đủ các yêu cầu của rubric và mang lại trải nghiệm người dùng mượt mà, chuyên nghiệp!

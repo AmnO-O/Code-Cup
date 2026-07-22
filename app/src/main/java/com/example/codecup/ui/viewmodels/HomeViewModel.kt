@@ -13,6 +13,7 @@ data class HomeUiState(
     val products: List<Product> = emptyList(),
     val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Pastries"),
     val selectedCategory: String = "All Coffee",
+    val searchQuery: String = "",
     val cartItemsCount: Int = 0,
     val isLoading: Boolean = false
 )
@@ -37,7 +38,7 @@ class HomeViewModel(
             .onStart { _uiState.update { it.copy(isLoading = true) } }
             .onEach { products ->
                 _allProducts.value = products
-                filterProducts(_uiState.value.selectedCategory)
+                applyFilters()
             }
             .launchIn(viewModelScope)
     }
@@ -50,14 +51,22 @@ class HomeViewModel(
 
     fun selectCategory(category: String) {
         _uiState.update { it.copy(selectedCategory = category) }
-        filterProducts(category)
+        applyFilters()
     }
 
-    private fun filterProducts(category: String) {
-        val filtered = if (category == "All Coffee") {
-            _allProducts.value
-        } else {
-            _allProducts.value.filter { it.category == category }
+    fun updateSearchQuery(query: String) {
+        _uiState.update { it.copy(searchQuery = query) }
+        applyFilters()
+    }
+
+    private fun applyFilters() {
+        val category = _uiState.value.selectedCategory
+        val query = _uiState.value.searchQuery
+
+        val filtered = _allProducts.value.filter { product ->
+            val matchesCategory = category == "All Coffee" || product.category == category
+            val matchesSearch = query.isBlank() || product.name.contains(query, ignoreCase = true)
+            matchesCategory && matchesSearch
         }
         _uiState.update { it.copy(products = filtered, isLoading = false) }
     }

@@ -10,8 +10,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -82,6 +85,33 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     LoyaltyCard(stampsEarned = 5, onClick = onNavigateToRewards)
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // Search Bar
+                    OutlinedTextField(
+                        value = uiState.searchQuery,
+                        onValueChange = { viewModel.updateSearchQuery(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Search your favorite coffee...") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        trailingIcon = {
+                            if (uiState.searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                    Icon(Icons.Default.Clear, contentDescription = "Clear")
+                                }
+                            }
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = CoffeePrimary,
+                            unfocusedBorderColor = CoffeeOutline,
+                            focusedContainerColor = CoffeeSurface,
+                            unfocusedContainerColor = CoffeeSurface
+                        ),
+                        singleLine = true
+                    )
+
                     Spacer(modifier = Modifier.height(24.dp))
                     CategoryChips(
                         categories = uiState.categories,

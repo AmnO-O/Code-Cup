@@ -92,11 +92,46 @@ fun CartScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(uiState.cartItems, key = { it.id }) { item ->
-                    CartItemRow(
-                        item = item,
-                        onQuantityChange = { viewModel.updateQuantity(item.id, it) },
-                        onRemove = { viewModel.removeItem(item.id) }
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = {
+                            if (it == SwipeToDismissBoxValue.EndToStart) {
+                                viewModel.removeItem(item.id)
+                                true
+                            } else {
+                                false
+                            }
+                        }
                     )
+
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        backgroundContent = {
+                            val color = when (dismissState.dismissDirection) {
+                                SwipeToDismissBoxValue.EndToStart -> Color.Red.copy(alpha = 0.8f)
+                                else -> Color.Transparent
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color, RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        enableDismissFromStartToEnd = false
+                    ) {
+                        CartItemRow(
+                            item = item,
+                            onQuantityChange = { viewModel.updateQuantity(item.id, it) },
+                            onRemove = { viewModel.removeItem(item.id) }
+                        )
+                    }
                 }
             }
         }

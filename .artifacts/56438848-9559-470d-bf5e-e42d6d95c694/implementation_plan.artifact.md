@@ -1,44 +1,72 @@
-# Implementation Plan - Profile Screen Redesign
+# Implementation Plan - Rewards Logic & Room/DataStore Persistence
 
-Redesign the Profile screen to match the artisan coffee theme, adding icons to information fields, a sign-out button, and an avatar editing trigger.
+This plan implements the mandatory rubric requirements for data persistence and the core business logic for the Rewards system.
 
 ## User Review Required
 
-> [!NOTE]
-> I will be introducing a `ProfileViewModel` and `ProfileRepository` to manage user data reactively, following the MVVM pattern established in previous tasks.
+> [!IMPORTANT]
+> I will be refactoring the entire data layer. This involves moving from in-memory `StateFlow` to a local Room Database and Jetpack DataStore. The current sample data will be used to seed the database on the first launch.
+
+> [!WARNING]
+> This change will require a Gradle Sync and potentially a clean build.
 
 ## Proposed Changes
 
-### [Data Layer]
+### [Dependencies]
+Add Room and DataStore libraries to `libs.versions.toml` and `app/build.gradle.kts`.
 
-#### [NEW] [ProfileRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt)
-Create a repository to manage user profile data (name, email, phone, avatar, stats). It will be an in-memory singleton for this session.
+### [Data Layer - Room]
 
-### [Logic / ViewModels]
+#### [NEW] [CoffeeDatabase](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/local/CoffeeDatabase.kt)
+- Define the Room Database class.
+- Implement a `RoomDatabase.Callback` to seed the `products` table with `sampleProducts` on creation.
 
-#### [NEW] [ProfileViewModel](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ProfileViewModel.kt)
-Create a ViewModel to observe profile data and handle updates (saving changes, changing avatar, signing out).
+#### [NEW] [Entities & DAOs]
+- **Products:** `ProductEntity` and `ProductDao`.
+- **Cart:** `CartItemEntity` and `CartDao`.
+- **Orders:** `OrderEntity`, `OrderItemEntity` (to handle the 1-to-many relationship), and `OrderDao`.
+- **Rewards:** `RewardsEntity` (total points/stamps) and `RewardsHistoryEntity`.
 
-#### [MODIFY] [ViewModelFactory](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ViewModelFactory.kt)
-Update the factory to provide the `ProfileRepository` to the `ProfileViewModel`.
+### [Data Layer - DataStore]
+
+#### [NEW] [ProfileDataStore](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/local/ProfileDataStore.kt)
+- Implement Jetpack DataStore to persist user profile details (Name, Email, Phone, Avatar URL).
+
+### [Repositories - Refactoring]
+
+#### [MODIFY] [ProductRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProductRepository.kt)
+- Fetch products from `ProductDao`.
+
+#### [MODIFY] [CartRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/CartRepository.kt)
+- Store and manage cart items in `CartDao`.
+
+#### [MODIFY] [OrderRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/OrderRepository.kt)
+- Persist orders and their items using `OrderDao`.
+- **Rewards Integration:** After a successful `placeOrder`, trigger point and stamp increment logic.
+
+#### [NEW] [RewardsRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/RewardsRepository.kt)
+- Manage total points and stamps.
+- Logic: **+1 stamp per order** (max 8), **+1 point per $1 spent**.
+- Logic: **Redeem** (deduct points or reset stamps).
+
+#### [MODIFY] [ProfileRepository](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt)
+- Backed by `ProfileDataStore`.
 
 ### [UI Layer]
 
-#### [MODIFY] [ProfileScreen](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/ProfileScreen.kt)
-- **Avatar:** Replace the Icon with an `AsyncImage`. Add a circular border and a floating camera icon button on the bottom-right for editing.
-- **Stats:** Redesign into card-style "Bento" items with icons (`ReceiptLong`, `Stars`, `CalendarMonth`).
-- **Personal Information Card:**
-    - Wrap fields in a stylized card with a header.
-    - Add leading icons to each field (`Person`, `Email`, `Phone`).
-    - Update both read-only and edit modes to include these icons.
-- **Sign Out:** Add a "Sign Out" button at the bottom of the information card with a `Logout` icon.
+#### [MODIFY] [RewardsScreen](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt)
+- Observe real data from `RewardsRepository`.
+- Implement the "Tap full card to reset" requirement from the rubric.
 
 ## Verification Plan
 
+### Automated Tests
+- Create a simple unit test for the `RewardsRepository` logic (Price to Points calculation, Stamp capping).
+
 ### Manual Verification
-1.  Navigate to the Profile screen.
-2.  Verify the avatar has a "camera" icon overlay.
-3.  Verify stats (Orders, Points, Joined) have icons and a card-like appearance.
-4.  Verify the "Personal Information" section has icons next to the Name, Email, and Phone.
-5.  Click "Edit" (pencil icon), modify fields, and "Save". Verify icons are still present in edit mode.
-6.  Verify the "Sign Out" button is visible and styled correctly.
+1. **Initial Persistence:** Install the app, verify products appear (seeded from Room).
+2. **Order & Rewards:**
+    - Place an order for $12.50.
+    - Navigate to Rewards. Verify stamps increased by 1 and points increased by 13 (rounded).
+    - Repeat until 8 stamps. Verify the card becomes "ready to reset".
+3. **App Restart:** Kill the app and reopen. Verify the cart, orders, profile, and rewards data are all preserved.

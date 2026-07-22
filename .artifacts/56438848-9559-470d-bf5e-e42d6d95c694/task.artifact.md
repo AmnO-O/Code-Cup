@@ -18,3 +18,10 @@
 - [x] Add "Sign Out" button `[x]`
 - [x] Implement avatar edit trigger (UI only) `[x]`
 - [x] Final Verification `[x]`
+
+# Task Checklist - Search & Swipe-to-Dismiss
+
+- [x] Update `HomeViewModel` with search logic `[x]`
+- [x] Add search bar to `HomeScreen` `[x]`
+- [x] Implement `SwipeToDismissBox` in `CartScreen` `[x]`
+- [x] Final Verification `[x]`

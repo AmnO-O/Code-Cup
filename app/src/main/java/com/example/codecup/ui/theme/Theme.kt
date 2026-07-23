@@ -9,17 +9,21 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = CoffeePrimary,
-    secondary = CoffeeSecondary,
+    primary = CoffeeOnPrimaryContainer, // Use the lighter tan color as primary
+    secondary = CoffeeSecondaryContainer, // Use the vibrant orange-brown
+    tertiary = CoffeeOnTertiaryContainer,
     background = CoffeeOnBackground,
     surface = CoffeePrimaryContainer,
-    onPrimary = CoffeeSurface,
-    onSecondary = CoffeeSurface,
-    onBackground = CoffeeSurface,
-    onSurface = CoffeeSurface
+    onPrimary = CoffeePrimary,
+    onSecondary = CoffeeOnSecondaryContainer,
+    onBackground = CoffeeBackground,
+    onSurface = CoffeeBackground,
+    surfaceVariant = Color(0xFF3D2D26),
+    onSurfaceVariant = CoffeeOutlineVariant
 )
 
 private val LightColorScheme = lightColorScheme(

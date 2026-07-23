@@ -6,17 +6,22 @@ import com.example.codecup.data.CartRepository
 import com.example.codecup.data.OrderRepository
 import com.example.codecup.data.ProductRepository
 import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.UserPreferencesRepository
 
 class ViewModelFactory(
     private val productId: Int = -1,
     private val productRepository: ProductRepository = ProductRepository(),
     private val cartRepository: CartRepository = CartRepository.getInstance(),
     private val orderRepository: OrderRepository = OrderRepository.getInstance(),
-    private val profileRepository: ProfileRepository = ProfileRepository.getInstance()
+    private val profileRepository: ProfileRepository = ProfileRepository.getInstance(),
+    private val userPreferencesRepository: UserPreferencesRepository? = null
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(userPreferencesRepository!!) as T
+            }
             modelClass.isAssignableFrom(ProductDetailsViewModel::class.java) -> {
                 ProductDetailsViewModel(productId, productRepository, cartRepository) as T
             }
@@ -30,7 +35,7 @@ class ViewModelFactory(
                 MyOrdersViewModel(orderRepository) as T
             }
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
-                ProfileViewModel(profileRepository) as T
+                ProfileViewModel(profileRepository, userPreferencesRepository!!) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

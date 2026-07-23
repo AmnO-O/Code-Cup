@@ -26,8 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.codecup.data.AppTheme
+import com.example.codecup.data.UserPreferencesRepository
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.ProfileViewModel
@@ -36,11 +39,16 @@ import com.example.codecup.ui.viewmodels.ViewModelFactory
 @Composable
 fun ProfileScreen(
     onNavigate: (String) -> Unit,
-    viewModel: ProfileViewModel = viewModel(factory = ViewModelFactory())
+    viewModel: ProfileViewModel = viewModel(
+        factory = ViewModelFactory(
+            userPreferencesRepository = UserPreferencesRepository.getInstance(LocalContext.current)
+        )
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val user = uiState.user
     val isEditMode = uiState.isEditMode
+    val themeMode = uiState.themeMode
 
     var editedName by remember(user.name) { mutableStateOf(user.name) }
     var editedEmail by remember(user.email) { mutableStateOf(user.email) }
@@ -222,6 +230,51 @@ fun ProfileScreen(
                 }
             }
             
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Appearance Card
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = CoffeeSurface,
+                border = BorderStroke(1.dp, CoffeeOutline)
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Text(
+                        text = "Appearance",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = CoffeePrimary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ThemeOption(
+                            modifier = Modifier.weight(1f),
+                            label = "Light",
+                            isSelected = themeMode == AppTheme.LIGHT,
+                            onClick = { viewModel.setThemeMode(AppTheme.LIGHT) }
+                        )
+                        ThemeOption(
+                            modifier = Modifier.weight(1f),
+                            label = "Dark",
+                            isSelected = themeMode == AppTheme.DARK,
+                            onClick = { viewModel.setThemeMode(AppTheme.DARK) }
+                        )
+                        ThemeOption(
+                            modifier = Modifier.weight(1f),
+                            label = "System",
+                            isSelected = themeMode == AppTheme.SYSTEM,
+                            onClick = { viewModel.setThemeMode(AppTheme.SYSTEM) }
+                        )
+                    }
+                }
+            }
+            
             if (isEditMode) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(
@@ -244,6 +297,31 @@ fun ProfileScreen(
             }
             
             Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun ThemeOption(
+    modifier: Modifier = Modifier,
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .height(48.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = if (isSelected) CoffeePrimary else CoffeeSurface,
+        border = if (isSelected) null else BorderStroke(1.dp, CoffeeOutline),
+        contentColor = if (isSelected) Color.White else CoffeeOnSurface
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+            )
         }
     }
 }

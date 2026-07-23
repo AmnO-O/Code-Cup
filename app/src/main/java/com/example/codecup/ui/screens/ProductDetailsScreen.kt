@@ -61,11 +61,11 @@ fun ProductDetailsScreen(
                         }
                     ) {
                         IconButton(onClick = { showCartPreview = true }) {
-                            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart", tint = CoffeePrimary)
+                            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorite", tint = CoffeePrimary)
+                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorite", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             )
@@ -75,9 +75,9 @@ fun ProductDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.navigationBars),
-                color = CoffeeSurface,
+                color = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp,
-                border = BorderStroke(1.dp, CoffeeOutlineVariant.copy(alpha = 0.5f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             ) {
                 Row(
                     modifier = Modifier
@@ -90,12 +90,12 @@ fun ProductDetailsScreen(
                         Text(
                             text = "Total Price",
                             style = MaterialTheme.typography.labelSmall,
-                            color = CoffeeOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "$${"%.2f".format(uiState.totalPrice)}",
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                            color = CoffeeOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     PrimaryButton(
@@ -112,7 +112,7 @@ fun ProductDetailsScreen(
                 }
             }
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -135,17 +135,17 @@ fun ProductDetailsScreen(
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeeOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = product.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CoffeeOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
-                HorizontalDivider(color = CoffeeOutlineVariant)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Customization: Size
@@ -182,8 +182,8 @@ fun ProductDetailsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(CoffeeSurface, RoundedCornerShape(12.dp))
-                        .border(1.dp, CoffeeOutline, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -191,7 +191,7 @@ fun ProductDetailsScreen(
                     Text(
                         text = "Quantity",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeeOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     QuantityStepper(
                         quantity = uiState.quantity,
@@ -208,7 +208,7 @@ fun ProductDetailsScreen(
         ModalBottomSheet(
             onDismissRequest = { showCartPreview = false },
             sheetState = sheetState,
-            containerColor = CoffeeSurface
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
             CartPreviewContent(
                 cartItems = cartItems,
@@ -232,7 +232,7 @@ fun CartPreviewContent(
         Text(
             "Cart Preview",
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-            color = CoffeeOnSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         
@@ -240,7 +240,7 @@ fun CartPreviewContent(
             Text(
                 "Your cart is empty.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = CoffeeOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
             LazyColumn(
@@ -251,7 +251,7 @@ fun CartPreviewContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(CoffeeBackground, RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                             .padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -263,10 +263,10 @@ fun CartPreviewContent(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(item.product.name, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                            Text(item.customizationSummary, style = MaterialTheme.typography.labelSmall, color = CoffeeOnSurfaceVariant)
+                            Text(item.product.name, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                            Text(item.customizationSummary, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        Text("$${"%.2f".format(item.totalPrice)}", style = MaterialTheme.typography.bodyMedium)
+                        Text("$${"%.2f".format(item.totalPrice)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
@@ -290,7 +290,7 @@ fun CustomizationSection(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = CoffeeOnSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(
@@ -305,9 +305,9 @@ fun CustomizationSection(
                         .height(48.dp)
                         .clickable { onOptionSelected(option) },
                     shape = RoundedCornerShape(999.dp),
-                    color = if (isSelected) CoffeePrimaryContainer else Color.Transparent,
-                    contentColor = if (isSelected) Color.White else CoffeeOnSurfaceVariant,
-                    border = if (isSelected) null else BorderStroke(1.dp, CoffeeOutline)
+                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                    contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(

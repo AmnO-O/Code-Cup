@@ -33,7 +33,7 @@ fun BottomNavBar(
     onNavigate: (String) -> Unit
 ) {
     NavigationBar(
-        containerColor = CoffeeSurface,
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
         NavDestination.values().forEach { destination ->
@@ -49,11 +49,11 @@ fun BottomNavBar(
                 },
                 label = { Text(destination.label) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = CoffeeOnSecondaryContainer,
-                    selectedTextColor = CoffeeOnSecondaryContainer,
-                    indicatorColor = CoffeeSecondaryContainer,
-                    unselectedIconColor = CoffeeOnSurfaceVariant,
-                    unselectedTextColor = CoffeeOnSurfaceVariant
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }

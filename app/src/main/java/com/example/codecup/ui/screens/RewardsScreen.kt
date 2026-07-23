@@ -32,7 +32,7 @@ fun RewardsScreen(
         bottomBar = {
             BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -51,14 +51,17 @@ fun RewardsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = CoffeeAccentContainer)
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.size(48.dp)
                         ) {
@@ -66,7 +69,7 @@ fun RewardsScreen(
                                 Icons.Default.Stars,
                                 contentDescription = null,
                                 modifier = Modifier.padding(8.dp),
-                                tint = CoffeeSecondary
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -74,16 +77,16 @@ fun RewardsScreen(
                             Text(
                                 text = "Total Points",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = CoffeeOnSurfaceVariant
+                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                             )
                             Text(
                                 text = "1,240 pts",
                                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                                color = CoffeePrimary
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
                         TextButton(onClick = onRedeemClick) {
-                            Text("Redeem", color = CoffeeSecondary, fontWeight = FontWeight.Bold)
+                            Text("Redeem", color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -94,7 +97,7 @@ fun RewardsScreen(
                 Text(
                     text = "Points History",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeeOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             
@@ -131,18 +134,18 @@ fun PointsHistoryRow(history: PointsHistory) {
             Text(
                 text = history.title,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = CoffeeOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = history.date,
                 style = MaterialTheme.typography.bodySmall,
-                color = CoffeeOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Text(
             text = history.points,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = if (history.points.startsWith("+")) CoffeeStampGreen else CoffeeSecondary
+            color = if (history.points.startsWith("+")) CoffeeStampGreen else MaterialTheme.colorScheme.secondary
         )
     }
 }

@@ -47,7 +47,7 @@ fun HomeScreen(
                 title = "Artisan Coffee",
                 navigationIcon = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = CoffeeOnSurfaceVariant)
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 actions = {
@@ -58,7 +58,7 @@ fun HomeScreen(
         bottomBar = {
             BottomNavBar(currentRoute = NavDestination.Home.route, onNavigate = onNavigate)
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -76,12 +76,12 @@ fun HomeScreen(
                     Text(
                         text = "Good Morning, Alex",
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeeOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Ready for your daily brew?",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CoffeeOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     LoyaltyCard(stampsEarned = 5, onClick = onNavigateToRewards)
@@ -104,10 +104,10 @@ fun HomeScreen(
                         },
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = CoffeePrimary,
-                            unfocusedBorderColor = CoffeeOutline,
-                            focusedContainerColor = CoffeeSurface,
-                            unfocusedContainerColor = CoffeeSurface
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         ),
                         singleLine = true
                     )
@@ -152,10 +152,10 @@ fun CategoryChips(
         items(categories) { category ->
             val isSelected = category == selectedCategory
             Surface(
-                color = if (isSelected) CoffeePrimaryContainer else Color.Transparent,
-                contentColor = if (isSelected) Color.White else CoffeeOnSurface,
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                 shape = CircleShape,
-                border = if (isSelected) null else BorderStroke(1.dp, CoffeeOutline),
+                border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 modifier = Modifier
                     .height(40.dp)
                     .clickable { onCategorySelected(category) }

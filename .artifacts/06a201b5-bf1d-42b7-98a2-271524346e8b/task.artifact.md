@@ -1,0 +1,5 @@
+- [x] Update `tertiary` colors in `Theme.kt` for Light and Dark modes
+- [x] Fix Sign Out button contrast in `ProfileScreen.kt`
+- [x] Restore Points Banner colors in `RewardsScreen.kt`
+- [x] Improve selected chip text readability in `ProductDetailsScreen.kt`
+- [x] Verify Light and Dark theme consistency

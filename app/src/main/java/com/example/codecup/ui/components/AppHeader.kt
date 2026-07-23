@@ -34,7 +34,7 @@ fun AppHeader(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = CoffeePrimary
+                    color = MaterialTheme.colorScheme.primary
                 )
             )
         },
@@ -46,14 +46,14 @@ fun AppHeader(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = CoffeePrimary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         },
         actions = actions,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = CoffeeBackground
+            containerColor = MaterialTheme.colorScheme.background
         )
     )
 }
@@ -68,14 +68,14 @@ fun CartIconWithBadge(
             Icon(
                 Icons.Default.ShoppingCart,
                 contentDescription = "Cart",
-                tint = CoffeeOnSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         if (count > 0) {
             Box(
                 modifier = Modifier
                     .size(18.dp)
-                    .background(CoffeeSecondary, CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary, CircleShape)
                     .align(Alignment.TopEnd)
                     .offset(x = (-4).dp, y = 4.dp),
                 contentAlignment = Alignment.Center

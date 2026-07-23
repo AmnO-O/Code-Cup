@@ -13,30 +13,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = CoffeeOnPrimaryContainer, // Use the lighter tan color as primary
-    secondary = CoffeeSecondaryContainer, // Use the vibrant orange-brown
-    tertiary = CoffeeOnTertiaryContainer,
-    background = CoffeeOnBackground,
-    surface = CoffeePrimaryContainer,
+    primary = CoffeeOnPrimaryContainer, // Light tan for visibility on dark
     onPrimary = CoffeePrimary,
+    primaryContainer = CoffeePrimaryContainer,
+    onPrimaryContainer = Color.White,
+    secondary = CoffeeSecondaryContainer, // Vibrant orange for dark mode
     onSecondary = CoffeeOnSecondaryContainer,
+    secondaryContainer = CoffeeSecondaryContainer,
+    onSecondaryContainer = CoffeeOnSecondaryContainer,
+    tertiaryContainer = Color(0xFF5D4037),
+    onTertiaryContainer = CoffeeAccentContainer,
+    background = CoffeeOnBackground,
     onBackground = CoffeeBackground,
+    surface = CoffeePrimaryContainer,
     onSurface = CoffeeBackground,
     surfaceVariant = Color(0xFF3D2D26),
-    onSurfaceVariant = CoffeeOutlineVariant
+    onSurfaceVariant = CoffeeOutlineVariant,
+    outline = CoffeeOutline,
+    outlineVariant = CoffeeOutlineVariant
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = CoffeePrimary,
     primaryContainer = CoffeePrimaryContainer,
-    onPrimaryContainer = CoffeeOnPrimaryContainer,
+    onPrimaryContainer = Color.White,
     secondary = CoffeeSecondary,
     secondaryContainer = CoffeeSecondaryContainer,
     onSecondaryContainer = CoffeeOnSecondaryContainer,
+    tertiaryContainer = CoffeeAccentContainer,
+    onTertiaryContainer = CoffeeOnSecondaryContainer,
     background = CoffeeBackground,
     onBackground = CoffeeOnBackground,
     surface = CoffeeSurface,
     onSurface = CoffeeOnSurface,
+    surfaceVariant = CoffeeSurfaceContainerLow,
+    onSurfaceVariant = CoffeeOnSurfaceVariant,
     outline = CoffeeOutline,
     outlineVariant = CoffeeOutlineVariant
 )

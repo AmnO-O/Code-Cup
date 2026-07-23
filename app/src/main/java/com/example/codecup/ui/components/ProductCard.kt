@@ -32,14 +32,14 @@ fun ProductCard(
             .fillMaxWidth()
             .clickable { onProductClick(product) },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = CoffeeSurface),
-        border = BorderStroke(1.dp, CoffeeOutline)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .aspectRatio(1f)
-                    .background(CoffeeSurfaceContainerLow)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 AsyncImage(
                     model = product.imageUrl,
@@ -49,7 +49,7 @@ fun ProductCard(
                 )
 
                 Surface(
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                     shape = CircleShape,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -61,7 +61,7 @@ fun ProductCard(
                         Icons.Default.Add,
                         contentDescription = "Add",
                         modifier = Modifier.padding(4.dp),
-                        tint = CoffeePrimary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -71,12 +71,12 @@ fun ProductCard(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = CoffeeOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = product.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CoffeeOnSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.height(32.dp)
@@ -85,7 +85,7 @@ fun ProductCard(
                 Text(
                     text = "$${"%.2f".format(product.price)}",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeePrimary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

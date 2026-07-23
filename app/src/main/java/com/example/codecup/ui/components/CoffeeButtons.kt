@@ -55,10 +55,10 @@ fun SecondaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(999.dp),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = CoffeePrimary
+            contentColor = MaterialTheme.colorScheme.primary
         ),
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = androidx.compose.ui.graphics.SolidColor(CoffeePrimary)
+            brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
         ),
         contentPadding = PaddingValues(horizontal = 24.dp),
         content = content

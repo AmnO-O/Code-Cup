@@ -30,7 +30,7 @@ fun LoyaltyCard(
             .fillMaxWidth()
             .height(140.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CoffeePrimaryContainer),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -55,16 +55,16 @@ fun LoyaltyCard(
                         Text(
                             text = "Loyalty Rewards",
                             style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Text(
                             text = "${totalStamps - stampsEarned} stamps until a free drink",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                         )
                     }
                     Surface(
-                        color = CoffeeSurface,
+                        color = MaterialTheme.colorScheme.surface,
                         shape = CircleShape,
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
@@ -76,13 +76,13 @@ fun LoyaltyCard(
                                 Icons.Default.Star,
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
-                                tint = CoffeePrimary
+                                tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "$stampsEarned / $totalStamps",
                                 style = MaterialTheme.typography.labelLarge,
-                                color = CoffeePrimary
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -112,7 +112,7 @@ fun StampCircle(filled: Boolean) {
             .clip(CircleShape)
             .then(
                 if (filled) Modifier.background(CoffeeStampGreen)
-                else Modifier.border(1.dp, CoffeeOutlineVariant, CircleShape)
+                else Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
             ),
         contentAlignment = Alignment.Center
     ) {

@@ -46,7 +46,7 @@ fun CartScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .windowInsetsPadding(WindowInsets.navigationBars),
-                    color = CoffeeSurface,
+                    color = MaterialTheme.colorScheme.surface,
                     tonalElevation = 8.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -54,11 +54,11 @@ fun CartScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Total", style = MaterialTheme.typography.titleMedium, color = CoffeeOnSurface)
+                            Text("Total", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                             Text(
                                 "$${"%.2f".format(uiState.totalPrice)}",
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                color = CoffeePrimary
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -71,7 +71,7 @@ fun CartScreen(
                 }
             }
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         if (uiState.cartItems.isEmpty()) {
             EmptyState(
@@ -147,7 +147,7 @@ fun CartItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(CoffeeSurface, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -164,12 +164,12 @@ fun CartItemRow(
             Text(
                 text = item.product.name,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = CoffeeOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = item.customizationSummary,
                 style = MaterialTheme.typography.bodySmall,
-                color = CoffeeOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -184,12 +184,12 @@ fun CartItemRow(
                 Text(
                     text = "$${"%.2f".format(item.totalPrice)}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeePrimary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
         IconButton(onClick = onRemove) {
-            Icon(Icons.Default.Delete, contentDescription = "Remove", tint = CoffeeSecondary.copy(alpha = 0.6f))
+            Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f))
         }
     }
 }

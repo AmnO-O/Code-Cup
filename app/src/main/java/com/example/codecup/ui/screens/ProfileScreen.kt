@@ -69,7 +69,7 @@ fun ProfileScreen(
                         Icon(
                             imageVector = if (isEditMode) Icons.Default.Check else Icons.Default.Edit,
                             contentDescription = if (isEditMode) "Save" else "Edit",
-                            tint = CoffeePrimary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -80,7 +80,7 @@ fun ProfileScreen(
                 BottomNavBar(currentRoute = NavDestination.Profile.route, onNavigate = onNavigate)
             }
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -96,9 +96,9 @@ fun ProfileScreen(
                 Surface(
                     modifier = Modifier
                         .size(100.dp)
-                        .border(2.dp, CoffeeOutline, CircleShape),
+                        .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
                     shape = CircleShape,
-                    color = CoffeePrimaryContainer
+                    color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     AsyncImage(
                         model = user.avatarUrl,
@@ -114,8 +114,8 @@ fun ProfileScreen(
                         .shadow(4.dp, CircleShape)
                         .clickable { /* Trigger photo picker */ },
                     shape = CircleShape,
-                    color = CoffeeSecondary,
-                    contentColor = Color.White
+                    color = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                 ) {
                     Icon(
                         Icons.Default.PhotoCamera,
@@ -130,12 +130,12 @@ fun ProfileScreen(
             Text(
                 text = user.name,
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                color = CoffeeOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = user.email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = CoffeeOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -175,17 +175,17 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = CoffeeSurface,
-                border = BorderStroke(1.dp, CoffeeOutline)
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
                         text = "Personal Information",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeePrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    HorizontalDivider(color = CoffeeOutlineVariant)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(20.dp))
                     
                     ProfileField(
@@ -213,15 +213,15 @@ fun ProfileScreen(
                     )
                     
                     Spacer(modifier = Modifier.height(24.dp))
-                    HorizontalDivider(color = CoffeeOutlineVariant)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     // Sign Out Button
                     PrimaryButton(
                         onClick = { viewModel.signOut() },
                         modifier = Modifier.fillMaxWidth().height(48.dp),
-                        containerColor = CoffeePrimaryContainer,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
                     ) {
                         Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
@@ -238,14 +238,14 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = CoffeeSurface,
-                border = BorderStroke(1.dp, CoffeeOutline)
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
                         text = "Appearance",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeePrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     
@@ -313,9 +313,9 @@ fun ThemeOption(
             .height(48.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        color = if (isSelected) CoffeePrimary else CoffeeSurface,
-        border = if (isSelected) null else BorderStroke(1.dp, CoffeeOutline),
-        contentColor = if (isSelected) Color.White else CoffeeOnSurface
+        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+        border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
@@ -336,8 +336,8 @@ fun ProfileStatCard(
     Surface(
         modifier = modifier.height(100.dp),
         shape = RoundedCornerShape(12.dp),
-        color = CoffeeSurface,
-        border = BorderStroke(1.dp, CoffeeOutline),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         tonalElevation = 1.dp
     ) {
         Column(
@@ -348,19 +348,19 @@ fun ProfileStatCard(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = CoffeeSecondary,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = CoffeePrimary
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = CoffeeOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -378,7 +378,7 @@ fun ProfileField(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = CoffeeOnSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(6.dp))
         if (isEditMode) {
@@ -387,14 +387,14 @@ fun ProfileField(
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
-                    Icon(icon, contentDescription = null, tint = CoffeeOnSurfaceVariant, modifier = Modifier.size(20.dp))
+                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = CoffeePrimary,
-                    unfocusedBorderColor = CoffeeOutline,
-                    focusedContainerColor = CoffeeBackground.copy(alpha = 0.5f),
-                    unfocusedContainerColor = CoffeeBackground.copy(alpha = 0.5f)
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
                 ),
                 singleLine = true
             )
@@ -402,22 +402,22 @@ fun ProfileField(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CoffeeBackground.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
-                    .border(1.dp, CoffeeOutline, RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = CoffeeOnSurfaceVariant,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = value,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = CoffeeOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

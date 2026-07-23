@@ -45,7 +45,7 @@ fun MyOrdersScreen(
         bottomBar = {
             BottomNavBar(currentRoute = NavDestination.Orders.route, onNavigate = onNavigate)
         },
-        containerColor = CoffeeBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -59,11 +59,11 @@ fun MyOrdersScreen(
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.Transparent,
-                contentColor = CoffeePrimary,
+                contentColor = MaterialTheme.colorScheme.primary,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = CoffeePrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 divider = {}
@@ -79,8 +79,8 @@ fun MyOrdersScreen(
                                 fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
                             )
                         },
-                        selectedContentColor = CoffeePrimary,
-                        unselectedContentColor = CoffeeOnSurfaceVariant
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -100,7 +100,7 @@ fun MyOrdersScreen(
 fun OngoingOrdersList(orders: List<Order>, onMarkPickedUp: (String) -> Unit) {
     if (orders.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No active orders", color = CoffeeOnSurfaceVariant)
+            Text("No active orders", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -117,12 +117,12 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = CoffeeSurface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, CoffeeOutline)
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column {
             // Top Status Indicator
-            Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(CoffeeSecondary))
+            Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(MaterialTheme.colorScheme.secondary))
             
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
@@ -134,7 +134,7 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
                         Text(
                             text = order.status.name.uppercase(),
                             style = MaterialTheme.typography.labelSmall.copy(
-                                color = CoffeeSecondary,
+                                color = MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp
                             )
@@ -142,25 +142,25 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
                         Text(
                             text = "Order #${order.id}",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = CoffeePrimary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             text = "$${"%.2f".format(order.totalPrice)}",
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = CoffeePrimary
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = order.date,
                             style = MaterialTheme.typography.bodySmall,
-                            color = CoffeeOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 
                 Spacer(modifier = Modifier.height(12.dp))
-                HorizontalDivider(color = CoffeeOutlineVariant)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 // Items
@@ -172,12 +172,12 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
                         Text(
                             text = "${item.quantity}x ${item.product.name}",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CoffeeOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "$${"%.2f".format(item.totalPrice)}",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CoffeeOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -205,8 +205,8 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
-                        color = CoffeeSecondary,
-                        trackColor = CoffeeSurfaceContainerHigh
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
                 
@@ -230,7 +230,7 @@ fun StatusText(text: String, isReached: Boolean, isCurrent: Boolean = false) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelSmall,
-        color = if (isCurrent) CoffeeSecondary else if (isReached) CoffeeOnSurface else CoffeeOnSurfaceVariant,
+        color = if (isCurrent) MaterialTheme.colorScheme.secondary else if (isReached) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
     )
 }
@@ -239,7 +239,7 @@ fun StatusText(text: String, isReached: Boolean, isCurrent: Boolean = false) {
 fun OrdersHistoryList(orders: List<Order>) {
     if (orders.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No order history", color = CoffeeOnSurfaceVariant)
+            Text("No order history", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -256,8 +256,8 @@ fun HistoryOrderCard(order: Order) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = CoffeeSurface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, CoffeeOutline)
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -266,14 +266,14 @@ fun HistoryOrderCard(order: Order) {
             Surface(
                 modifier = Modifier.size(64.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = CoffeeSurfaceContainerLow
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         Icons.Default.LocalCafe,
                         contentDescription = null,
                         modifier = Modifier.size(32.dp),
-                        tint = CoffeeOnSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -288,23 +288,23 @@ fun HistoryOrderCard(order: Order) {
                     Text(
                         text = "Order #${order.id}",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeePrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = "$${"%.2f".format(order.totalPrice)}",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CoffeePrimary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 Text(
                     text = order.date,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CoffeeOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = order.itemsSummary,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CoffeeOnSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -313,7 +313,7 @@ fun HistoryOrderCard(order: Order) {
             Spacer(modifier = Modifier.width(8.dp))
             
             IconButton(onClick = { /* Reorder logic */ }) {
-                Icon(Icons.Default.Replay, contentDescription = "Reorder", tint = CoffeeSecondary)
+                Icon(Icons.Default.Replay, contentDescription = "Reorder", tint = MaterialTheme.colorScheme.secondary)
             }
         }
     }

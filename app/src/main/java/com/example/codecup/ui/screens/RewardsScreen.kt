@@ -5,13 +5,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,35 +21,52 @@ import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.RewardsViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun RewardsScreen(
     onNavigate: (String) -> Unit,
     onRedeemClick: () -> Unit,
-    viewModel: RewardsViewModel = viewModel(factory = ViewModelFactory())
+    viewModel: RewardsViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val user = uiState.user
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            AppHeader(
-                title = "Rewards",
-                onBackClick = { onNavigate("home") }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(
+                currentRoute = "rewards",
+                onNavigate = onNavigate,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
             )
-        },
-        bottomBar = {
-            BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                AppHeader(
+                    title = "Rewards",
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    }
+                )
+            },
+            bottomBar = {
+                BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
             // Loyalty Card
             item {
                 LoyaltyCard(stampsEarned = user.stamps)
@@ -115,6 +132,7 @@ fun RewardsScreen(
             }
         }
     }
+}
 }
 
 @Composable

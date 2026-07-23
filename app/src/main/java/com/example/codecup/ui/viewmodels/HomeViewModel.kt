@@ -17,13 +17,15 @@ data class HomeUiState(
     val searchQuery: String = "",
     val cartItemsCount: Int = 0,
     val stampsEarned: Int = 0,
+    val favoriteProductIds: Set<Int> = emptySet(),
     val isLoading: Boolean = false
 )
 
 class HomeViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val favoritesRepository: com.example.codecup.data.FavoritesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -35,6 +37,7 @@ class HomeViewModel(
         loadProducts()
         observeCart()
         observeProfile()
+        observeFavorites()
     }
 
     private fun loadProducts() {
@@ -56,6 +59,12 @@ class HomeViewModel(
     private fun observeProfile() {
         profileRepository.profile.onEach { user ->
             _uiState.update { it.copy(stampsEarned = user.stamps) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observeFavorites() {
+        favoritesRepository.getAllFavorites().onEach { favorites ->
+            _uiState.update { it.copy(favoriteProductIds = favorites.map { it.productId }.toSet()) }
         }.launchIn(viewModelScope)
     }
 
@@ -92,6 +101,17 @@ class HomeViewModel(
         )
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)
+        }
+    }
+
+    fun toggleFavorite(productId: Int) {
+        viewModelScope.launch {
+            val isFav = _uiState.value.favoriteProductIds.contains(productId)
+            if (isFav) {
+                favoritesRepository.removeFavorite(productId)
+            } else {
+                favoritesRepository.addFavorite(productId)
+            }
         }
     }
 }

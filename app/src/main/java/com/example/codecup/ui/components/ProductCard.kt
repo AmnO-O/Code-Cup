@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +27,9 @@ import com.example.codecup.ui.theme.*
 fun ProductCard(
     product: Product,
     onProductClick: (Product) -> Unit,
-    onAddClick: (Product) -> Unit
+    onAddClick: (Product) -> Unit,
+    isFavorite: Boolean = false,
+    onFavoriteClick: (Product) -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -47,6 +51,25 @@ fun ProductCard(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+
+                IconButton(
+                    onClick = { onFavoriteClick(product) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                            shape = CircleShape
+                        )
+                        .size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (isFavorite) "Remove from Favorites" else "Add to Favorites",
+                        tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
 
                 Surface(
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),

@@ -12,6 +12,7 @@ class ViewModelFactory(
     private val cartRepository: CartRepository = CartRepository.getInstance(),
     private val orderRepository: OrderRepository = OrderRepository.getInstance(),
     private val profileRepository: ProfileRepository = ProfileRepository.getInstance(),
+    private val favoritesRepository: FavoritesRepository? = context?.let { FavoritesRepository.getInstance(it) },
     private val userPreferencesRepository: UserPreferencesRepository? = null
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
@@ -21,10 +22,13 @@ class ViewModelFactory(
                 MainViewModel(userPreferencesRepository!!) as T
             }
             modelClass.isAssignableFrom(ProductDetailsViewModel::class.java) -> {
-                ProductDetailsViewModel(productId, productRepository, cartRepository) as T
+                ProductDetailsViewModel(productId, productRepository, cartRepository, favoritesRepository!!) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(productRepository, cartRepository, profileRepository) as T
+                HomeViewModel(productRepository, cartRepository, profileRepository, favoritesRepository!!) as T
+            }
+            modelClass.isAssignableFrom(FavoritesViewModel::class.java) -> {
+                FavoritesViewModel(favoritesRepository!!, productRepository) as T
             }
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
                 CartViewModel(cartRepository, orderRepository, profileRepository, context) as T

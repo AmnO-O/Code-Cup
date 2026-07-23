@@ -50,6 +50,27 @@ fun NavGraph() {
                 }
             )
         }
+
+        composable("favorites") {
+            FavoritesScreen(
+                onProductClick = { productId ->
+                    navController.navigate("details/$productId")
+                },
+                onNavigate = { route ->
+                    if (route != "favorites") {
+                        if (route == "home") {
+                            navController.popBackStack("home", inclusive = false)
+                        } else {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+                }
+            )
+        }
         
         composable(
             route = "details/{productId}",

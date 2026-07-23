@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,31 +30,51 @@ import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.MyOrdersViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyOrdersScreen(
     onNavigate: (String) -> Unit,
-    viewModel: MyOrdersViewModel = viewModel(factory = ViewModelFactory())
+    viewModel: MyOrdersViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Ongoing", "History")
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            AppHeader(title = "My Orders")
-        },
-        bottomBar = {
-            BottomNavBar(currentRoute = NavDestination.Orders.route, onNavigate = onNavigate)
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(
+                currentRoute = "orders",
+                onNavigate = onNavigate,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
+            )
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                AppHeader(
+                    title = "My Orders",
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    }
+                )
+            },
+            bottomBar = {
+                BottomNavBar(currentRoute = NavDestination.Orders.route, onNavigate = onNavigate)
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
             Spacer(modifier = Modifier.height(16.dp))
             
             // Tabs
@@ -94,6 +116,7 @@ fun MyOrdersScreen(
             }
         }
     }
+}
 }
 
 @Composable

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import com.example.codecup.data.AppTheme
 import com.example.codecup.data.UserPreferencesRepository
 import com.example.codecup.ui.components.*
@@ -41,6 +42,7 @@ fun ProfileScreen(
     onNavigate: (String) -> Unit,
     viewModel: ProfileViewModel = viewModel(
         factory = ViewModelFactory(
+            context = LocalContext.current,
             userPreferencesRepository = UserPreferencesRepository.getInstance(LocalContext.current)
         )
     )
@@ -50,16 +52,37 @@ fun ProfileScreen(
     val isEditMode = uiState.isEditMode
     val themeMode = uiState.themeMode
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     var editedName by remember(user.name) { mutableStateOf(user.name) }
     var editedEmail by remember(user.email) { mutableStateOf(user.email) }
     var editedPhone by remember(user.phone) { mutableStateOf(user.phone) }
 
-    Scaffold(
-        topBar = {
-            AppHeader(
-                title = "Profile",
-                actions = {
-                    IconButton(onClick = { 
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(
+                currentRoute = "profile",
+                onNavigate = onNavigate,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
+            )
+        },
+        gesturesEnabled = !isEditMode
+    ) {
+        Scaffold(
+            topBar = {
+                AppHeader(
+                    title = "Profile",
+                    navigationIcon = {
+                        if (!isEditMode) {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            }
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { 
                         if (isEditMode) {
                             viewModel.updateProfile(editedName, editedEmail, editedPhone)
                         } else {
@@ -299,6 +322,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
+}
 }
 
 @Composable

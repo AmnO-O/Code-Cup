@@ -20,10 +20,11 @@ fun EmptyState(
     title: String,
     description: String,
     icon: ImageVector = Icons.Default.Info,
-    action: (@Composable () -> Unit)? = null
+    action: (@Composable () -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

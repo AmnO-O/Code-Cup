@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +40,7 @@ fun ProductDetailsScreen(
     productId: Int,
     onBackClick: () -> Unit,
     onAddToCartClick: () -> Unit,
-    viewModel: ProductDetailsViewModel = viewModel(factory = ViewModelFactory(productId = productId))
+    viewModel: ProductDetailsViewModel = viewModel(factory = ViewModelFactory(productId = productId, context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val product = uiState.product ?: return // Handle null product if not found
@@ -64,8 +66,12 @@ fun ProductDetailsScreen(
                             Icon(Icons.Default.ShoppingCart, contentDescription = "Cart", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorite", tint = MaterialTheme.colorScheme.primary)
+                    IconButton(onClick = { viewModel.toggleFavorite() }) {
+                        Icon(
+                            imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (uiState.isFavorite) Color.Red else MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             )

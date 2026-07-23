@@ -16,12 +16,11 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,7 @@ import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.HomeViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -37,24 +37,36 @@ fun HomeScreen(
     onNavigateToRewards: () -> Unit,
     onNavigateToCart: () -> Unit,
     onNavigate: (String) -> Unit,
-    viewModel: HomeViewModel = viewModel(factory = ViewModelFactory())
+    viewModel: HomeViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            AppHeader(
-                title = "Artisan Coffee",
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                },
-                actions = {
-                    CartIconWithBadge(count = uiState.cartItemsCount, onClick = onNavigateToCart)
-                }
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(
+                currentRoute = "home",
+                onNavigate = onNavigate,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
             )
-        },
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                AppHeader(
+                    title = "Artisan Coffee",
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    },
+                    actions = {
+                        CartIconWithBadge(count = uiState.cartItemsCount, onClick = onNavigateToCart)
+                    }
+                )
+            },
         bottomBar = {
             BottomNavBar(currentRoute = NavDestination.Home.route, onNavigate = onNavigate)
         },
@@ -127,7 +139,9 @@ fun HomeScreen(
                 ProductCard(
                     product = product,
                     onProductClick = { onProductClick(product.id) },
-                    onAddClick = { viewModel.quickAddToCart(it) }
+                    onAddClick = { viewModel.quickAddToCart(it) },
+                    isFavorite = uiState.favoriteProductIds.contains(product.id),
+                    onFavoriteClick = { viewModel.toggleFavorite(it.id) }
                 )
             }
             
@@ -137,6 +151,7 @@ fun HomeScreen(
             }
         }
     }
+}
 }
 
 @Composable

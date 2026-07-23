@@ -15,6 +15,7 @@ data class ProductDetailsUiState(
     val selectedSize: String = "Medium (12oz)",
     val selectedShots: String = "Double",
     val selectedIce: String = "Regular Ice",
+    val isFavorite: Boolean = false,
     val totalPrice: Double = 0.0,
     val cartItemsCount: Int = 0
 )
@@ -22,7 +23,8 @@ data class ProductDetailsUiState(
 class ProductDetailsViewModel(
     private val productId: Int,
     private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val favoritesRepository: com.example.codecup.data.FavoritesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
@@ -31,6 +33,7 @@ class ProductDetailsViewModel(
     init {
         loadProduct()
         observeCart()
+        observeFavorite()
     }
 
     private fun loadProduct() {
@@ -42,6 +45,12 @@ class ProductDetailsViewModel(
     private fun observeCart() {
         cartRepository.cartItems.onEach { items ->
             _uiState.update { it.copy(cartItemsCount = items.size) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observeFavorite() {
+        favoritesRepository.isFavorite(productId).onEach { isFav ->
+            _uiState.update { it.copy(isFavorite = isFav) }
         }.launchIn(viewModelScope)
     }
 
@@ -104,6 +113,16 @@ class ProductDetailsViewModel(
         
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)
+        }
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            if (_uiState.value.isFavorite) {
+                favoritesRepository.removeFavorite(productId)
+            } else {
+                favoritesRepository.addFavorite(productId)
+            }
         }
     }
 }

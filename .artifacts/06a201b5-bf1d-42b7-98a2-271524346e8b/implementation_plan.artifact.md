@@ -1,47 +1,63 @@
-# Implementation Plan - Fix Theme Contrast and Restore Light Mode Design
+# Implementation Plan - Order Status Simulation & Notifications
 
-This plan addresses the contrast issues with the Sign Out button, Product Details customization chips, and restores the original "Accent" color for the Rewards banner in Light Mode.
+We should definitely proceed with these features. They add a significant layer of realism to the coffee ordering experience and demonstrate high-level Android development skills like background task management and platform API integration.
+
+## Goal Description
+Implement an automated order status transition (Received → Preparing → Ready) using `WorkManager` and notify the user via a local push notification when their coffee is "Ready".
 
 ## User Review Required
 
 > [!IMPORTANT]
-> I will be updating the `tertiaryContainer` color in the theme to act as the "Accent" color (the light peach/orange) used in the Rewards screen. This ensures the Light Theme remains faithful to its original design while providing a proper semantic mapping for Dark Mode.
+> I will be adding the `androidx.work:work-runtime-ktx` dependency to your project.
+> I will also request the `POST_NOTIFICATIONS` permission (for Android 13+) in the `AndroidManifest.xml`.
 
 ## Proposed Changes
 
-### [Theme & Colors]
+### [Dependencies & Configuration]
 
-#### [MODIFY] [Theme.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/theme/Theme.kt)
-- Update `LightColorScheme`:
-    - Set `onPrimaryContainer` to `Color.White` for better contrast on dark brown backgrounds.
-    - Set `tertiaryContainer` to `CoffeeAccentContainer` (the original light orange banner color).
-    - Set `onTertiaryContainer` to `CoffeeOnSecondaryContainer` (for readable text on the accent banner).
-- Update `DarkColorScheme`:
-    - Set `onPrimaryContainer` to `Color.White`.
-    - Ensure `tertiaryContainer` has a distinct dark-mode accent color.
+#### [MODIFY] [build.gradle.kts](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/build.gradle.kts)
+- Add `androidx.work:work-runtime-ktx` dependency.
 
-### [Profile Screen]
+#### [MODIFY] [AndroidManifest.xml](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/AndroidManifest.xml)
+- Add `POST_NOTIFICATIONS` permission.
+- (Internal) Register the `WorkManager` default initializer if necessary, though it's usually automatic.
 
-#### [MODIFY] [ProfileScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/ProfileScreen.kt)
-- Change the Sign Out button to use `secondary` and `onSecondary` (orange) instead of `primaryContainer`. This will prevent it from blending into the dark background in Dark Mode.
+### [Data Layer]
 
-### [Rewards Screen]
+#### [MODIFY] [OrderRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/OrderRepository.kt)
+- Add a method to trigger the simulation when an order is placed.
 
-#### [MODIFY] [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt)
-- Update the Points Banner to use `tertiaryContainer` and `onTertiaryContainer`. This restores the light orange look in Light Mode.
+### [Background Simulation]
 
-### [Product Details Screen]
+#### [NEW] [OrderStatusWorker.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/workers/OrderStatusWorker.kt)
+- Create a `CoroutineWorker` that handles:
+    1.  Waiting for a few seconds.
+    2.  Updating status to `Preparing`.
+    3.  Waiting again.
+    4.  Updating status to `Ready`.
+    5.  Triggering a notification.
 
-#### [MODIFY] [ProductDetailsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/ProductDetailsScreen.kt)
-- Update the customization chips to use `primary` and `onPrimary` (or `onPrimaryContainer` if set to White) for the selected state to ensure maximum readability.
+### [Notifications]
+
+#### [NEW] [NotificationHelper.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/utils/NotificationHelper.kt)
+- Utility class to create a Notification Channel and post the "Order Ready" alert.
+
+### [UI Layer]
+
+#### [MODIFY] [CartViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/CartViewModel.kt)
+- Change initial order status from `Preparing` to `Received`.
+- Trigger the `WorkManager` simulation upon checkout.
+
+#### [MODIFY] [MainActivity.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/MainActivity.kt)
+- Request notification permissions on launch for Android 13+ devices.
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `gradle :app:assembleDebug` to verify compilation.
+- No specific automated tests, but I will ensure the project builds successfully with new dependencies.
 
 ### Manual Verification
-- **Profile:** Verify Sign Out button is orange and visible in both themes.
-- **Rewards:** Verify the Points Banner is light orange in Light Theme (as it was originally).
-- **Product Details:** Verify selected customization chips have white/very light text on the dark brown background.
-- **Dark Mode:** Verify all these areas remain legible and well-contrasted in Dark Mode.
+1.  Place an order in the app.
+2.  Navigate to the "Orders" screen.
+3.  Observe the status bar change from "Received" to "Preparing" and finally "Ready" over ~20-30 seconds.
+4.  Verify that a system notification appears when the status becomes "Ready".

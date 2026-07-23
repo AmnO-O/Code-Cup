@@ -1,28 +1,35 @@
-# Walkthrough - Theme Contrast and Design Restoration
+# Walkthrough - Order Status Simulation & Notifications
 
-I have fixed the contrast issues with the Sign Out button and customization chips, and restored the original design of the Rewards banner in Light Mode.
+I have successfully implemented an automated order status simulation and local push notifications. This adds a layer of interactivity and realism to the Artisan Coffee app.
 
 ## Changes Made
 
-### Theme & Colors
-- **Contrast Improvement:** Updated `onPrimaryContainer` to `Color.White` in both Light and Dark themes. This ensures that any text on a `primaryContainer` (like selected customization chips) is perfectly legible.
-- **Semantic Restoration:** Updated `tertiaryContainer` to use the original peach/orange accent color (`CoffeeAccentContainer`) for Light Mode.
+### Background Simulation & Tasks
+- **WorkManager Integration:** Added `androidx.work:work-runtime-ktx` to handle background order processing.
+- **[NEW] [OrderStatusWorker.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/workers/OrderStatusWorker.kt):** A `CoroutineWorker` that simulates a realistic coffee preparation timeline:
+    - `Received` → `Preparing` (after 5 seconds)
+    - `Preparing` → `Ready` (after 10 seconds)
+- **Automatic Trigger:** The simulation now starts immediately when a user checkouts from the [CartScreen](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/CartScreen.kt).
 
-### Profile Screen
-- **Sign Out Visibility:** Updated the Sign Out button in [ProfileScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/ProfileScreen.kt) to use the orange `secondary` color scheme. This prevents it from blending into the dark background in Dark Mode while remaining prominent in Light Mode.
+### Notifications
+- **[NEW] [NotificationHelper.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/utils/NotificationHelper.kt):** A utility class to manage the notification channel and post alerts.
+- **Order Ready Alert:** When the `OrderStatusWorker` completes its simulation (status becomes `Ready`), a local push notification is sent to the user: *"Your Coffee is Ready! ☕"*.
+- **Permission Handling:** Added `POST_NOTIFICATIONS` to the manifest and implemented a permission request flow in [MainActivity.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/MainActivity.kt) for Android 13+ support.
 
-### Rewards Screen
-- **Design Restoration:** Updated the Points Banner in [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt) to use the `tertiary` color slots. This restores the original light orange look in Light Mode as requested.
-
-### Product Details
-- **Chip Readability:** The selected customization chips in [ProductDetailsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/ProductDetailsScreen.kt) now use white text on their dark brown background due to the `onPrimaryContainer` update, making them easy to read.
+### Infrastructure Updates
+- **Dependency Management:** Updated `libs.versions.toml` and `build.gradle.kts` with WorkManager.
+- **ViewModel Architecture:** Updated `ViewModelFactory` and `CartViewModel` to support context-aware operations required by WorkManager.
 
 ## Verification Results
 
 ### Automated Tests
-- Ran `gradle :app:assembleDebug` successfully.
+- Ran `gradle :app:assembleDebug` successfully. All dependencies resolved correctly.
 
-### Manual Verification Required
-- **Rewards:** Verify the points banner has restored its light peach color in Light Mode.
-- **Profile:** Verify the Sign Out button is orange and visible in both themes.
-- **Product Details:** Verify that selected size/shot/ice options have clear white text.
+### Manual Verification
+1.  **Grant Permission:** Launch the app and allow notification permissions when prompted.
+2.  **Order Placement:** Add items to your cart and tap **Checkout**.
+3.  **Real-time Updates:** Go to the **Orders** tab. You will see your new order start at `Received`.
+4.  **Simulation Flow:**
+    - After ~5 seconds, it will automatically switch to `Preparing`.
+    - After another ~10 seconds, it will switch to `Ready`.
+5.  **Notification:** Observe the push notification appearing in your status bar exactly when the order becomes `Ready`.

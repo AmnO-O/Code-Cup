@@ -1,12 +1,17 @@
 package com.example.codecup.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.codecup.data.CartRepository
 import com.example.codecup.data.OrderRepository
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Order
 import com.example.codecup.models.OrderStatus
+import com.example.codecup.workers.OrderStatusWorker
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -22,7 +27,8 @@ data class CartUiState(
 
 class CartViewModel(
     private val cartRepository: CartRepository,
-    private val orderRepository: OrderRepository
+    private val orderRepository: OrderRepository,
+    private val context: Context? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
@@ -64,11 +70,20 @@ class CartViewModel(
             date = date,
             items = items,
             totalPrice = _uiState.value.totalPrice,
-            status = OrderStatus.Preparing
+            status = OrderStatus.Received
         )
 
         viewModelScope.launch {
             orderRepository.placeOrder(order)
+            
+            // Trigger background simulation if context is available
+            context?.let { ctx ->
+                val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
+                    .setInputData(workDataOf("order_id" to orderId))
+                    .build()
+                WorkManager.getInstance(ctx).enqueue(workRequest)
+            }
+
             cartRepository.clearCart()
             _uiState.update { it.copy(lastPlacedOrderId = orderId) }
             onSuccess(orderId)

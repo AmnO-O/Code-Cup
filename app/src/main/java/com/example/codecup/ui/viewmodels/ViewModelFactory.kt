@@ -1,14 +1,12 @@
 package com.example.codecup.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.codecup.data.CartRepository
-import com.example.codecup.data.OrderRepository
-import com.example.codecup.data.ProductRepository
-import com.example.codecup.data.ProfileRepository
-import com.example.codecup.data.UserPreferencesRepository
+import com.example.codecup.data.*
 
 class ViewModelFactory(
+    private val context: Context? = null,
     private val productId: Int = -1,
     private val productRepository: ProductRepository = ProductRepository(),
     private val cartRepository: CartRepository = CartRepository.getInstance(),
@@ -29,7 +27,7 @@ class ViewModelFactory(
                 HomeViewModel(productRepository, cartRepository) as T
             }
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
-                CartViewModel(cartRepository, orderRepository) as T
+                CartViewModel(cartRepository, orderRepository, context) as T
             }
             modelClass.isAssignableFrom(MyOrdersViewModel::class.java) -> {
                 MyOrdersViewModel(orderRepository) as T

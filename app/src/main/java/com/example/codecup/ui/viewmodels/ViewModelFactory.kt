@@ -24,16 +24,22 @@ class ViewModelFactory(
                 ProductDetailsViewModel(productId, productRepository, cartRepository) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(productRepository, cartRepository) as T
+                HomeViewModel(productRepository, cartRepository, profileRepository) as T
             }
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
-                CartViewModel(cartRepository, orderRepository, context) as T
+                CartViewModel(cartRepository, orderRepository, profileRepository, context) as T
             }
             modelClass.isAssignableFrom(MyOrdersViewModel::class.java) -> {
                 MyOrdersViewModel(orderRepository) as T
             }
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(profileRepository, userPreferencesRepository!!) as T
+            }
+            modelClass.isAssignableFrom(RewardsViewModel::class.java) -> {
+                RewardsViewModel(profileRepository) as T
+            }
+            modelClass.isAssignableFrom(RedeemRewardsViewModel::class.java) -> {
+                RedeemRewardsViewModel(profileRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

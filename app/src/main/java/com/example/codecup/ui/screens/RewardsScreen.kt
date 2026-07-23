@@ -8,20 +8,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.codecup.models.PointsHistoryItem
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
+import com.example.codecup.ui.viewmodels.RewardsViewModel
+import com.example.codecup.ui.viewmodels.ViewModelFactory
 
 @Composable
 fun RewardsScreen(
     onNavigate: (String) -> Unit,
-    onRedeemClick: () -> Unit
+    onRedeemClick: () -> Unit,
+    viewModel: RewardsViewModel = viewModel(factory = ViewModelFactory())
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val user = uiState.user
+
     Scaffold(
         topBar = {
             AppHeader(
@@ -43,7 +52,7 @@ fun RewardsScreen(
         ) {
             // Loyalty Card
             item {
-                LoyaltyCard(stampsEarned = 5)
+                LoyaltyCard(stampsEarned = user.stamps)
             }
             
             // Points Banner
@@ -80,7 +89,7 @@ fun RewardsScreen(
                                 color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                             )
                             Text(
-                                text = "1,240 pts",
+                                text = "${user.points} pts",
                                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
@@ -101,28 +110,15 @@ fun RewardsScreen(
                 )
             }
             
-            items(samplePointsHistory) { history ->
+            items(user.pointsHistory) { history ->
                 PointsHistoryRow(history)
             }
         }
     }
 }
 
-data class PointsHistory(
-    val title: String,
-    val date: String,
-    val points: String
-)
-
-val samplePointsHistory = listOf(
-    PointsHistory("Order #1042", "21 July, 21:15", "+8 pts"),
-    PointsHistory("Order #1041", "20 July, 09:30", "+5 pts"),
-    PointsHistory("Redeemed Caramel Macchiato", "18 July, 14:20", "-150 pts"),
-    PointsHistory("Order #1039", "18 July, 10:15", "+12 pts")
-)
-
 @Composable
-fun PointsHistoryRow(history: PointsHistory) {
+fun PointsHistoryRow(history: PointsHistoryItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,7 +141,7 @@ fun PointsHistoryRow(history: PointsHistory) {
         Text(
             text = history.points,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = if (history.points.startsWith("+")) CoffeeStampGreen else MaterialTheme.colorScheme.secondary
+            color = if (history.isPositive) CoffeeStampGreen else MaterialTheme.colorScheme.secondary
         )
     }
 }

@@ -8,6 +8,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.codecup.data.CartRepository
 import com.example.codecup.data.OrderRepository
+import com.example.codecup.data.ProfileRepository
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Order
 import com.example.codecup.models.OrderStatus
@@ -28,6 +29,7 @@ data class CartUiState(
 class CartViewModel(
     private val cartRepository: CartRepository,
     private val orderRepository: OrderRepository,
+    private val profileRepository: ProfileRepository,
     private val context: Context? = null
 ) : ViewModel() {
 
@@ -75,6 +77,11 @@ class CartViewModel(
 
         viewModelScope.launch {
             orderRepository.placeOrder(order)
+            
+            // Reward points and stamps
+            val pointsEarned = (order.totalPrice * 5).toInt() // $1 = 5 pts
+            profileRepository.addPoints(pointsEarned, "Points from Order #${order.id}")
+            profileRepository.addStamp()
             
             // Trigger background simulation if context is available
             context?.let { ctx ->

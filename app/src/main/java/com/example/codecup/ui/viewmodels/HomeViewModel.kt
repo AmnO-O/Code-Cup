@@ -3,6 +3,7 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.CartRepository
+import com.example.codecup.data.ProfileRepository
 import com.example.codecup.data.ProductRepository
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Product
@@ -15,12 +16,14 @@ data class HomeUiState(
     val selectedCategory: String = "All Coffee",
     val searchQuery: String = "",
     val cartItemsCount: Int = 0,
+    val stampsEarned: Int = 0,
     val isLoading: Boolean = false
 )
 
 class HomeViewModel(
     private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -31,6 +34,7 @@ class HomeViewModel(
     init {
         loadProducts()
         observeCart()
+        observeProfile()
     }
 
     private fun loadProducts() {
@@ -46,6 +50,12 @@ class HomeViewModel(
     private fun observeCart() {
         cartRepository.cartItems.onEach { items ->
             _uiState.update { it.copy(cartItemsCount = items.size) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observeProfile() {
+        profileRepository.profile.onEach { user ->
+            _uiState.update { it.copy(stampsEarned = user.stamps) }
         }.launchIn(viewModelScope)
     }
 

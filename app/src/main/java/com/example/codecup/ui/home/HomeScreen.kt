@@ -84,7 +84,7 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    LoyaltyCard(stampsEarned = 5, onClick = onNavigateToRewards)
+                    LoyaltyCard(stampsEarned = uiState.stampsEarned, onClick = onNavigateToRewards)
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     

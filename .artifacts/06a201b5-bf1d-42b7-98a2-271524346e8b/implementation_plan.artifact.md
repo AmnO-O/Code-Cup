@@ -1,63 +1,68 @@
-# Implementation Plan - Order Status Simulation & Notifications
+# Implementation Plan - Rewards & Redeem Logic
 
-We should definitely proceed with these features. They add a significant layer of realism to the coffee ordering experience and demonstrate high-level Android development skills like background task management and platform API integration.
-
-## Goal Description
-Implement an automated order status transition (Received → Preparing → Ready) using `WorkManager` and notify the user via a local push notification when their coffee is "Ready".
+Implement the missing business logic for earning and redeeming rewards points, as well as tracking loyalty stamps.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> I will be adding the `androidx.work:work-runtime-ktx` dependency to your project.
-> I will also request the `POST_NOTIFICATIONS` permission (for Android 13+) in the `AndroidManifest.xml`.
+> I will be modifying the `ProfileRepository` and `UserProfile` model to include points history and stamps. I will also be creating new ViewModels for the Rewards and Redeem screens.
 
 ## Proposed Changes
 
-### [Dependencies & Configuration]
-
-#### [MODIFY] [build.gradle.kts](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/build.gradle.kts)
-- Add `androidx.work:work-runtime-ktx` dependency.
-
-#### [MODIFY] [AndroidManifest.xml](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/AndroidManifest.xml)
-- Add `POST_NOTIFICATIONS` permission.
-- (Internal) Register the `WorkManager` default initializer if necessary, though it's usually automatic.
-
 ### [Data Layer]
 
-#### [MODIFY] [OrderRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/OrderRepository.kt)
-- Add a method to trigger the simulation when an order is placed.
+#### [MODIFY] [ProfileRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt)
+- Update `UserProfile` data class:
+    - Add `stamps: Int`.
+    - Add `pointsHistory: List<PointsHistoryItem>`.
+- Add methods to `ProfileRepository`:
+    - `addPoints(amount: Int, title: String)`
+    - `redeemPoints(amount: Int, title: String)`
+    - `addStamp()`
+    - `resetStamps()`
 
-### [Background Simulation]
+#### [NEW] [PointsHistoryItem.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/models/PointsHistoryItem.kt)
+- Create a shared model for points history entries.
 
-#### [NEW] [OrderStatusWorker.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/workers/OrderStatusWorker.kt)
-- Create a `CoroutineWorker` that handles:
-    1.  Waiting for a few seconds.
-    2.  Updating status to `Preparing`.
-    3.  Waiting again.
-    4.  Updating status to `Ready`.
-    5.  Triggering a notification.
+### [Logic & ViewModels]
 
-### [Notifications]
+#### [NEW] [RewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RewardsViewModel.kt)
+- Observe `ProfileRepository` to expose points, stamps, and history.
 
-#### [NEW] [NotificationHelper.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/utils/NotificationHelper.kt)
-- Utility class to create a Notification Channel and post the "Order Ready" alert.
+#### [NEW] [RedeemRewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RedeemRewardsViewModel.kt)
+- Handle the redemption process: call `redeemPoints` and show success/error states.
+
+#### [MODIFY] [CartViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/CartViewModel.kt)
+- In `checkout()`:
+    - Calculate points earned (e.g., $1 = 5 points).
+    - Call `profileRepository.addPoints()` and `profileRepository.addStamp()`.
+
+#### [MODIFY] [HomeViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/HomeViewModel.kt)
+- Observe `ProfileRepository` to expose `stampsEarned` in `HomeUiState`.
+
+#### [MODIFY] [ViewModelFactory.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ViewModelFactory.kt)
+- Add support for new ViewModels.
 
 ### [UI Layer]
 
-#### [MODIFY] [CartViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/CartViewModel.kt)
-- Change initial order status from `Preparing` to `Received`.
-- Trigger the `WorkManager` simulation upon checkout.
+#### [MODIFY] [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt)
+- Connect to `RewardsViewModel`.
+- Remove hardcoded sample data.
 
-#### [MODIFY] [MainActivity.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/MainActivity.kt)
-- Request notification permissions on launch for Android 13+ devices.
+#### [MODIFY] [RedeemRewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RedeemRewardsScreen.kt)
+- Connect to `RedeemRewardsViewModel`.
+- Implement "Redeem" button click logic.
+
+#### [MODIFY] [HomeScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/home/HomeScreen.kt)
+- Update `LoyaltyCard` to use `uiState.stampsEarned`.
 
 ## Verification Plan
 
 ### Automated Tests
-- No specific automated tests, but I will ensure the project builds successfully with new dependencies.
+- Build the project to ensure all ViewModel connections are correct.
 
 ### Manual Verification
-1.  Place an order in the app.
-2.  Navigate to the "Orders" screen.
-3.  Observe the status bar change from "Received" to "Preparing" and finally "Ready" over ~20-30 seconds.
-4.  Verify that a system notification appears when the status becomes "Ready".
+1.  **Earn Points:** Place an order and verify that points and a stamp are added to the user's profile.
+2.  **View History:** Navigate to the Rewards screen and check the "Points History" list.
+3.  **Redeem Reward:** Navigate to the Redeem screen, select an item, and verify that points are deducted and a new history entry is added.
+4.  **Loyalty Card:** Verify that stamps are correctly displayed on both the Home and Rewards screens.

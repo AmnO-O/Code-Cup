@@ -1,35 +1,30 @@
-# Walkthrough - Order Status Simulation & Notifications
+# Walkthrough - Rewards & Redeem Logic Implementation
 
-I have successfully implemented an automated order status simulation and local push notifications. This adds a layer of interactivity and realism to the Artisan Coffee app.
+I have implemented the complete business logic for the Rewards and Redemption system. The app now tracks loyalty stamps and reward points dynamically, reacting to user actions like placing orders and redeeming items.
 
 ## Changes Made
 
-### Background Simulation & Tasks
-- **WorkManager Integration:** Added `androidx.work:work-runtime-ktx` to handle background order processing.
-- **[NEW] [OrderStatusWorker.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/workers/OrderStatusWorker.kt):** A `CoroutineWorker` that simulates a realistic coffee preparation timeline:
-    - `Received` → `Preparing` (after 5 seconds)
-    - `Preparing` → `Ready` (after 10 seconds)
-- **Automatic Trigger:** The simulation now starts immediately when a user checkouts from the [CartScreen](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/CartScreen.kt).
+### Data Layer & State Management
+- **[NEW] [PointsHistoryItem.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/models/PointsHistoryItem.kt):** Defined a model for tracking point transactions (earned vs. redeemed).
+- **Profile Repository:** Updated [ProfileRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/ProfileRepository.kt) to manage the global state of user points, stamps, and history. Added methods for adding/redeeming points and incrementing stamps.
 
-### Notifications
-- **[NEW] [NotificationHelper.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/utils/NotificationHelper.kt):** A utility class to manage the notification channel and post alerts.
-- **Order Ready Alert:** When the `OrderStatusWorker` completes its simulation (status becomes `Ready`), a local push notification is sent to the user: *"Your Coffee is Ready! ☕"*.
-- **Permission Handling:** Added `POST_NOTIFICATIONS` to the manifest and implemented a permission request flow in [MainActivity.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/MainActivity.kt) for Android 13+ support.
+### Business Logic (ViewModels)
+- **Automatic Rewards:** Updated [CartViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/CartViewModel.kt) to automatically grant points ($1 = 5 pts) and a loyalty stamp upon every successful checkout.
+- **[NEW] [RewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RewardsViewModel.kt):** Exposes the user's current reward status and full transaction history.
+- **[NEW] [RedeemRewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RedeemRewardsViewModel.kt):** Manages the redemption process, ensuring users have enough points before allowing a "purchase" with points.
 
-### Infrastructure Updates
-- **Dependency Management:** Updated `libs.versions.toml` and `build.gradle.kts` with WorkManager.
-- **ViewModel Architecture:** Updated `ViewModelFactory` and `CartViewModel` to support context-aware operations required by WorkManager.
+### UI Integration
+- **Rewards Screen:** Updated [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt) to display real-time user data. The "Points History" now shows actual transactions.
+- **Redeem Screen:** Updated [RedeemRewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RedeemRewardsScreen.kt) to allow users to redeem products. The point balance and "Redeem" buttons now update dynamically.
+- **Home Screen:** Updated [HomeScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/home/HomeScreen.kt) to show the correct number of stamps on the loyalty card.
 
 ## Verification Results
 
 ### Automated Tests
-- Ran `gradle :app:assembleDebug` successfully. All dependencies resolved correctly.
+- Ran `gradle :app:assembleDebug` successfully. All ViewModel injections and repository calls are verified.
 
-### Manual Verification
-1.  **Grant Permission:** Launch the app and allow notification permissions when prompted.
-2.  **Order Placement:** Add items to your cart and tap **Checkout**.
-3.  **Real-time Updates:** Go to the **Orders** tab. You will see your new order start at `Received`.
-4.  **Simulation Flow:**
-    - After ~5 seconds, it will automatically switch to `Preparing`.
-    - After another ~10 seconds, it will switch to `Ready`.
-5.  **Notification:** Observe the push notification appearing in your status bar exactly when the order becomes `Ready`.
+### Manual Verification Path
+1.  **Place an Order:** Go to the Home screen, add a coffee to your cart, and checkout.
+2.  **Verify Rewards:** Navigate to the Rewards tab. You should see your points balance increase and a new "Order" entry in the history.
+3.  **Check Stamps:** Verify the loyalty card (on Home and Rewards) has an additional filled stamp.
+4.  **Redeem points:** Navigate to the "Redeem" screen from the Rewards tab. Select an item you have enough points for, tap "Redeem", and verify your balance decreases.

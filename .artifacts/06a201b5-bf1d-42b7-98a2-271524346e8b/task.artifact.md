@@ -1,7 +1,11 @@
-- [x] Add WorkManager dependency
-- [x] Add POST_NOTIFICATIONS permission
-- [x] Create `NotificationHelper`
-- [x] Create `OrderStatusWorker`
-- [x] Trigger WorkManager from `CartViewModel`
-- [x] Request permissions in `MainActivity`
+- [x] Create `PointsHistoryItem` model
+- [x] Update `ProfileRepository` and `UserProfile`
+- [x] Create `RewardsViewModel`
+- [x] Create `RedeemRewardsViewModel`
+- [x] Update `ViewModelFactory`
+- [x] Update `CartViewModel` to reward points/stamps
+- [x] Update `HomeViewModel` to expose stamps
+- [x] Connect `RewardsScreen` to ViewModel
+- [x] Connect `RedeemRewardsScreen` to ViewModel
+- [x] Update `HomeScreen` loyalty card
 - [x] Verify build and functionality

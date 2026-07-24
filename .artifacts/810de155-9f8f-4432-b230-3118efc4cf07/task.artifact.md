@@ -1,0 +1,4 @@
+- [x] Update `ProfileRepository.kt` with new default state and manual reset logic
+- [x] Add `resetLoyaltyCard` to `RewardsViewModel.kt`
+- [x] Implement click handling and Snackbar in `RewardsScreen.kt`
+- [x] Verify the full flow (7 stamps -> 8 stamps -> Reset)

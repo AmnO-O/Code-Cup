@@ -33,6 +33,7 @@ fun RewardsScreen(
     val user = uiState.user
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -45,6 +46,7 @@ fun RewardsScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 AppHeader(
                     title = "Rewards",
@@ -69,7 +71,21 @@ fun RewardsScreen(
             ) {
             // Loyalty Card
             item {
-                LoyaltyCard(stampsEarned = user.stamps)
+                LoyaltyCard(
+                    stampsEarned = user.stamps,
+                    onClick = {
+                        if (user.stamps >= 8) {
+                            viewModel.resetLoyaltyCard()
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Reward Redeemed! Enjoy your free drink.")
+                            }
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Collect 8 stamps to get a free drink! (${8 - user.stamps} left)")
+                            }
+                        }
+                    }
+                )
             }
             
             // Points Banner

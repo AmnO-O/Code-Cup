@@ -27,4 +27,8 @@ class RewardsViewModel(
             _uiState.update { it.copy(user = user) }
         }.launchIn(viewModelScope)
     }
+
+    fun resetLoyaltyCard() {
+        profileRepository.resetStamps()
+    }
 }

@@ -16,7 +16,8 @@ data class UserProfile(
     val avatarUrl: String = "https://lh3.googleusercontent.com/aida-public/AB6AXuAl3oL7Ez9iBCbgtJa5MHZ4oztckVgwX8ME-c7JHzd7GUNKxhcjFfdY8TxbHWuhqwiY7Vw8NmjC-l6D6-_FKJgSK0sCrcQAleIINZIym-2nsHOz-e6v3JbksXLs7q7HhLoGTf1laO1OY6IdGM8uOEPwnnCYGJ2wJtYNysZ1g8xlCub13bU1Y8J9-ECTUsQlNQSIdXY7LJ-j3VVkYtq6gCL1gVUmnbXZHDHDjMyj8B0k0TEOBuaz_p1t",
     val ordersCount: Int = 42,
     val points: Int = 1240,
-    val stamps: Int = 5,
+    val stamps: Int = 7,
+    val freeDrinks: Int = 0,
     val joinedYear: String = "2023",
     val pointsHistory: List<PointsHistoryItem> = listOf(
         PointsHistoryItem("Order #1042", "21 July, 21:15", "+8 pts", true),
@@ -64,10 +65,19 @@ class ProfileRepository {
         _profile.update { 
             val newStamps = it.stamps + 1
             if (newStamps >= 8) {
-                // Logic for free drink could be added here
-                it.copy(stamps = 0, ordersCount = it.ordersCount + 1)
+                it.copy(stamps = 8, ordersCount = it.ordersCount + 1)
             } else {
                 it.copy(stamps = newStamps, ordersCount = it.ordersCount + 1)
+            }
+        }
+    }
+
+    fun resetStamps() {
+        _profile.update { 
+            if (it.stamps >= 8) {
+                it.copy(stamps = 0, freeDrinks = it.freeDrinks + 1)
+            } else {
+                it
             }
         }
     }

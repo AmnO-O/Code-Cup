@@ -86,7 +86,7 @@ fun HomeScreen(
                 Column {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Good Morning, Alex",
+                        text = "Good Morning, ${uiState.userName}",
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )

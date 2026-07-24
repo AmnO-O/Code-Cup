@@ -17,6 +17,7 @@ data class HomeUiState(
     val searchQuery: String = "",
     val cartItemsCount: Int = 0,
     val stampsEarned: Int = 0,
+    val userName: String = "",
     val favoriteProductIds: Set<Int> = emptySet(),
     val isLoading: Boolean = false
 )
@@ -58,7 +59,10 @@ class HomeViewModel(
 
     private fun observeProfile() {
         profileRepository.profile.onEach { user ->
-            _uiState.update { it.copy(stampsEarned = user.stamps) }
+            _uiState.update { it.copy(
+                stampsEarned = user.stamps,
+                userName = user.name.split(" ").firstOrNull() ?: user.name
+            ) }
         }.launchIn(viewModelScope)
     }
 

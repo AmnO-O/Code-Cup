@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.codecup.data.RewardsRepository
 import com.example.codecup.models.PointsHistoryItem
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
@@ -31,7 +32,6 @@ fun RewardsScreen(
     viewModel: RewardsViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val user = uiState.user
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -95,13 +95,16 @@ fun RewardsScreen(
                     // Loyalty Card
                     item {
                         LoyaltyCard(
-                            stampsEarned = user.stamps,
+                            stampsEarned = uiState.stamps,
                             onClick = {
-                                if (user.stamps >= 8) {
+                                if (uiState.stamps >= RewardsRepository.STAMPS_PER_CARD) {
                                     viewModel.onStampsCompleted()
                                 } else {
                                     scope.launch {
-                                        snackbarHostState.showSnackbar("Collect 8 stamps to get a free drink! (${8 - user.stamps} left)")
+                                        snackbarHostState.showSnackbar(
+                                            "Collect ${RewardsRepository.STAMPS_PER_CARD} stamps to get a free drink! " +
+                                                "(${RewardsRepository.STAMPS_PER_CARD - uiState.stamps} left)"
+                                        )
                                     }
                                 }
                             }
@@ -142,7 +145,7 @@ fun RewardsScreen(
                                         color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                                     )
                                     Text(
-                                        text = "${user.points} pts",
+                                        text = "${uiState.points} pts",
                                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.onTertiaryContainer
                                     )
@@ -163,7 +166,7 @@ fun RewardsScreen(
                         )
                     }
                     
-                    items(user.pointsHistory) { history ->
+                    items(uiState.pointsHistory) { history ->
                         PointsHistoryRow(history)
                     }
                 }

@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.codecup.data.RewardsRepository
 import com.example.codecup.models.Product
-import com.example.codecup.models.sampleProducts
 import com.example.codecup.ui.components.AppHeader
 import com.example.codecup.ui.components.ConfettiEffect
 import com.example.codecup.ui.components.PrimaryButton
@@ -104,8 +104,8 @@ fun RedeemRewardsScreen(
                     }
                 }
                 
-                items(sampleProducts) { product ->
-                    val pointCost = (product.price * 25).toInt() // Example: $1 = 25 pts
+                items(uiState.products) { product ->
+                    val pointCost = RewardsRepository.redeemCostFor(product.price)
                     val canRedeem = uiState.pointsBalance >= pointCost
                     
                     RedeemItemRow(

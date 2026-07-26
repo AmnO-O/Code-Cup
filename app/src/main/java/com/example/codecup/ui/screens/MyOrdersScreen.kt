@@ -44,6 +44,13 @@ fun MyOrdersScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // One-shot events from the ViewModel ("+1 stamp earned!", "Order added to cart")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -122,7 +129,10 @@ fun MyOrdersScreen(
                     }
                 )
             } else {
-                OrdersHistoryList(uiState.orderHistory)
+                OrdersHistoryList(
+                    orders = uiState.orderHistory,
+                    onReorder = { viewModel.reorder(it) }
+                )
             }
         }
     }
@@ -290,7 +300,7 @@ fun StatusText(text: String, isReached: Boolean, isCurrent: Boolean = false) {
 }
 
 @Composable
-fun OrdersHistoryList(orders: List<Order>) {
+fun OrdersHistoryList(orders: List<Order>, onReorder: (Order) -> Unit) {
     if (orders.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("No order history", color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -298,7 +308,7 @@ fun OrdersHistoryList(orders: List<Order>) {
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(orders) { order ->
-                HistoryOrderCard(order)
+                HistoryOrderCard(order = order, onReorder = onReorder)
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -306,7 +316,7 @@ fun OrdersHistoryList(orders: List<Order>) {
 }
 
 @Composable
-fun HistoryOrderCard(order: Order) {
+fun HistoryOrderCard(order: Order, onReorder: (Order) -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -366,7 +376,7 @@ fun HistoryOrderCard(order: Order) {
             
             Spacer(modifier = Modifier.width(8.dp))
             
-            IconButton(onClick = { /* Reorder logic */ }) {
+            IconButton(onClick = { onReorder(order) }) {
                 Icon(Icons.Default.Replay, contentDescription = "Reorder", tint = MaterialTheme.colorScheme.secondary)
             }
         }

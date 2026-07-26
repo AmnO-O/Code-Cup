@@ -6,20 +6,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.codecup.data.NotificationsRepository
 import com.example.codecup.data.OrderRepository
-import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.ProductRepository
+import com.example.codecup.data.RewardsRepository
+import com.example.codecup.domain.PriceCalculator
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Order
 import com.example.codecup.models.OrderStatus
 import com.example.codecup.models.Product
 import com.example.codecup.workers.OrderStatusWorker
+import java.util.UUID
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 data class RedeemRewardsUiState(
     val pointsBalance: Int = 0,
+    val products: List<Product> = emptyList(),
     val isRedeeming: Boolean = false,
     val redeemSuccess: Boolean = false,
     val showConfirmDialog: Boolean = false,
@@ -28,17 +31,23 @@ data class RedeemRewardsUiState(
 )
 
 class RedeemRewardsViewModel(
-    private val profileRepository: ProfileRepository,
+    private val rewardsRepository: RewardsRepository,
     private val orderRepository: OrderRepository,
-    private val context: Context? = null
+    private val productRepository: ProductRepository,
+    private val notificationsRepository: NotificationsRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RedeemRewardsUiState())
     val uiState: StateFlow<RedeemRewardsUiState> = _uiState.asStateFlow()
 
     init {
-        profileRepository.profile.onEach { user ->
-            _uiState.update { it.copy(pointsBalance = user.points) }
+        rewardsRepository.points.onEach { points ->
+            _uiState.update { it.copy(pointsBalance = points) }
+        }.launchIn(viewModelScope)
+
+        productRepository.getProducts().onEach { products ->
+            _uiState.update { it.copy(products = products) }
         }.launchIn(viewModelScope)
     }
 
@@ -50,66 +59,69 @@ class RedeemRewardsViewModel(
         _uiState.update { it.copy(showConfirmDialog = false, selectedProduct = null) }
     }
 
+    /**
+     * Deducts points and places a free order when confirmed. Declining the dialog
+     * leaves the balance untouched.
+     */
     fun confirmRedeem(takeNow: Boolean) {
         val product = _uiState.value.selectedProduct ?: return
-        val cost = (product.price * 25).toInt()
-        
-        if (_uiState.value.pointsBalance >= cost) {
-            viewModelScope.launch {
-                _uiState.update { it.copy(isRedeeming = true, showConfirmDialog = false) }
-                
-                if (takeNow) {
-                    // Deduct points only if taking now
-                    profileRepository.redeemPoints(cost, "Redeemed ${product.name}")
-                    
-                    // Place free order
-                    val orderId = "RE-${UUID.randomUUID().toString().take(6).uppercase()}"
-                    val cartItem = CartItem(
-                        product = product,
-                        quantity = 1,
-                        size = "Regular",
-                        shots = "Standard",
-                        iceLevel = "Normal",
-                        totalPrice = 0.0
-                    )
-                    val order = Order(
-                        id = orderId,
-                        date = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date()),
-                        items = listOf(cartItem),
-                        totalPrice = 0.0,
-                        status = OrderStatus.Received
-                    )
-                    orderRepository.placeOrder(order)
+        val cost = RewardsRepository.redeemCostFor(product.price)
 
-                    // Trigger simulation
-                    context?.let { ctx ->
-                        val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
-                            .setInputData(workDataOf("order_id" to orderId))
-                            .build()
-                        WorkManager.getInstance(ctx).enqueue(workRequest)
-                    }
-                } else {
-                    // User canceled or decided not to spend points yet
-                    // The user said "không nên trừ điểm" when save later/cancel
-                    // So we just reset state
-                }
-                
-                _uiState.update { 
-                    it.copy(
-                        isRedeeming = false, 
-                        redeemSuccess = takeNow, 
-                        selectedProduct = null,
-                        showCelebration = takeNow
-                    ) 
-                }
+        if (_uiState.value.pointsBalance < cost) {
+            dismissDialog()
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRedeeming = true, showConfirmDialog = false) }
+
+            if (takeNow) {
+                rewardsRepository.redeemPoints(cost, "Redeemed ${product.name}")
+
+                val orderId = "RE-${UUID.randomUUID().toString().take(6).uppercase()}"
+                val order = Order(
+                    id = orderId,
+                    dateMillis = System.currentTimeMillis(),
+                    items = listOf(
+                        CartItem(
+                            product = product,
+                            quantity = 1,
+                            size = PriceCalculator.SIZE_MEDIUM,
+                            shots = PriceCalculator.SHOTS_DOUBLE,
+                            iceLevel = PriceCalculator.ICE_REGULAR,
+                            totalPrice = 0.0
+                        )
+                    ),
+                    totalPrice = 0.0,
+                    status = OrderStatus.Received
+                )
+                orderRepository.placeOrder(order)
+                notificationsRepository.add(
+                    title = "Reward redeemed",
+                    body = "${product.name} redeemed for $cost pts — enjoy!"
+                )
+
+                val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
+                    .setInputData(workDataOf(OrderStatusWorker.KEY_ORDER_ID to orderId))
+                    .build()
+                WorkManager.getInstance(context).enqueue(workRequest)
+            }
+
+            _uiState.update {
+                it.copy(
+                    isRedeeming = false,
+                    redeemSuccess = takeNow,
+                    selectedProduct = null,
+                    showCelebration = takeNow
+                )
             }
         }
     }
-    
+
     fun dismissCelebration() {
         _uiState.update { it.copy(showCelebration = false) }
     }
-    
+
     fun resetSuccess() {
         _uiState.update { it.copy(redeemSuccess = false) }
     }

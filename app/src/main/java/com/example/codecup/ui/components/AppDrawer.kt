@@ -33,7 +33,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.codecup.data.AppTheme
 import com.example.codecup.data.UserProfile
-import com.example.codecup.data.UserPreferencesRepository
 import com.example.codecup.ui.viewmodels.MainViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
 
@@ -60,13 +59,12 @@ fun AppDrawer(
     onNavigate: (String) -> Unit,
     onCloseDrawer: () -> Unit,
     viewModel: MainViewModel = viewModel(
-        factory = ViewModelFactory(
-            userPreferencesRepository = UserPreferencesRepository.getInstance(LocalContext.current)
-        )
+        factory = ViewModelFactory(LocalContext.current)
     )
 ) {
     val themeMode by viewModel.themeMode.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
+    val points by viewModel.points.collectAsState()
     val isDarkMode = themeMode == AppTheme.DARK
 
     ModalDrawerSheet(
@@ -79,7 +77,7 @@ fun AppDrawer(
             modifier = Modifier.fillMaxHeight()
         ) {
             // Header
-            DrawerHeader(user = userProfile)
+            DrawerHeader(user = userProfile, points = points)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -149,7 +147,7 @@ fun AppDrawer(
 }
 
 @Composable
-fun DrawerHeader(user: UserProfile) {
+fun DrawerHeader(user: UserProfile, points: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -215,7 +213,7 @@ fun DrawerHeader(user: UserProfile) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${user.points} pts",
+                    text = "$points pts",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFFBE927F)

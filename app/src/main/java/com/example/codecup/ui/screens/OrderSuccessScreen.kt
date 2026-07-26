@@ -134,7 +134,8 @@ fun OrderSuccessScreen(
             }
         }
         
-        ConfettiEffect(modifier = Modifier.fillMaxSize())
+        // trigger defaults to false, so without this the celebration never played
+        ConfettiEffect(modifier = Modifier.fillMaxSize(), trigger = true)
     }
 }
 

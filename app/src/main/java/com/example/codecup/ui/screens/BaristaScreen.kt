@@ -42,6 +42,7 @@ fun BaristaScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Scroll to bottom when new messages arrive
     LaunchedEffect(uiState.messages.size) {
@@ -50,7 +51,15 @@ fun BaristaScreen(
         }
     }
 
+    // One-shot events ("... added to cart")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = { 
@@ -100,7 +109,8 @@ fun BaristaScreen(
             items(uiState.messages) { message ->
                 MessageBubble(
                     message = message,
-                    onProductClick = onProductClick
+                    onProductClick = onProductClick,
+                    onAddToCart = { viewModel.addRecommendationToCart(it) }
                 )
             }
 
@@ -133,7 +143,8 @@ fun DateDivider() {
 @Composable
 fun MessageBubble(
     message: ChatMessage,
-    onProductClick: (Int) -> Unit
+    onProductClick: (Int) -> Unit,
+    onAddToCart: (Product) -> Unit
 ) {
     val isBarista = message.sender == MessageSender.BARISTA
     
@@ -172,7 +183,11 @@ fun MessageBubble(
 
             message.recommendedProduct?.let { product ->
                 Spacer(modifier = Modifier.height(8.dp))
-                RecommendationCard(product = product, onClick = { onProductClick(product.id) })
+                RecommendationCard(
+                    product = product,
+                    onClick = { onProductClick(product.id) },
+                    onAddToCart = { onAddToCart(product) }
+                )
             }
         }
     }
@@ -200,7 +215,8 @@ fun BaristaAvatar() {
 @Composable
 fun RecommendationCard(
     product: Product,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onAddToCart: () -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -231,9 +247,10 @@ fun RecommendationCard(
                     maxLines = 1
                 )
                 Text(
-                    text = "Smooth, bold", // Placeholder description
+                    text = product.description,
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF50443F)
+                    color = Color(0xFF50443F),
+                    maxLines = 1
                 )
                 Text(
                     text = "$${"%.2f".format(product.price)}",
@@ -242,13 +259,15 @@ fun RecommendationCard(
                 )
             }
             Surface(
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable(onClick = onAddToCart),
                 shape = CircleShape,
                 color = Color(0xFFF3E4D7)
             ) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = "Add",
+                    contentDescription = "Add to cart",
                     modifier = Modifier.size(16.dp),
                     tint = Color(0xFF31170B)
                 )
@@ -283,13 +302,6 @@ fun ChatInputArea(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier.fillMaxWidth()
         ) {
-            IconButton(
-                onClick = { /* Add attachment */ },
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(Icons.Default.AddCircle, contentDescription = null, tint = Color(0xFF50443F))
-            }
-            
             TextField(
                 value = text,
                 onValueChange = onTextChanged,

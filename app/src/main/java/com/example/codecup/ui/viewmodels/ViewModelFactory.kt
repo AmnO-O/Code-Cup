@@ -20,7 +20,7 @@ class ViewModelFactory(
         val c = app.container
         return when {
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(c.userPreferencesRepository, c.profileRepository, c.rewardsRepository) as T
+                MainViewModel(c.userPreferencesRepository, c.profileRepository, c.rewardsRepository, c.notificationsRepository) as T
             }
             modelClass.isAssignableFrom(ProductDetailsViewModel::class.java) -> {
                 ProductDetailsViewModel(productId, c.productRepository, c.cartRepository, c.favoritesRepository) as T
@@ -47,7 +47,10 @@ class ViewModelFactory(
                 RedeemRewardsViewModel(c.rewardsRepository, c.orderRepository, c.productRepository, c.notificationsRepository, app) as T
             }
             modelClass.isAssignableFrom(BaristaViewModel::class.java) -> {
-                BaristaViewModel(c.productRepository) as T
+                BaristaViewModel(c.productRepository, c.cartRepository) as T
+            }
+            modelClass.isAssignableFrom(NotificationsViewModel::class.java) -> {
+                NotificationsViewModel(c.notificationsRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

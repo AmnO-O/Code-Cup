@@ -3,6 +3,7 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.AppTheme
+import com.example.codecup.data.NotificationsRepository
 import com.example.codecup.data.ProfileRepository
 import com.example.codecup.data.RewardsRepository
 import com.example.codecup.data.UserProfile
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
     profileRepository: ProfileRepository,
-    rewardsRepository: RewardsRepository
+    rewardsRepository: RewardsRepository,
+    notificationsRepository: NotificationsRepository
 ) : ViewModel() {
 
     val themeMode: StateFlow<AppTheme> = userPreferencesRepository.themeMode
@@ -33,6 +35,13 @@ class MainViewModel(
         )
 
     val points: StateFlow<Int> = rewardsRepository.points
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
+    val unreadNotifications: StateFlow<Int> = notificationsRepository.unreadCount
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

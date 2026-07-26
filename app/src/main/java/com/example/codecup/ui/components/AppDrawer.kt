@@ -39,14 +39,12 @@ import com.example.codecup.ui.viewmodels.ViewModelFactory
 sealed class DrawerDestination(
     val route: String,
     val label: String,
-    val icon: ImageVector,
-    val hasBadge: Boolean = false,
-    val badgeCount: Int = 0
+    val icon: ImageVector
 ) {
     object Home : DrawerDestination("home", "Home", Icons.Default.Home)
     object Favorites : DrawerDestination("favorites", "Favorites", Icons.Default.FavoriteBorder)
     object Barista : DrawerDestination("barista", "Ask the Barista", Icons.Default.ChatBubbleOutline)
-    object Notifications : DrawerDestination("notifications", "Notifications", Icons.Default.NotificationsNone, hasBadge = true, badgeCount = 2)
+    object Notifications : DrawerDestination("notifications", "Notifications", Icons.Default.NotificationsNone)
     object Orders : DrawerDestination("orders", "My Orders", Icons.Default.Receipt)
     object Rewards : DrawerDestination("rewards", "Rewards", Icons.Default.StarBorder)
     object Profile : DrawerDestination("profile", "Profile", Icons.Default.PersonOutline)
@@ -65,6 +63,7 @@ fun AppDrawer(
     val themeMode by viewModel.themeMode.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
     val points by viewModel.points.collectAsState()
+    val unreadNotifications by viewModel.unreadNotifications.collectAsState()
     val isDarkMode = themeMode == AppTheme.DARK
 
     ModalDrawerSheet(
@@ -104,7 +103,8 @@ fun AppDrawer(
                     destination = DrawerDestination.Notifications,
                     isSelected = currentRoute == DrawerDestination.Notifications.route,
                     onNavigate = onNavigate,
-                    onCloseDrawer = onCloseDrawer
+                    onCloseDrawer = onCloseDrawer,
+                    badgeCount = unreadNotifications
                 )
 
                 HorizontalDivider(
@@ -229,7 +229,8 @@ fun DrawerItem(
     destination: DrawerDestination,
     isSelected: Boolean,
     onNavigate: (String) -> Unit,
-    onCloseDrawer: () -> Unit
+    onCloseDrawer: () -> Unit,
+    badgeCount: Int = 0
 ) {
     NavigationDrawerItem(
         label = {
@@ -244,13 +245,13 @@ fun DrawerItem(
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )
                 )
-                if (destination.hasBadge && destination.badgeCount > 0) {
+                if (badgeCount > 0) {
                     Surface(
                         color = Color(0xFFE5E2DD),
                         shape = CircleShape
                     ) {
                         Text(
-                            text = destination.badgeCount.toString(),
+                            text = badgeCount.toString(),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelMedium,
                             color = Color(0xFF50443F)
@@ -271,7 +272,7 @@ fun DrawerItem(
                     contentDescription = null,
                     tint = if (isSelected) Color(0xFF31170B) else Color(0xFF50443F)
                 )
-                if (destination.route == "notifications") {
+                if (badgeCount > 0) {
                     Box(
                         modifier = Modifier
                             .size(8.dp)

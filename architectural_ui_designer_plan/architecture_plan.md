@@ -186,15 +186,75 @@ Keep it tight and narrated — a rambling demo undercuts the code-quality/report
 
 ---
 
-## 7. Suggested Build Order (phase-based)
+## 7. Build Order — REVISED ROADMAP (updated 26 Jul 2026, after code audit)
 
-1. **Phase 1 — Data layer:** Room schema (products, cart, orders, rewards, profile) + seeding + DataStore. Get this right first; every screen depends on it.
-2. **Phase 2 — Core flow:** Home → Details → Cart → Order Success (the primary user journey, gets you to a demoable app fastest).
-3. **Phase 3 — Loop-closing screens:** My Orders → Rewards → Redeem Rewards (this is where stamp/points logic lives, wire it to order completion).
-4. **Phase 4 — Profile + lifecycle hardening:** editing flow, then a dedicated pass rotating/backgrounding every screen to confirm state survives.
-5. **Phase 5 — User-defined features:** build the 4–6 chosen extras from §3.3 — do not leave this for the last night, it's worth as much as the rest of the checklist combined.
-6. **Phase 6 — Polish pass:** lint, remove dead code, add KDoc, write unit tests for price/stamp/points logic.
-7. **Phase 7 — Report + demo:** screenshots, self-assessment, retrospective, references, then record the demo video last, after everything is frozen.
+> **Status note:** the original 7-phase build order below is superseded. The app already implements
+> the full screen flow (Splash → Home → Details → Cart → Order Success → My Orders → Rewards →
+> Redeem → Profile), plus a strong user-defined feature set: search + category filter, Favorites
+> (Room), dark/light/system theme (DataStore), order-status simulation (WorkManager), local
+> "order ready" notification, "Ask the Barista" chat, navigation drawer, confetti celebrations.
+> **What is missing is not screens — it is persistence, reward-timing correctness, feature polish,
+> and theme conformance.** The canonical design token source is
+> `artisan_brew_system/DESIGN.md` (the code's `Color.kt` already follows it); `ui_design_plan.md`
+> §1.2–1.3 has been patched to match. DI stays manual (`ViewModelFactory`, no Hilt).
+>
+> Reward economy constants (named constants in code, quoted in the report):
+> `STAMPS_PER_CARD = 8`, `POINTS_PER_DOLLAR = 5` (earn), `REDEEM_POINTS_PER_DOLLAR = 25`
+> (spend), `FULL_CARD_BONUS_POINTS = 500`. The earn rate deliberately deviates from the "1 pt/$"
+> example earlier in this doc so redemption is demoable after a handful of orders.
+
+### Phase 1 — Persistence overhaul (protects the 6-pt persistence item, the 12-pt lifecycle item, and the 7-pt Cart Item Rendering item)
+
+1. **Room schema v2** (single `AppDatabase`, `fallbackToDestructiveMigration` during dev):
+   - `ProductEntity` — id, name, description, price, imageUrl, category.
+   - `CartItemEntity` — id (String PK), productId, quantity, size, shots, iceLevel, totalPrice.
+   - `OrderEntity` — id (String PK), dateMillis, totalPrice, status (enum name String).
+   - `OrderItemEntity` — autoId PK, orderId FK, product snapshot (name, imageUrl), quantity, size, shots, iceLevel, linePrice; exposed via `OrderWithItems` `@Relation`.
+   - `PointsHistoryEntity` — autoId PK, title, dateMillis, points (signed Int).
+   - `NotificationEntity` — autoId PK, title, body, dateMillis, isRead (consumed in Phase 3).
+   - Keep the existing `FavoriteProduct` entity unchanged.
+2. **Menu seeding:** `RoomDatabase.Callback.onCreate` inserts an 8-item menu (Espresso, Cold Brew, Latte, Pastries categories; product IDs 1–8 stable so Barista recommendations can reference them). Seeds exactly once per install — verify on fresh install.
+3. **Repositories become Room/DataStore-backed, same public Flow APIs** so ViewModels barely change:
+   - `ProductRepository` → DAO-backed (`Flow<List<Product>>`, `suspend getProductById`).
+   - `CartRepository` → DAO-backed (insert-or-merge on same product+customization, quantity update recomputes from unit price, swipe delete, clear on checkout).
+   - `OrderRepository` → DAO-backed (place order + items transactionally, status updates persisted).
+   - **New `RewardsRepository`** — stamps count + points balance in DataStore (default 0), points history in Room. Owns ALL stamp/points mutations (single source of truth).
+   - `ProfileRepository` → DataStore-backed (name, email, phone, avatarUri, joinedYear); `ordersCount` derived from the orders table, not stored. **Fake seed data removed** (no more "7 stamps / 1,240 pts / 42 orders" on fresh install).
+4. **Wiring:** `CodeCupApplication` exposes a lazy `AppContainer` (db + repos); `ViewModelFactory` reads from it. `OrderStatusWorker` updates order status via the DAO (transitions now survive process death).
+5. **Verify:** build; fresh-install seed runs once; cart/orders/stamps survive process death ("Don't keep activities").
+
+### Phase 2 — Reward timing correctness (3-pt Loyalty Stamp Logic + 3-pt Order Status Transition)
+
+1. Remove stamp/points award from `CartViewModel.checkout` — checkout only creates the order.
+2. `MyOrdersViewModel.markAsPickedUp` → `OrderRepository.updateOrderStatus(PickedUp)` **and** `RewardsRepository.awardForCompletedOrder(order)`: +1 stamp (capped at `STAMPS_PER_CARD`), +`floor(total × POINTS_PER_DOLLAR)` points, one points-history row. Zero-total (redeemed) orders earn a stamp but 0 points.
+3. Surface a snackbar on the transition: "+1 stamp earned! +N pts" (per ui_design §3.5 — the grader must *see* the link between screens).
+4. Full-card handling unchanged (tap at 8/8 → choice dialog → reset), now via `RewardsRepository`.
+
+### Phase 3 — User-defined feature polish (the 50-pt line item)
+
+1. **Ask the Barista:** recommendations resolved from the real seeded menu (match by category/keyword, never a hardcoded ID that may not exist); reply texts mention only drinks that are actually on the menu; the recommendation card's "+" adds a default-config item to the cart with a snackbar; remove the dead attachment button.
+2. **Real Notifications screen:** `NotificationsRepository` over `NotificationEntity`; rows are written on order placed, order ready (from the worker), stamp earned, points redeemed. Screen lists them (EmptyState when none) and marks all read on open; drawer badge = live unread count (replaces the hardcoded "2").
+3. **Reorder button (My Orders history):** copies that order's items back into the cart, snackbar "Added to cart".
+4. **Remove dead stubs:** Sign Out button (no auth exists), chat attachment icon. Avatar photo picking stays out of scope unless time remains (documented choice).
+5. **Unit tests** (JUnit + kotlinx-coroutines-test): extract pure logic into `PriceCalculator` (size/shot surcharges × quantity) and rewards math (stamp cap, points earn, redeem guard); test cart merge/quantity math with a fake DAO. Named explicitly in the report.
+
+### Phase 4 — Design-system & dark-mode conformance (Additional Criteria + "polish" feature credibility)
+
+1. Replace every hardcoded hex color with `MaterialTheme.colorScheme` tokens in: `AppDrawer`, `BaristaScreen`, `QuantityStepper`, `EmptyState`, `OrderSuccessScreen`, `RedeemRewardsScreen`, `SplashScreen`, `AppHeader` — these currently render light-on-light in dark mode.
+2. Light scheme = `DESIGN.md` tokens verbatim (incl. `error`/`error-container`); dark scheme derived per existing `Theme.kt` approach, tuned for contrast.
+3. Typography per `DESIGN.md` scale mapped onto Material slots (headline 22/28, title 17/22, body 15/20, label 13/16, caption 12/16); Poppins/Inter via downloadable Google Fonts with system-default fallback — if the dependency proves flaky, keep the scale and drop the custom families (documented).
+
+### Phase 5 — Spec-compliance edge cases (State/Lifecycle 12 pts + ui_design cross-screen rules)
+
+1. `SavedStateHandle` in `ProductDetailsViewModel` for in-progress customization (size/shots/ice/quantity) — survives process death mid-customization; My Orders tab via `rememberSaveable`.
+2. Home: `EmptyState` for zero filtered results ("No drinks match your search" + clear-filters action); simple skeleton placeholders while the first Room query resolves.
+3. Order Success back-stack: checkout navigates with `popUpTo("home")` so hardware back from Success goes Home, never into the emptied cart.
+4. My Orders empty tabs use the shared `EmptyState` component ("No active orders" + "Order Now" → Home).
+5. Details sticky bar: button label carries the live total ("Add to Cart — $X.XX").
+6. Rewards zero-state caption ("Complete orders to start earning stamps and points").
+7. Dead-code sweep: template `Greeting`/preview in `MainActivity`, `sampleCartItems`, non-English comments, magic numbers → named constants; lint pass.
+
+Each phase ends with a debug build; Phases 1–2 additionally get the process-death test. Report/demo work (old Phases 6–7) is unchanged and still comes last.
 
 ---
 

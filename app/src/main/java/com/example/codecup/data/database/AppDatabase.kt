@@ -39,7 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getDatabase(context: Context): AppDatabase {
             return Instance ?: synchronized(this) {
                 Instance ?: Room.databaseBuilder(context, AppDatabase::class.java, "code_cup_database")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(dropAllTables = true)
                     .addCallback(seedCallback)
                     .build()
                     .also { Instance = it }

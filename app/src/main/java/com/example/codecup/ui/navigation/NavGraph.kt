@@ -90,7 +90,11 @@ fun NavGraph() {
             CartScreen(
                 onBackClick = { navController.popBackStack() },
                 onCheckoutClick = { orderId ->
-                    navController.navigate("success/$orderId")
+                    // Pop Details/Cart off the stack so back from Success goes Home,
+                    // never into the now-empty cart (ui_design §3.4)
+                    navController.navigate("success/$orderId") {
+                        popUpTo("home")
+                    }
                 }
             )
         }

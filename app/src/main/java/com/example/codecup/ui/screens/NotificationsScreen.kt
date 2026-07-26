@@ -18,15 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.codecup.data.database.NotificationEntity
 import com.example.codecup.ui.components.AppDrawer
 import com.example.codecup.ui.components.AppHeader
 import com.example.codecup.ui.components.EmptyState
+import com.example.codecup.ui.viewmodels.NotificationUiModel
 import com.example.codecup.ui.viewmodels.NotificationsViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.launch
 
 @Composable
@@ -91,7 +88,7 @@ fun NotificationsScreen(
 }
 
 @Composable
-private fun NotificationRow(notification: NotificationEntity) {
+private fun NotificationRow(notification: NotificationUiModel) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -128,8 +125,7 @@ private fun NotificationRow(notification: NotificationEntity) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
-                        .format(Date(notification.dateMillis)),
+                    text = notification.dateText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -157,6 +157,17 @@ fun RewardsScreen(
                         }
                     }
                     
+                    // New-user hint: teach how the system works instead of hiding the cards
+                    if (uiState.stamps == 0 && uiState.points == 0) {
+                        item {
+                            Text(
+                                text = "Complete orders to start earning stamps and points",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
                     // Points History
                     item {
                         Text(

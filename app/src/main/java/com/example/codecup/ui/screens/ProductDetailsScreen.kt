@@ -108,11 +108,10 @@ fun ProductDetailsScreen(
                             viewModel.addToCart()
                             onAddToCartClick()
                         },
-                        modifier = Modifier.width(200.dp)
+                        modifier = Modifier.width(220.dp)
                     ) {
-                        Text("Add to Cart")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.Default.ShoppingCart, contentDescription = null, modifier = Modifier.size(20.dp))
+                        // Live total in the label so price feedback is impossible to miss
+                        Text("Add to Cart — $${"%.2f".format(uiState.totalPrice)}")
                     }
                 }
             }

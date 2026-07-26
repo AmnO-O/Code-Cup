@@ -3,6 +3,8 @@ package com.example.codecup.ui.viewmodels
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.codecup.CodeCupApplication
 
 /**
@@ -15,7 +17,7 @@ class ViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val app = context.applicationContext as CodeCupApplication
         val c = app.container
         return when {
@@ -23,7 +25,13 @@ class ViewModelFactory(
                 MainViewModel(c.userPreferencesRepository, c.profileRepository, c.rewardsRepository, c.notificationsRepository) as T
             }
             modelClass.isAssignableFrom(ProductDetailsViewModel::class.java) -> {
-                ProductDetailsViewModel(productId, c.productRepository, c.cartRepository, c.favoritesRepository) as T
+                ProductDetailsViewModel(
+                    productId,
+                    c.productRepository,
+                    c.cartRepository,
+                    c.favoritesRepository,
+                    extras.createSavedStateHandle()
+                ) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(c.productRepository, c.cartRepository, c.profileRepository, c.rewardsRepository, c.favoritesRepository) as T

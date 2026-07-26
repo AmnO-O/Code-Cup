@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Menu
@@ -38,7 +39,7 @@ fun MyOrdersScreen(
     viewModel: MyOrdersViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
     val tabs = listOf("Ongoing", "History")
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -126,7 +127,8 @@ fun MyOrdersScreen(
                         scope.launch {
                             snackbarHostState.showSnackbar("Please wait a moment, your drink is being prepared!")
                         }
-                    }
+                    },
+                    onOrderNow = { onNavigate("home") }
                 )
             } else {
                 OrdersHistoryList(
@@ -143,12 +145,20 @@ fun MyOrdersScreen(
 fun OngoingOrdersList(
     orders: List<Order>,
     onMarkPickedUp: (String) -> Unit,
-    onNotReadyClick: () -> Unit
+    onNotReadyClick: () -> Unit,
+    onOrderNow: () -> Unit
 ) {
     if (orders.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No active orders", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        EmptyState(
+            title = "No active orders",
+            description = "Hungry for a brew? Your next order will show up here.",
+            icon = Icons.Default.LocalCafe,
+            action = {
+                PrimaryButton(onClick = onOrderNow, modifier = Modifier.width(180.dp)) {
+                    Text("Order Now")
+                }
+            }
+        )
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(orders) { order ->
@@ -302,9 +312,11 @@ fun StatusText(text: String, isReached: Boolean, isCurrent: Boolean = false) {
 @Composable
 fun OrdersHistoryList(orders: List<Order>, onReorder: (Order) -> Unit) {
     if (orders.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No order history", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        EmptyState(
+            title = "No past orders yet",
+            description = "Completed orders move here from the Ongoing tab.",
+            icon = Icons.AutoMirrored.Filled.ReceiptLong
+        )
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(orders) { order ->

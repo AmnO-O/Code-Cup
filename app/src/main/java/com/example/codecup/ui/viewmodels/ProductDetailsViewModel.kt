@@ -1,5 +1,6 @@
 package com.example.codecup.ui.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.CartRepository
@@ -27,10 +28,19 @@ class ProductDetailsViewModel(
     private val productId: Int,
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProductDetailsUiState())
+    private val _uiState = MutableStateFlow(
+        // In-progress customization survives process death, not just rotation
+        ProductDetailsUiState(
+            quantity = savedStateHandle[KEY_QUANTITY] ?: 1,
+            selectedSize = savedStateHandle[KEY_SIZE] ?: PriceCalculator.SIZE_MEDIUM,
+            selectedShots = savedStateHandle[KEY_SHOTS] ?: PriceCalculator.SHOTS_DOUBLE,
+            selectedIce = savedStateHandle[KEY_ICE] ?: PriceCalculator.ICE_REGULAR
+        )
+    )
     val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
     init {
@@ -61,22 +71,26 @@ class ProductDetailsViewModel(
 
     fun updateQuantity(newQuantity: Int) {
         if (newQuantity >= 1) {
+            savedStateHandle[KEY_QUANTITY] = newQuantity
             _uiState.update { it.copy(quantity = newQuantity) }
             recalculatePrice()
         }
     }
 
     fun updateSize(size: String) {
+        savedStateHandle[KEY_SIZE] = size
         _uiState.update { it.copy(selectedSize = size) }
         recalculatePrice()
     }
 
     fun updateShots(shots: String) {
+        savedStateHandle[KEY_SHOTS] = shots
         _uiState.update { it.copy(selectedShots = shots) }
         recalculatePrice()
     }
 
     fun updateIce(ice: String) {
+        savedStateHandle[KEY_ICE] = ice
         _uiState.update { it.copy(selectedIce = ice) }
         recalculatePrice()
     }
@@ -115,5 +129,12 @@ class ProductDetailsViewModel(
                 favoritesRepository.addFavorite(productId)
             }
         }
+    }
+
+    companion object {
+        private const val KEY_QUANTITY = "customization_quantity"
+        private const val KEY_SIZE = "customization_size"
+        private const val KEY_SHOTS = "customization_shots"
+        private const val KEY_ICE = "customization_ice"
     }
 }

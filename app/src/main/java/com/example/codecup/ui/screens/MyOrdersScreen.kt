@@ -1,5 +1,7 @@
 package com.example.codecup.ui.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,11 +34,16 @@ import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.MyOrdersViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+private const val HIGHLIGHT_HOLD_MS = 450L
+private const val HIGHLIGHT_FADE_MS = 1400
 
 @Composable
 fun MyOrdersScreen(
     onNavigate: (String) -> Unit,
+    highlightOrderId: String? = null,
     viewModel: MyOrdersViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -122,6 +130,7 @@ fun MyOrdersScreen(
             if (selectedTab == 0) {
                 OngoingOrdersList(
                     orders = uiState.ongoingOrders,
+                    highlightOrderId = highlightOrderId,
                     onMarkPickedUp = { viewModel.markAsPickedUp(it) },
                     onNotReadyClick = {
                         scope.launch {
@@ -144,6 +153,7 @@ fun MyOrdersScreen(
 @Composable
 fun OngoingOrdersList(
     orders: List<Order>,
+    highlightOrderId: String?,
     onMarkPickedUp: (String) -> Unit,
     onNotReadyClick: () -> Unit,
     onOrderNow: () -> Unit
@@ -162,7 +172,12 @@ fun OngoingOrdersList(
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(orders) { order ->
-                OngoingOrderCard(order, onMarkPickedUp, onNotReadyClick)
+                OngoingOrderCard(
+                    order = order,
+                    isHighlighted = order.id == highlightOrderId,
+                    onMarkPickedUp = onMarkPickedUp,
+                    onNotReadyClick = onNotReadyClick
+                )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -173,12 +188,26 @@ fun OngoingOrdersList(
 fun OngoingOrderCard(
     order: Order,
     onMarkPickedUp: (String) -> Unit,
-    onNotReadyClick: () -> Unit
+    onNotReadyClick: () -> Unit,
+    isHighlighted: Boolean = false
 ) {
+    // One-time background pulse on the order the user just placed (ui_design §3.5)
+    val highlightFraction = remember { Animatable(if (isHighlighted) 1f else 0f) }
+    LaunchedEffect(Unit) {
+        if (isHighlighted) {
+            delay(HIGHLIGHT_HOLD_MS)
+            highlightFraction.animateTo(0f, tween(HIGHLIGHT_FADE_MS))
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
+        color = lerp(
+            MaterialTheme.colorScheme.surface,
+            MaterialTheme.colorScheme.tertiaryContainer,
+            highlightFraction.value
+        ),
         border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column {

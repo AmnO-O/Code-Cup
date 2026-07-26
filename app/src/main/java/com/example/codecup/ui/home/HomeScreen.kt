@@ -44,6 +44,21 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Quick-add feedback with Undo (ui_design §3.1)
+    LaunchedEffect(Unit) {
+        viewModel.quickAddEvents.collect { event ->
+            val result = snackbarHostState.showSnackbar(
+                message = "Added to cart",
+                actionLabel = "Undo",
+                duration = SnackbarDuration.Short
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.undoQuickAdd(event.item)
+            }
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -56,6 +71,7 @@ fun HomeScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 AppHeader(
                     title = "Artisan Coffee",

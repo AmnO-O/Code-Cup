@@ -47,6 +47,21 @@ class CartRepository(private val cartDao: CartDao) {
 
     suspend fun removeFromCart(itemId: String) = cartDao.delete(itemId)
 
+    /**
+     * Undo for a quick add: takes one unit back off the matching row, deleting the
+     * row when it was the last one (works whether the add merged or inserted).
+     */
+    suspend fun removeOneOf(item: CartItem) {
+        val existing = cartDao.findMatching(item.product.id, item.size, item.shots, item.iceLevel) ?: return
+        if (existing.quantity > 1) {
+            val unitPrice = existing.totalPrice / existing.quantity
+            val newQuantity = existing.quantity - 1
+            cartDao.update(existing.copy(quantity = newQuantity, totalPrice = unitPrice * newQuantity))
+        } else {
+            cartDao.delete(existing.id)
+        }
+    }
+
     suspend fun clearCart() = cartDao.clear()
 }
 

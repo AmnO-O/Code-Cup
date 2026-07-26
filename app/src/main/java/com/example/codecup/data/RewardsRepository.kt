@@ -3,6 +3,7 @@ package com.example.codecup.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.rewardsDataStore: DataStore<Preferences> by preferencesDataStore(name = "rewards_prefs")
@@ -30,6 +32,7 @@ class RewardsRepository(
     private object Keys {
         val STAMPS = intPreferencesKey("stamps")
         val POINTS = intPreferencesKey("points")
+        val DEMO_SEEDED = booleanPreferencesKey("demo_seeded")
     }
 
     val stamps: Flow<Int> = context.rewardsDataStore.data.map { it[Keys.STAMPS] ?: 0 }
@@ -90,6 +93,19 @@ class RewardsRepository(
     /** Explicit user action once the card is full (rubric: Loyalty Card Reset). */
     suspend fun clearStamps() {
         context.rewardsDataStore.edit { prefs -> prefs[Keys.STAMPS] = 0 }
+    }
+
+    /** True once the one-time demo account seed has run (see [DemoDataSeeder]). */
+    suspend fun isDemoSeeded(): Boolean =
+        context.rewardsDataStore.data.first()[Keys.DEMO_SEEDED] ?: false
+
+    /** One-time initialization of demo balances; marks the seed as done atomically. */
+    suspend fun seedDemoBalances(stamps: Int, points: Int) {
+        context.rewardsDataStore.edit { prefs ->
+            prefs[Keys.STAMPS] = stamps.coerceIn(0, STAMPS_PER_CARD)
+            prefs[Keys.POINTS] = points.coerceAtLeast(0)
+            prefs[Keys.DEMO_SEEDED] = true
+        }
     }
 
     private fun formatDate(millis: Long): String =

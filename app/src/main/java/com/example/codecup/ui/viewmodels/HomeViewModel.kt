@@ -25,6 +25,9 @@ data class HomeUiState(
     val isLoading: Boolean = true
 )
 
+/** Carries the just-added item so the snackbar's Undo can take it back out. */
+data class QuickAddEvent(val item: CartItem)
+
 class HomeViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
@@ -35,6 +38,9 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _quickAddEvents = MutableSharedFlow<QuickAddEvent>()
+    val quickAddEvents: SharedFlow<QuickAddEvent> = _quickAddEvents.asSharedFlow()
 
     private val _allProducts = MutableStateFlow<List<Product>>(emptyList())
 
@@ -121,6 +127,13 @@ class HomeViewModel(
         )
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)
+            _quickAddEvents.emit(QuickAddEvent(cartItem))
+        }
+    }
+
+    fun undoQuickAdd(item: CartItem) {
+        viewModelScope.launch {
+            cartRepository.removeOneOf(item)
         }
     }
 

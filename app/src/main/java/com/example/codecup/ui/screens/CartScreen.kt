@@ -56,8 +56,8 @@ fun CartScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Total", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
-                            Text(
-                                "$${"%.2f".format(uiState.totalPrice)}",
+                            PulsingText(
+                                text = "$${"%.2f".format(uiState.totalPrice)}",
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -82,7 +82,8 @@ fun CartScreen(
                     SecondaryButton(onClick = onBackClick) {
                         Text("Browse Menu")
                     }
-                }
+                },
+                modifier = Modifier.padding(innerPadding)
             )
         } else {
             LazyColumn(
@@ -106,6 +107,8 @@ fun CartScreen(
 
                     SwipeToDismissBox(
                         state = dismissState,
+                        // Remaining rows close the gap smoothly instead of snapping (ui_design §6)
+                        modifier = Modifier.animateItem(),
                         backgroundContent = {
                             val color = when (dismissState.dismissDirection) {
                                 SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error.copy(alpha = 0.8f)

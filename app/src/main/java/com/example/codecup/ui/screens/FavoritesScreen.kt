@@ -29,6 +29,14 @@ fun FavoritesScreen(
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // One-shot events ("... added to cart")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -41,6 +49,7 @@ fun FavoritesScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 AppHeader(
                     title = "My Favorites",
@@ -83,7 +92,7 @@ fun FavoritesScreen(
                         ProductCard(
                             product = product,
                             onProductClick = { onProductClick(product.id) },
-                            onAddClick = { /* Quick add logic could be here too */ },
+                            onAddClick = { viewModel.quickAddToCart(it) },
                             isFavorite = true,
                             onFavoriteClick = { viewModel.toggleFavorite(it.id) }
                         )

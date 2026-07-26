@@ -131,7 +131,7 @@ fun DateDivider() {
             shape = CircleShape
         ) {
             Text(
-                text = "Today, 9:41 AM",
+                text = "Today",
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

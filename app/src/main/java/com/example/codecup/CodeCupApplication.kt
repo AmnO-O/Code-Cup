@@ -1,8 +1,8 @@
 package com.example.codecup
 
 import android.app.Application
-import com.example.codecup.data.database.AppDatabase
+import com.example.codecup.data.AppContainer
 
 class CodeCupApplication : Application() {
-    val database: AppDatabase by lazy { AppDatabase.getDatabase(this) }
+    val container: AppContainer by lazy { AppContainer(this) }
 }

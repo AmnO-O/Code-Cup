@@ -8,48 +8,55 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.codecup.data.OrderRepository
 import com.example.codecup.data.ProductRepository
-import com.example.codecup.data.ProfileRepository
-import com.example.codecup.data.UserProfile
-import com.example.codecup.models.*
+import com.example.codecup.data.RewardsRepository
+import com.example.codecup.domain.PriceCalculator
+import com.example.codecup.models.CartItem
+import com.example.codecup.models.Order
+import com.example.codecup.models.OrderStatus
+import com.example.codecup.models.PointsHistoryItem
 import com.example.codecup.workers.OrderStatusWorker
+import java.util.UUID
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 enum class RewardChoice {
     POINTS, FREE_DRINK
 }
 
 data class RewardsUiState(
-    val user: UserProfile = UserProfile(),
-    val isLoading: Boolean = false,
+    val stamps: Int = 0,
+    val points: Int = 0,
+    val pointsHistory: List<PointsHistoryItem> = emptyList(),
     val showRewardChoiceDialog: Boolean = false,
     val showCelebration: Boolean = false
 )
 
 class RewardsViewModel(
-    private val profileRepository: ProfileRepository,
+    private val rewardsRepository: RewardsRepository,
     private val orderRepository: OrderRepository,
     private val productRepository: ProductRepository,
-    private val context: Context? = null
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RewardsUiState())
     val uiState: StateFlow<RewardsUiState> = _uiState.asStateFlow()
 
     init {
-        observeProfile()
-    }
+        rewardsRepository.stamps.onEach { stamps ->
+            _uiState.update { it.copy(stamps = stamps) }
+        }.launchIn(viewModelScope)
 
-    private fun observeProfile() {
-        profileRepository.profile.onEach { user ->
-            _uiState.update { it.copy(user = user) }
+        rewardsRepository.points.onEach { points ->
+            _uiState.update { it.copy(points = points) }
+        }.launchIn(viewModelScope)
+
+        rewardsRepository.pointsHistory.onEach { history ->
+            _uiState.update { it.copy(pointsHistory = history) }
         }.launchIn(viewModelScope)
     }
 
     fun onStampsCompleted() {
-        if (_uiState.value.user.stamps >= 8) {
+        if (_uiState.value.stamps >= RewardsRepository.STAMPS_PER_CARD) {
             _uiState.update { it.copy(showRewardChoiceDialog = true) }
         }
     }
@@ -58,60 +65,51 @@ class RewardsViewModel(
         _uiState.update { it.copy(showRewardChoiceDialog = false) }
     }
 
+    /** Rubric: Loyalty Card Reset — explicit user action once the card is full. */
     fun claimReward(choice: RewardChoice) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, showRewardChoiceDialog = false) }
-            
-            profileRepository.clearStamps()
-            
+            _uiState.update { it.copy(showRewardChoiceDialog = false) }
+            rewardsRepository.clearStamps()
+
             when (choice) {
                 RewardChoice.POINTS -> {
-                    profileRepository.addPoints(500, "Loyalty Reward")
+                    rewardsRepository.addPoints(RewardsRepository.FULL_CARD_BONUS_POINTS, "Loyalty Reward")
                 }
                 RewardChoice.FREE_DRINK -> {
-                    // Get the cheapest drink
-                    productRepository.getProducts().firstOrNull()?.let { products ->
-                        val cheapestProduct = products.minByOrNull { it.price }
-                        if (cheapestProduct != null) {
-                            val orderId = "RW-${UUID.randomUUID().toString().take(6).uppercase()}"
-                            val cartItem = CartItem(
-                                product = cheapestProduct,
-                                quantity = 1,
-                                size = "Regular",
-                                shots = "Standard",
-                                iceLevel = "Normal",
-                                totalPrice = 0.0
-                            )
-                            val order = Order(
-                                id = orderId,
-                                date = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date()),
-                                items = listOf(cartItem),
-                                totalPrice = 0.0,
-                                status = OrderStatus.Received
-                            )
-                            orderRepository.placeOrder(order)
+                    val cheapest = productRepository.getProducts().first().minByOrNull { it.price }
+                    if (cheapest != null) {
+                        val orderId = "RW-${UUID.randomUUID().toString().take(6).uppercase()}"
+                        val order = Order(
+                            id = orderId,
+                            dateMillis = System.currentTimeMillis(),
+                            items = listOf(
+                                CartItem(
+                                    product = cheapest,
+                                    quantity = 1,
+                                    size = PriceCalculator.SIZE_MEDIUM,
+                                    shots = PriceCalculator.SHOTS_DOUBLE,
+                                    iceLevel = PriceCalculator.ICE_REGULAR,
+                                    totalPrice = 0.0
+                                )
+                            ),
+                            totalPrice = 0.0,
+                            status = OrderStatus.Received
+                        )
+                        orderRepository.placeOrder(order)
 
-                            // Trigger simulation
-                            context?.let { ctx ->
-                                val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
-                                    .setInputData(workDataOf("order_id" to orderId))
-                                    .build()
-                                WorkManager.getInstance(ctx).enqueue(workRequest)
-                            }
-                        }
+                        val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
+                            .setInputData(workDataOf(OrderStatusWorker.KEY_ORDER_ID to orderId))
+                            .build()
+                        WorkManager.getInstance(context).enqueue(workRequest)
                     }
                 }
             }
-            
-            _uiState.update { it.copy(isLoading = false, showCelebration = true) }
+
+            _uiState.update { it.copy(showCelebration = true) }
         }
     }
 
     fun dismissCelebration() {
         _uiState.update { it.copy(showCelebration = false) }
-    }
-
-    fun resetLoyaltyCard() {
-        profileRepository.resetStamps()
     }
 }

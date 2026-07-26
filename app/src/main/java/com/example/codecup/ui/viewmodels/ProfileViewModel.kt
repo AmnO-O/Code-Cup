@@ -3,7 +3,9 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.AppTheme
+import com.example.codecup.data.OrderRepository
 import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.RewardsRepository
 import com.example.codecup.data.UserProfile
 import com.example.codecup.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.*
@@ -11,13 +13,16 @@ import kotlinx.coroutines.launch
 
 data class ProfileUiState(
     val user: UserProfile = UserProfile(),
+    val ordersCount: Int = 0,
+    val points: Int = 0,
     val isEditMode: Boolean = false,
-    val isLoading: Boolean = false,
     val themeMode: AppTheme = AppTheme.SYSTEM
 )
 
 class ProfileViewModel(
     private val profileRepository: ProfileRepository,
+    rewardsRepository: RewardsRepository,
+    orderRepository: OrderRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -25,17 +30,18 @@ class ProfileViewModel(
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
-        observeProfile()
-        observeTheme()
-    }
-
-    private fun observeProfile() {
         profileRepository.profile.onEach { user ->
             _uiState.update { it.copy(user = user) }
         }.launchIn(viewModelScope)
-    }
 
-    private fun observeTheme() {
+        rewardsRepository.points.onEach { points ->
+            _uiState.update { it.copy(points = points) }
+        }.launchIn(viewModelScope)
+
+        orderRepository.orderCount.onEach { count ->
+            _uiState.update { it.copy(ordersCount = count) }
+        }.launchIn(viewModelScope)
+
         userPreferencesRepository.themeMode.onEach { theme ->
             _uiState.update { it.copy(themeMode = theme) }
         }.launchIn(viewModelScope)
@@ -56,9 +62,5 @@ class ProfileViewModel(
             profileRepository.updateProfile(name, email, phone)
             _uiState.update { it.copy(isEditMode = false) }
         }
-    }
-
-    fun signOut() {
-        // Implement sign out logic here
     }
 }

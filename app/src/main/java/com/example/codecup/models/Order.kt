@@ -1,5 +1,9 @@
 package com.example.codecup.models
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 enum class OrderStatus(val label: String) {
     Received("Received"),
     Preparing("Preparing"),
@@ -9,13 +13,14 @@ enum class OrderStatus(val label: String) {
 
 data class Order(
     val id: String,
-    val date: String,
+    val dateMillis: Long,
     val items: List<CartItem>,
     val totalPrice: Double,
-    var status: OrderStatus
+    val status: OrderStatus
 ) {
+    val date: String
+        get() = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault()).format(Date(dateMillis))
+
     val itemsSummary: String
         get() = items.joinToString(", ") { "${it.quantity}x ${it.product.name}" }
 }
-
-val sampleOrders = listOf<Order>() // Empty now, will be filled by repository

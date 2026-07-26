@@ -108,7 +108,7 @@ fun CartScreen(
                         state = dismissState,
                         backgroundContent = {
                             val color = when (dismissState.dismissDirection) {
-                                SwipeToDismissBoxValue.EndToStart -> Color.Red.copy(alpha = 0.8f)
+                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
                                 else -> Color.Transparent
                             }
                             Box(

@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.codecup.data.RewardsRepository
 import com.example.codecup.models.Product
-import com.example.codecup.models.sampleProducts
 import com.example.codecup.ui.components.AppHeader
 import com.example.codecup.ui.components.ConfettiEffect
 import com.example.codecup.ui.components.PrimaryButton
@@ -58,9 +58,9 @@ fun RedeemRewardsScreen(
                     Text("Cancel")
                 }
             },
-            containerColor = CoffeeSurface,
-            titleContentColor = CoffeePrimary,
-            textContentColor = CoffeeOnSurface
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            textContentColor = MaterialTheme.colorScheme.onSurface
         )
     }
 
@@ -69,7 +69,7 @@ fun RedeemRewardsScreen(
             topBar = {
                 AppHeader(title = "Redeem Rewards", onBackClick = onBackClick)
             },
-            containerColor = CoffeeBackground
+            containerColor = MaterialTheme.colorScheme.background
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
@@ -83,7 +83,7 @@ fun RedeemRewardsScreen(
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        color = CoffeeAccentContainer
+                        color = MaterialTheme.colorScheme.tertiaryContainer
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -93,19 +93,19 @@ fun RedeemRewardsScreen(
                             Text(
                                 text = "You have ",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = CoffeeOnSurface
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "${uiState.pointsBalance} points",
                                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                color = CoffeeSecondary
+                                color = MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
                 }
                 
-                items(sampleProducts) { product ->
-                    val pointCost = (product.price * 25).toInt() // Example: $1 = 25 pts
+                items(uiState.products) { product ->
+                    val pointCost = RewardsRepository.redeemCostFor(product.price)
                     val canRedeem = uiState.pointsBalance >= pointCost
                     
                     RedeemItemRow(
@@ -137,8 +137,8 @@ fun RedeemItemRow(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = CoffeeSurface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, CoffeeOutline)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -157,18 +157,18 @@ fun RedeemItemRow(
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeeOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "$pointCost pts",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeeSecondary
+                    color = MaterialTheme.colorScheme.secondary
                 )
                 if (!canRedeem) {
                     Text(
                         text = "Need ${pointCost - pointsBalance} more pts",
                         style = MaterialTheme.typography.labelSmall,
-                        color = CoffeeSecondary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f)
                     )
                 }
             }

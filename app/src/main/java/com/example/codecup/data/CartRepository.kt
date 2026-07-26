@@ -1,76 +1,61 @@
 package com.example.codecup.data
 
+import com.example.codecup.data.database.CartDao
+import com.example.codecup.data.database.CartItemEntity
+import com.example.codecup.data.database.CartItemWithProduct
 import com.example.codecup.models.CartItem
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class CartRepository {
-    private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
-    val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()
+class CartRepository(private val cartDao: CartDao) {
 
-    fun addToCart(item: CartItem) {
-        _cartItems.update { currentItems ->
-            val existingItemIndex = currentItems.indexOfFirst {
-                it.product.id == item.product.id &&
-                        it.size == item.size &&
-                        it.shots == item.shots &&
-                        it.iceLevel == item.iceLevel
-            }
+    val cartItems: Flow<List<CartItem>> = cartDao.getCartItems()
+        .map { rows -> rows.map(CartItemWithProduct::toDomain) }
 
-            if (existingItemIndex != -1) {
-                currentItems.mapIndexed { index, cartItem ->
-                    if (index == existingItemIndex) {
-                        val newQuantity = cartItem.quantity + item.quantity
-                        cartItem.copy(
-                            quantity = newQuantity,
-                            totalPrice = (cartItem.totalPrice / cartItem.quantity) * newQuantity
-                        )
-                    } else {
-                        cartItem
-                    }
-                }
-            } else {
-                currentItems + item
-            }
+    /**
+     * Inserts the item, or — when an identical product+customization row already
+     * exists — merges into it by bumping the quantity and re-deriving the price
+     * from the existing row's unit price.
+     */
+    suspend fun addToCart(item: CartItem) {
+        val existing = cartDao.findMatching(item.product.id, item.size, item.shots, item.iceLevel)
+        if (existing != null) {
+            val unitPrice = existing.totalPrice / existing.quantity
+            val newQuantity = existing.quantity + item.quantity
+            cartDao.update(existing.copy(quantity = newQuantity, totalPrice = unitPrice * newQuantity))
+        } else {
+            cartDao.insert(
+                CartItemEntity(
+                    id = item.id,
+                    productId = item.product.id,
+                    quantity = item.quantity,
+                    size = item.size,
+                    shots = item.shots,
+                    iceLevel = item.iceLevel,
+                    totalPrice = item.totalPrice
+                )
+            )
         }
     }
 
-    fun removeFromCart(itemId: String) {
-        _cartItems.update { currentItems ->
-            currentItems.filterNot { it.id == itemId }
-        }
-    }
-
-    fun updateQuantity(itemId: String, newQuantity: Int) {
+    suspend fun updateQuantity(itemId: String, newQuantity: Int) {
         if (newQuantity < 1) return
-        _cartItems.update { currentItems ->
-            currentItems.map { item ->
-                if (item.id == itemId) {
-                    val unitPrice = item.totalPrice / item.quantity
-                    item.copy(
-                        quantity = newQuantity,
-                        totalPrice = unitPrice * newQuantity
-                    )
-                } else {
-                    item
-                }
-            }
-        }
+        val row = cartDao.getById(itemId) ?: return
+        val unitPrice = row.totalPrice / row.quantity
+        cartDao.update(row.copy(quantity = newQuantity, totalPrice = unitPrice * newQuantity))
     }
 
-    fun clearCart() {
-        _cartItems.value = emptyList()
-    }
+    suspend fun removeFromCart(itemId: String) = cartDao.delete(itemId)
 
-    companion object {
-        @Volatile
-        private var instance: CartRepository? = null
-
-        fun getInstance() =
-            instance ?: synchronized(this) {
-                instance ?: CartRepository().also { instance = it }
-            }
-    }
+    suspend fun clearCart() = cartDao.clear()
 }
+
+private fun CartItemWithProduct.toDomain() = CartItem(
+    id = item.id,
+    product = product,
+    quantity = item.quantity,
+    size = item.size,
+    shots = item.shots,
+    iceLevel = item.iceLevel,
+    totalPrice = item.totalPrice
+)

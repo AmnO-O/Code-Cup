@@ -1,6 +1,7 @@
 package com.example.codecup.ui.home
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,6 +20,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -134,15 +136,60 @@ fun HomeScreen(
                 }
             }
 
-            // Product Grid
-            items(uiState.products) { product ->
-                ProductCard(
-                    product = product,
-                    onProductClick = { onProductClick(product.id) },
-                    onAddClick = { viewModel.quickAddToCart(it) },
-                    isFavorite = uiState.favoriteProductIds.contains(product.id),
-                    onFavoriteClick = { viewModel.toggleFavorite(it.id) }
-                )
+            // Product Grid: skeleton while loading, empty state for zero matches, cards otherwise
+            when {
+                uiState.isLoading -> {
+                    items(4) {
+                        Box(
+                            modifier = Modifier
+                                .height(220.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        )
+                    }
+                }
+                uiState.products.isEmpty() -> {
+                    item(span = { GridItemSpan(2) }) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 48.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "No drinks match your search",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            SecondaryButton(
+                                onClick = { viewModel.clearFilters() },
+                                modifier = Modifier.width(180.dp)
+                            ) {
+                                Text("Clear Filters")
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    items(uiState.products) { product ->
+                        ProductCard(
+                            product = product,
+                            onProductClick = { onProductClick(product.id) },
+                            onAddClick = { viewModel.quickAddToCart(it) },
+                            isFavorite = uiState.favoriteProductIds.contains(product.id),
+                            onFavoriteClick = { viewModel.toggleFavorite(it.id) }
+                        )
+                    }
+                }
             }
             
             // Footer spacer

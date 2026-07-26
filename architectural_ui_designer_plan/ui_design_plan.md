@@ -12,24 +12,32 @@ Warm, cafe-like, tactile — not a generic Material demo app. Think "artisan cof
 
 ### 1.2 Color Palette
 
-| Token | Light mode | Dark mode | Usage |
-|---|---|---|---|
-| `primary` | `#4A2C1E` (espresso brown) | `#E8C9A8` | headers, primary text on light surfaces, selected nav icon |
-| `primary-container` | `#F3E4D7` | `#3A2A20` | loyalty card background, chip backgrounds |
-| `accent` | `#C1502E` (terracotta) | `#E2795A` | primary CTA buttons ("Add to Cart," "Checkout," "Redeem") |
-| `accent-container` | `#FBE3DA` | `#4A2A1F` | badges, price highlight background |
-| `success` | `#4F7942` | `#8FBF7A` | stamp-earned states, order-completed status |
-| `error` | `#B3261E` | `#F2B8B5` | remove/destructive actions, validation |
-| `background` | `#FFFBF6` | `#1B1512` | screen background |
-| `surface` | `#FFFFFF` | `#241C17` | cards, sheets, nav bar |
-| `on-surface` | `#2B211B` | `#F1E7DD` | primary text |
-| `on-surface-variant` | `#6E5B4E` | `#C9B8AA` | secondary/caption text |
-| `outline` | `#E4D6C9` | `#4A3A30` | dividers, input borders |
+> **Canonical source: `artisan_brew_system/DESIGN.md`** (updated 26 Jul 2026). The implemented app
+> follows that token sheet, and this section now mirrors it — the earlier `#4A2C1E`/`#C1502E`
+> palette in this document is superseded. Key light-mode tokens for quick reference:
 
-Dark mode is one of the planned user-defined features (see `plan.md` §3.3) — design every screen with both columns above in mind from the start rather than retrofitting later.
+| Token | Light mode | Usage |
+|---|---|---|
+| `primary` | `#31170B` (dark espresso) | headers, primary text on light surfaces, selected nav icon |
+| `primary-container` | `#F3E4D7` | loyalty card background, chip backgrounds |
+| `secondary` (accent) | `#A53C1B` (burnt terracotta) | primary CTA buttons ("Add to Cart," "Checkout," "Redeem") |
+| `accent-container` | `#FBE3DA` | badges, price highlight background |
+| `success` | `#4F7942` (stamp green) | stamp-earned states, order-completed status |
+| `error` | `#BA1A1A` | remove/destructive actions, validation |
+| `background` | `#FDF9F4` | screen background |
+| `surface` | `#FFFFFF` | cards, sheets, nav bar |
+| `on-surface` | `#2B211B` | primary text |
+| `on-surface-variant` | `#6E5B4E` | secondary/caption text |
+| `outline` | `#E4D6C9` | dividers, input borders |
+
+Dark-mode values are derived from the same hues in `Theme.kt` (lightened primaries on darkened
+surfaces) rather than tabulated here — the requirement stands that **every screen must render
+correctly in both modes via `MaterialTheme.colorScheme` tokens, never hardcoded hex values**.
+Dark mode is one of the planned user-defined features (see `plan.md` §3.3).
 
 ### 1.3 Typography
-Two-font system: a rounded humanist display face for headings (e.g. **Poppins** / **Nunito**) + a clean text face for body copy (e.g. **Inter** / **Roboto**).
+Two-font system per `DESIGN.md`: **Poppins** for headings + **Inter** for body copy, with
+system-default fallback if downloadable fonts are unavailable on the device.
 
 | Style | Font / Weight | Size / Line height | Usage |
 |---|---|---|---|
@@ -225,7 +233,7 @@ Build order for UI: Splash → Home → Details → My Cart → Order Success �
 **Layout (top to bottom):**
 1. `AppHeader`: title "Rewards".
 2. Large loyalty stamp card (same visual language as the Home mini-card but full-size): 8-slot grid of cup icons, filled = earned, with a subtle "pop" animation on the most-recently-earned slot. If count == 8, card visually pulses/glows and shows "Tap to redeem your free drink!"
-3. Points summary card directly below: large **Total Points** number (Price-weight style, but not currency), Caption subtext ("Earn 1 point per $1 spent").
+3. Points summary card directly below: large **Total Points** number (Price-weight style, but not currency), Caption subtext ("Earn 5 points per $1 spent" — rate is the named constant `POINTS_PER_DOLLAR`, see `plan.md` §7; 5/$ keeps redemption demoable after a handful of orders).
 4. "Points History" section: list of past point-earning events, one row per completed order ("Order #1042 · +5 pts"), most recent first.
 5. `BottomNavBar` pinned, "Rewards" tab active.
 

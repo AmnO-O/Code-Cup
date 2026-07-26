@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import com.example.codecup.data.CartRepository
+import com.example.codecup.domain.PriceCalculator
 import com.example.codecup.models.Product
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
@@ -47,7 +47,6 @@ fun ProductDetailsScreen(
 
     var showCartPreview by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val cartItems by CartRepository.getInstance().cartItems.collectAsState()
 
     Scaffold(
         topBar = {
@@ -70,7 +69,7 @@ fun ProductDetailsScreen(
                         Icon(
                             imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorite",
-                            tint = if (uiState.isFavorite) Color.Red else MaterialTheme.colorScheme.primary
+                            tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -109,11 +108,10 @@ fun ProductDetailsScreen(
                             viewModel.addToCart()
                             onAddToCartClick()
                         },
-                        modifier = Modifier.width(200.dp)
+                        modifier = Modifier.width(220.dp)
                     ) {
-                        Text("Add to Cart")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.Default.ShoppingCart, contentDescription = null, modifier = Modifier.size(20.dp))
+                        // Live total in the label so price feedback is impossible to miss
+                        Text("Add to Cart — $${"%.2f".format(uiState.totalPrice)}")
                     }
                 }
             }
@@ -157,7 +155,7 @@ fun ProductDetailsScreen(
                 // Customization: Size
                 CustomizationSection(
                     title = "Size",
-                    options = listOf("Small (8oz)", "Medium (12oz)", "Large (16oz)"),
+                    options = PriceCalculator.SIZE_OPTIONS,
                     selectedOption = uiState.selectedSize,
                     onOptionSelected = { viewModel.updateSize(it) }
                 )
@@ -167,7 +165,7 @@ fun ProductDetailsScreen(
                 // Customization: Espresso Shots
                 CustomizationSection(
                     title = "Espresso Shots",
-                    options = listOf("Single", "Double", "Triple (+$0.80)"),
+                    options = PriceCalculator.SHOT_OPTIONS,
                     selectedOption = uiState.selectedShots,
                     onOptionSelected = { viewModel.updateShots(it) }
                 )
@@ -177,7 +175,7 @@ fun ProductDetailsScreen(
                 // Customization: Ice Level
                 CustomizationSection(
                     title = "Ice Level",
-                    options = listOf("No Ice", "Light Ice", "Regular Ice", "Extra Ice"),
+                    options = PriceCalculator.ICE_OPTIONS,
                     selectedOption = uiState.selectedIce,
                     onOptionSelected = { viewModel.updateIce(it) }
                 )
@@ -217,7 +215,7 @@ fun ProductDetailsScreen(
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             CartPreviewContent(
-                cartItems = cartItems,
+                cartItems = uiState.cartItems,
                 onClose = { showCartPreview = false }
             )
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Menu
@@ -38,11 +39,18 @@ fun MyOrdersScreen(
     viewModel: MyOrdersViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
     val tabs = listOf("Ongoing", "History")
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // One-shot events from the ViewModel ("+1 stamp earned!", "Order added to cart")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -119,10 +127,14 @@ fun MyOrdersScreen(
                         scope.launch {
                             snackbarHostState.showSnackbar("Please wait a moment, your drink is being prepared!")
                         }
-                    }
+                    },
+                    onOrderNow = { onNavigate("home") }
                 )
             } else {
-                OrdersHistoryList(uiState.orderHistory)
+                OrdersHistoryList(
+                    orders = uiState.orderHistory,
+                    onReorder = { viewModel.reorder(it) }
+                )
             }
         }
     }
@@ -133,12 +145,20 @@ fun MyOrdersScreen(
 fun OngoingOrdersList(
     orders: List<Order>,
     onMarkPickedUp: (String) -> Unit,
-    onNotReadyClick: () -> Unit
+    onNotReadyClick: () -> Unit,
+    onOrderNow: () -> Unit
 ) {
     if (orders.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No active orders", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        EmptyState(
+            title = "No active orders",
+            description = "Hungry for a brew? Your next order will show up here.",
+            icon = Icons.Default.LocalCafe,
+            action = {
+                PrimaryButton(onClick = onOrderNow, modifier = Modifier.width(180.dp)) {
+                    Text("Order Now")
+                }
+            }
+        )
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(orders) { order ->
@@ -290,15 +310,17 @@ fun StatusText(text: String, isReached: Boolean, isCurrent: Boolean = false) {
 }
 
 @Composable
-fun OrdersHistoryList(orders: List<Order>) {
+fun OrdersHistoryList(orders: List<Order>, onReorder: (Order) -> Unit) {
     if (orders.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No order history", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        EmptyState(
+            title = "No past orders yet",
+            description = "Completed orders move here from the Ongoing tab.",
+            icon = Icons.AutoMirrored.Filled.ReceiptLong
+        )
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(orders) { order ->
-                HistoryOrderCard(order)
+                HistoryOrderCard(order = order, onReorder = onReorder)
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -306,7 +328,7 @@ fun OrdersHistoryList(orders: List<Order>) {
 }
 
 @Composable
-fun HistoryOrderCard(order: Order) {
+fun HistoryOrderCard(order: Order, onReorder: (Order) -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -366,7 +388,7 @@ fun HistoryOrderCard(order: Order) {
             
             Spacer(modifier = Modifier.width(8.dp))
             
-            IconButton(onClick = { /* Reorder logic */ }) {
+            IconButton(onClick = { onReorder(order) }) {
                 Icon(Icons.Default.Replay, contentDescription = "Reorder", tint = MaterialTheme.colorScheme.secondary)
             }
         }

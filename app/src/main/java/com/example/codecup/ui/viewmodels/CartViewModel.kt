@@ -7,17 +7,15 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.codecup.data.CartRepository
+import com.example.codecup.data.NotificationsRepository
 import com.example.codecup.data.OrderRepository
-import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.RewardsRepository
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Order
 import com.example.codecup.models.OrderStatus
 import com.example.codecup.workers.OrderStatusWorker
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.random.Random
 
 data class CartUiState(
@@ -29,8 +27,9 @@ data class CartUiState(
 class CartViewModel(
     private val cartRepository: CartRepository,
     private val orderRepository: OrderRepository,
-    private val profileRepository: ProfileRepository,
-    private val context: Context? = null
+    private val rewardsRepository: RewardsRepository,
+    private val notificationsRepository: NotificationsRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
@@ -59,17 +58,18 @@ class CartViewModel(
         }
     }
 
+    /**
+     * Commits the cart into a persisted Order and clears the cart. Stamps/points are
+     * NOT awarded here — the rubric grants them when the order is completed (picked up).
+     */
     fun checkout(onSuccess: (String) -> Unit) {
         val items = _uiState.value.cartItems
         if (items.isEmpty()) return
 
         val orderId = "AC-${Random.nextInt(10000, 99999)}"
-        val sdf = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
-        val date = sdf.format(Date())
-
         val order = Order(
             id = orderId,
-            date = date,
+            dateMillis = System.currentTimeMillis(),
             items = items,
             totalPrice = _uiState.value.totalPrice,
             status = OrderStatus.Received
@@ -77,19 +77,15 @@ class CartViewModel(
 
         viewModelScope.launch {
             orderRepository.placeOrder(order)
-            
-            // Reward points and stamps
-            val pointsEarned = (order.totalPrice * 5).toInt() // $1 = 5 pts
-            profileRepository.addPoints(pointsEarned, "Points from Order #${order.id}")
-            profileRepository.addStamp()
-            
-            // Trigger background simulation if context is available
-            context?.let { ctx ->
-                val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
-                    .setInputData(workDataOf("order_id" to orderId))
-                    .build()
-                WorkManager.getInstance(ctx).enqueue(workRequest)
-            }
+            notificationsRepository.add(
+                title = "Order placed",
+                body = "Order #$orderId is being prepared. We'll tell you when it's ready!"
+            )
+
+            val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
+                .setInputData(workDataOf(OrderStatusWorker.KEY_ORDER_ID to orderId))
+                .build()
+            WorkManager.getInstance(context).enqueue(workRequest)
 
             cartRepository.clearCart()
             _uiState.update { it.copy(lastPlacedOrderId = orderId) }

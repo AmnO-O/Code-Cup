@@ -3,8 +3,11 @@ package com.example.codecup.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.CartRepository
-import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.FavoritesRepository
 import com.example.codecup.data.ProductRepository
+import com.example.codecup.data.ProfileRepository
+import com.example.codecup.data.RewardsRepository
+import com.example.codecup.domain.PriceCalculator
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Product
 import kotlinx.coroutines.flow.*
@@ -12,21 +15,22 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val products: List<Product> = emptyList(),
-    val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Pastries"),
+    val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Latte", "Pastries"),
     val selectedCategory: String = "All Coffee",
     val searchQuery: String = "",
     val cartItemsCount: Int = 0,
     val stampsEarned: Int = 0,
     val userName: String = "",
     val favoriteProductIds: Set<Int> = emptySet(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = true
 )
 
 class HomeViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
     private val profileRepository: ProfileRepository,
-    private val favoritesRepository: com.example.codecup.data.FavoritesRepository
+    private val rewardsRepository: RewardsRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -38,15 +42,15 @@ class HomeViewModel(
         loadProducts()
         observeCart()
         observeProfile()
+        observeRewards()
         observeFavorites()
     }
 
     private fun loadProducts() {
         productRepository.getProducts()
-            .onStart { _uiState.update { it.copy(isLoading = true) } }
             .onEach { products ->
                 _allProducts.value = products
-                applyFilters()
+                applyFilters(loaded = true)
             }
             .launchIn(viewModelScope)
     }
@@ -59,16 +63,21 @@ class HomeViewModel(
 
     private fun observeProfile() {
         profileRepository.profile.onEach { user ->
-            _uiState.update { it.copy(
-                stampsEarned = user.stamps,
-                userName = user.name.split(" ").firstOrNull() ?: user.name
-            ) }
+            _uiState.update {
+                it.copy(userName = user.name.split(" ").firstOrNull() ?: user.name)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observeRewards() {
+        rewardsRepository.stamps.onEach { stamps ->
+            _uiState.update { it.copy(stampsEarned = stamps) }
         }.launchIn(viewModelScope)
     }
 
     private fun observeFavorites() {
         favoritesRepository.getAllFavorites().onEach { favorites ->
-            _uiState.update { it.copy(favoriteProductIds = favorites.map { it.productId }.toSet()) }
+            _uiState.update { state -> state.copy(favoriteProductIds = favorites.map { it.productId }.toSet()) }
         }.launchIn(viewModelScope)
     }
 
@@ -82,7 +91,12 @@ class HomeViewModel(
         applyFilters()
     }
 
-    private fun applyFilters() {
+    fun clearFilters() {
+        _uiState.update { it.copy(searchQuery = "", selectedCategory = "All Coffee") }
+        applyFilters()
+    }
+
+    private fun applyFilters(loaded: Boolean = false) {
         val category = _uiState.value.selectedCategory
         val query = _uiState.value.searchQuery
 
@@ -91,17 +105,19 @@ class HomeViewModel(
             val matchesSearch = query.isBlank() || product.name.contains(query, ignoreCase = true)
             matchesCategory && matchesSearch
         }
-        _uiState.update { it.copy(products = filtered, isLoading = false) }
+        _uiState.update {
+            it.copy(products = filtered, isLoading = if (loaded) false else it.isLoading)
+        }
     }
 
     fun quickAddToCart(product: Product) {
         val cartItem = CartItem(
             product = product,
             quantity = 1,
-            size = "Medium (12oz)",
-            shots = "Double",
-            iceLevel = "Regular Ice",
-            totalPrice = product.price + 0.50 // Default medium price
+            size = PriceCalculator.SIZE_MEDIUM,
+            shots = PriceCalculator.SHOTS_DOUBLE,
+            iceLevel = PriceCalculator.ICE_REGULAR,
+            totalPrice = PriceCalculator.totalPrice(product.price, PriceCalculator.SIZE_MEDIUM, PriceCalculator.SHOTS_DOUBLE, 1)
         )
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)

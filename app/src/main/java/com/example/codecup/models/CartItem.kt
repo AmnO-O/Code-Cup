@@ -14,5 +14,3 @@ data class CartItem(
     val customizationSummary: String
         get() = "$size, $shots Shots, $iceLevel"
 }
-
-val sampleCartItems = listOf<CartItem>() // Empty for now to fix build

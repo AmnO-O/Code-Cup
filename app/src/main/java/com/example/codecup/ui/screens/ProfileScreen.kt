@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -31,7 +30,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import com.example.codecup.data.AppTheme
-import com.example.codecup.data.UserPreferencesRepository
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.ProfileViewModel
@@ -41,10 +39,7 @@ import com.example.codecup.ui.viewmodels.ViewModelFactory
 fun ProfileScreen(
     onNavigate: (String) -> Unit,
     viewModel: ProfileViewModel = viewModel(
-        factory = ViewModelFactory(
-            context = LocalContext.current,
-            userPreferencesRepository = UserPreferencesRepository.getInstance(LocalContext.current)
-        )
+        factory = ViewModelFactory(LocalContext.current)
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -174,13 +169,13 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     icon = Icons.AutoMirrored.Filled.ReceiptLong,
                     label = "Orders",
-                    value = user.ordersCount.toString()
+                    value = uiState.ordersCount.toString()
                 )
                 ProfileStatCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Default.Stars,
                     label = "Points",
-                    value = user.points.toString()
+                    value = uiState.points.toString()
                 )
                 ProfileStatCard(
                     modifier = Modifier.weight(1f),
@@ -234,22 +229,6 @@ fun ProfileScreen(
                         isEditMode = isEditMode,
                         onValueChange = { editedPhone = it }
                     )
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Sign Out Button
-                    PrimaryButton(
-                        onClick = { viewModel.signOut() },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Sign Out", fontWeight = FontWeight.Bold)
-                    }
                 }
             }
             

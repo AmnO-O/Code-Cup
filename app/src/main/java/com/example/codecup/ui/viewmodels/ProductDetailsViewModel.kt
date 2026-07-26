@@ -1,9 +1,12 @@
 package com.example.codecup.ui.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.CartRepository
+import com.example.codecup.data.FavoritesRepository
 import com.example.codecup.data.ProductRepository
+import com.example.codecup.domain.PriceCalculator
 import com.example.codecup.models.CartItem
 import com.example.codecup.models.Product
 import kotlinx.coroutines.flow.*
@@ -12,22 +15,32 @@ import kotlinx.coroutines.launch
 data class ProductDetailsUiState(
     val product: Product? = null,
     val quantity: Int = 1,
-    val selectedSize: String = "Medium (12oz)",
-    val selectedShots: String = "Double",
-    val selectedIce: String = "Regular Ice",
+    val selectedSize: String = PriceCalculator.SIZE_MEDIUM,
+    val selectedShots: String = PriceCalculator.SHOTS_DOUBLE,
+    val selectedIce: String = PriceCalculator.ICE_REGULAR,
     val isFavorite: Boolean = false,
     val totalPrice: Double = 0.0,
-    val cartItemsCount: Int = 0
+    val cartItemsCount: Int = 0,
+    val cartItems: List<CartItem> = emptyList()
 )
 
 class ProductDetailsViewModel(
     private val productId: Int,
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
-    private val favoritesRepository: com.example.codecup.data.FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProductDetailsUiState())
+    private val _uiState = MutableStateFlow(
+        // In-progress customization survives process death, not just rotation
+        ProductDetailsUiState(
+            quantity = savedStateHandle[KEY_QUANTITY] ?: 1,
+            selectedSize = savedStateHandle[KEY_SIZE] ?: PriceCalculator.SIZE_MEDIUM,
+            selectedShots = savedStateHandle[KEY_SHOTS] ?: PriceCalculator.SHOTS_DOUBLE,
+            selectedIce = savedStateHandle[KEY_ICE] ?: PriceCalculator.ICE_REGULAR
+        )
+    )
     val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
     init {
@@ -37,14 +50,16 @@ class ProductDetailsViewModel(
     }
 
     private fun loadProduct() {
-        val product = productRepository.getProductById(productId)
-        _uiState.update { it.copy(product = product) }
-        calculatePrice()
+        viewModelScope.launch {
+            val product = productRepository.getProductById(productId)
+            _uiState.update { it.copy(product = product) }
+            recalculatePrice()
+        }
     }
 
     private fun observeCart() {
         cartRepository.cartItems.onEach { items ->
-            _uiState.update { it.copy(cartItemsCount = items.size) }
+            _uiState.update { it.copy(cartItemsCount = items.size, cartItems = items) }
         }.launchIn(viewModelScope)
     }
 
@@ -56,45 +71,35 @@ class ProductDetailsViewModel(
 
     fun updateQuantity(newQuantity: Int) {
         if (newQuantity >= 1) {
+            savedStateHandle[KEY_QUANTITY] = newQuantity
             _uiState.update { it.copy(quantity = newQuantity) }
-            calculatePrice()
+            recalculatePrice()
         }
     }
 
     fun updateSize(size: String) {
+        savedStateHandle[KEY_SIZE] = size
         _uiState.update { it.copy(selectedSize = size) }
-        calculatePrice()
+        recalculatePrice()
     }
 
     fun updateShots(shots: String) {
+        savedStateHandle[KEY_SHOTS] = shots
         _uiState.update { it.copy(selectedShots = shots) }
-        calculatePrice()
+        recalculatePrice()
     }
 
     fun updateIce(ice: String) {
+        savedStateHandle[KEY_ICE] = ice
         _uiState.update { it.copy(selectedIce = ice) }
+        recalculatePrice()
     }
 
-    private fun calculatePrice() {
+    /** Live price recompute — runs on every customization or quantity change. */
+    private fun recalculatePrice() {
         val state = _uiState.value
         val product = state.product ?: return
-
-        var basePrice = product.price
-        
-        // Add cost for size
-        basePrice += when (state.selectedSize) {
-            "Small (8oz)" -> 0.0
-            "Medium (12oz)" -> 0.50
-            "Large (16oz)" -> 1.00
-            else -> 0.0
-        }
-
-        // Add cost for shots
-        if (state.selectedShots.contains("Triple")) {
-            basePrice += 0.80
-        }
-
-        val total = basePrice * state.quantity
+        val total = PriceCalculator.totalPrice(product.price, state.selectedSize, state.selectedShots, state.quantity)
         _uiState.update { it.copy(totalPrice = total) }
     }
 
@@ -110,7 +115,7 @@ class ProductDetailsViewModel(
             iceLevel = state.selectedIce,
             totalPrice = state.totalPrice
         )
-        
+
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)
         }
@@ -124,5 +129,12 @@ class ProductDetailsViewModel(
                 favoritesRepository.addFavorite(productId)
             }
         }
+    }
+
+    companion object {
+        private const val KEY_QUANTITY = "customization_quantity"
+        private const val KEY_SIZE = "customization_size"
+        private const val KEY_SHOTS = "customization_shots"
+        private const val KEY_ICE = "customization_ice"
     }
 }

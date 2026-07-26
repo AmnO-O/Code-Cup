@@ -1,28 +1,38 @@
-# Celebration Fireworks & Confetti Walkthrough
+# "Ask the Barista" Chat Feature Walkthrough
 
-I have added a celebratory burst effect to the rewards and redemption flows to make successful actions feel more rewarding.
+I have implemented a conversational UI where you can interact with a virtual barista to get coffee recommendations and advice.
 
 ## Changes Made
 
-### 1. Fireworks/Confetti Animation
-- **Burst Physics**: Modified the `ConfettiEffect` to act like a firework burst. Particles now launch upwards from the bottom-middle of the screen and then fall gracefully due to simulated gravity.
-- **Single Shot**: The animation now triggers once and lasts for about 2.5 seconds, providing a clear "congratulations" moment without cluttering the UI permanently.
+### 1. Conversational UI
+- **Redesigned Barista Screen**: Transformed the static screen into a modern chat interface.
+- **Message Bubbles**:
+    - **Barista**: Styled with a clean white background and a coffee icon avatar.
+    - **User**: Styled with a distinctive reddish background (`#C1502E`) and aligned to the right.
+- **Product Recommendations**: The barista can now send inline "Product Cards" for recommended drinks. These cards are clickable and take you directly to the drink's details.
+- **Typing Indicator**: Added a "Barista is typing..." indicator to make the conversation feel alive.
 
-### 2. Integration with Redemption
-- **Redeem Celebration**: In the **Redeem Rewards** screen, the celebration effect triggers immediately after you confirm an "Order Now" action.
-- **State Management**: The `RedeemRewardsViewModel` now tracks `showCelebration` and resets it automatically after the animation finishes.
+### 2. Barista Simulation (ViewModel)
+- **Smart Responses**: The `BaristaViewModel` analyzes your messages for keywords like "strong", "hot", "refreshing", or "dairy" and provides tailored advice.
+- **Automated Recommendations**: When suggesting a drink, the barista automatically attaches the corresponding product card to the message.
+- **Suggestion Chips**: Added quick-reply buttons (e.g., "Recommend a drink", "Low caffeine") to help users start the conversation easily.
 
-### 3. Integration with Loyalty Rewards
-- **Loyalty Celebration**: In the **Rewards** screen, the effect triggers when you successfully claim a reward (either the 500 points or the free drink).
-- **Visual Feedback**: Provides immediate visual confirmation that your loyalty stamps have been processed.
+### 3. Navigation & Architecture
+- **Transactional Flow**: The screen now features a back button instead of the drawer menu, focusing the user's attention on the conversation.
+- **Data Model**: Created a `ChatMessage` data class to handle the message history and attached products.
+- **Dependency Injection**: Updated `ViewModelFactory` to manage the new `BaristaViewModel`.
 
 ## Verification Results
 
 ### Automated Tests
 - `gradle assembleDebug` passed successfully.
-- Verified that the `ConfettiEffect` correctly uses the new `trigger` parameter to start and `onAnimationEnd` to clean up state.
+- Verified state management for chat history and typing simulation.
 
 ### Manual Verification Steps
-- **Redeem**: Confirm a reward order. Verify the colorful burst appears from the bottom of the screen.
-- **Loyalty**: Claim your free drink after 8 stamps. Verify the celebratory effect triggers.
-- **Auto-Dismiss**: Ensure the effect disappears on its own after ~2.5 seconds.
+1. Open the sidebar and click **"Ask the Barista"**.
+2. Type "I need something refreshing" and click send.
+3. Observe the user bubble appearing on the right.
+4. Watch the "typing" indicator on the left.
+5. Review the barista's response and the attached **Nitro Cold Brew** card.
+6. Click the suggestion chip **"Low caffeine"** and verify the response.
+7. Click the back arrow to return to the previous screen.

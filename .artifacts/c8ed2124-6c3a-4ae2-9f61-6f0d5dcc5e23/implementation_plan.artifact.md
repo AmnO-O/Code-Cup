@@ -1,47 +1,54 @@
-# Celebration Effect for Rewards and Redemption
+# Implement "Ask the Barista" Chat Feature
 
-Add a celebratory fireworks/confetti effect when a user successfully redeems a reward or claims a loyalty bonus.
+Implement a conversational UI where users can ask for drink recommendations and get advice from a virtual barista, based on the provided HTML design.
+
+## User Review Required
+
+> [!NOTE]
+> The chat will be a simulated experience with mock responses. In the future, this could be connected to an AI backend.
+
+> [!IMPORTANT]
+> The screen will transition from a drawer-based navigation to a transactional flow with a back button, as seen in the HTML design.
 
 ## Proposed Changes
 
-### [Component] UI Components
+### [Component] Data Models
 
-#### [MODIFY] [ConfettiEffect.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/ConfettiEffect.kt)
-- Update the `ConfettiEffect` to be triggered by a state change.
-- Modify the animation to run once (e.g., 3-5 seconds) instead of infinitely repeating.
-- Tweak the particle physics to feel more like a burst of fireworks (upward burst then falling).
+#### [NEW] [ChatMessage.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/models/ChatMessage.kt)
+- Define `ChatMessage` data class with fields for text, sender (User vs. Barista), timestamp, and optional `Product` recommendation.
 
 ### [Component] ViewModels
 
-#### [MODIFY] [RedeemRewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RedeemRewardsViewModel.kt)
-- Add `showCelebration: Boolean` to `RedeemRewardsUiState`.
-- Trigger `showCelebration = true` upon successful redemption.
-- Add a way to reset the celebration state.
+#### [NEW] [BaristaViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/BaristaViewModel.kt)
+- Manage a list of `ChatMessage` objects.
+- Implement logic to send a user message and trigger a delayed mock barista response.
+- Provide pre-defined recommendation logic based on keywords (e.g., "hot", "refreshing", "caffeine").
 
-#### [MODIFY] [RewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RewardsViewModel.kt)
-- Add `showCelebration: Boolean` to `RewardsUiState`.
-- Trigger `showCelebration = true` upon claiming a reward.
-- Add a way to reset the celebration state.
+#### [MODIFY] [ViewModelFactory.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ViewModelFactory.kt)
+- Add support for `BaristaViewModel`.
 
 ### [Component] UI Screens
 
-#### [MODIFY] [RedeemRewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RedeemRewardsScreen.kt)
-- Overlay the `ConfettiEffect` when `uiState.showCelebration` is true.
+#### [MODIFY] [BaristaScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/BaristaScreen.kt)
+- Redesign the UI to be a chat interface:
+    - **Header**: Back button and "Ask the Barista" title.
+    - **Chat History**: A scrolling list of message bubbles.
+    - **Barista Bubble**: Creamy background, coffee icon avatar.
+    - **User Bubble**: Primary/Reddish background, aligned to the right.
+    - **Product Card**: Inline card for recommended drinks.
+    - **Footer**: Suggestion chips and text input field with send button.
 
-#### [MODIFY] [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt)
-- Overlay the `ConfettiEffect` when `uiState.showCelebration` is true.
+#### [MODIFY] [NavGraph.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/navigation/NavGraph.kt)
+- Update `BaristaScreen` call to pass `onBackClick`.
 
 ## Verification Plan
 
 ### Automated Tests
-- Build the project and ensure animations are correctly handled.
+- Build the project to ensure all new components are correctly integrated.
 
 ### Manual Verification
-1. **Redeem Celebration**:
-    - Navigate to **Redeem Rewards**.
-    - Confirm an order.
-    - Verify that a celebration effect appears on the screen for a few seconds.
-2. **Loyalty Celebration**:
-    - Go to **Rewards**.
-    - Claim a reward (Points or Free Drink).
-    - Verify the celebration effect triggers.
+- Navigate to "Ask the Barista" from the sidebar.
+- Type a message and verify it appears on the right.
+- Wait for the barista's response to appear on the left.
+- Click a suggestion chip and verify it sends the message.
+- Verify the back button returns to the previous screen.

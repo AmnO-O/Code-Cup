@@ -45,6 +45,9 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(RedeemRewardsViewModel::class.java) -> {
                 RedeemRewardsViewModel(profileRepository, orderRepository, context) as T
             }
+            modelClass.isAssignableFrom(BaristaViewModel::class.java) -> {
+                BaristaViewModel(productRepository) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

@@ -176,12 +176,9 @@ fun NavGraph() {
 
         composable("barista") {
             BaristaScreen(
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                onBackClick = { navController.popBackStack() },
+                onProductClick = { productId ->
+                    navController.navigate("details/$productId")
                 }
             )
         }

@@ -1,6 +1,6 @@
-- [x] Update `ConfettiEffect.kt` for burst animation
-- [x] Add celebration state to `RedeemRewardsViewModel.kt`
-- [x] Add celebration state to `RewardsViewModel.kt`
-- [x] Show celebration in `RedeemRewardsScreen.kt`
-- [x] Show celebration in `RewardsScreen.kt`
-- [x] Verify animations
+- [x] Create `ChatMessage.kt` data model
+- [x] Create `BaristaViewModel.kt` with simulated responses
+- [x] Update `ViewModelFactory.kt`
+- [x] Redesign `BaristaScreen.kt` UI
+- [x] Update `NavGraph.kt` navigation
+- [x] Verify build and functionality

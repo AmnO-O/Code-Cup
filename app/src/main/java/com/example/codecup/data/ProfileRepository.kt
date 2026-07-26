@@ -1,13 +1,17 @@
 package com.example.codecup.data
 
 import android.content.Context
+import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import java.io.File
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 private val Context.profileDataStore: DataStore<Preferences> by preferencesDataStore(name = "profile_prefs")
 
@@ -55,7 +59,27 @@ class ProfileRepository(private val context: Context) {
         }
     }
 
-    suspend fun updateAvatar(newUrl: String) {
-        context.profileDataStore.edit { prefs -> prefs[Keys.AVATAR] = newUrl }
+    /**
+     * Copies a photo-picker image into app-internal storage and stores its file URI —
+     * picker grants are temporary, so referencing the original URI would break after
+     * a restart. A fresh filename per pick keeps Coil's cache from showing the old photo.
+     */
+    suspend fun updateAvatarFromUri(pickedUri: Uri): Boolean = withContext(Dispatchers.IO) {
+        val fileName = "avatar_${System.currentTimeMillis()}.jpg"
+        val file = File(context.filesDir, fileName)
+        val copied = context.contentResolver.openInputStream(pickedUri)?.use { input ->
+            file.outputStream().use { output -> input.copyTo(output) }
+            true
+        } ?: false
+        if (!copied) return@withContext false
+
+        context.filesDir.listFiles { candidate ->
+            candidate.name.startsWith("avatar_") && candidate.name != fileName
+        }?.forEach { it.delete() }
+
+        context.profileDataStore.edit { prefs ->
+            prefs[Keys.AVATAR] = Uri.fromFile(file).toString()
+        }
+        true
     }
 }

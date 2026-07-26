@@ -1,5 +1,8 @@
 package com.example.codecup.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -49,10 +52,25 @@ fun ProfileScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var editedName by remember(user.name) { mutableStateOf(user.name) }
     var editedEmail by remember(user.email) { mutableStateOf(user.email) }
     var editedPhone by remember(user.phone) { mutableStateOf(user.phone) }
+
+    // System photo picker — no runtime permission needed
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { pickedUri ->
+        pickedUri?.let { viewModel.updateAvatar(it) }
+    }
+
+    // One-shot events ("Profile updated", "Profile photo updated")
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -66,6 +84,7 @@ fun ProfileScreen(
         gesturesEnabled = !isEditMode
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 AppHeader(
                     title = "Profile",
@@ -109,20 +128,42 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Avatar
-            Surface(
-                modifier = Modifier
-                    .size(100.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                AsyncImage(
-                    model = user.avatarUrl,
-                    contentDescription = "Avatar",
-                    modifier = Modifier.fillMaxSize().clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+            // Avatar with tap-to-change photo badge
+            Box(contentAlignment = Alignment.BottomEnd) {
+                Surface(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    AsyncImage(
+                        model = user.avatarUrl,
+                        contentDescription = "Avatar",
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .shadow(4.dp, CircleShape)
+                        .clickable {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ) {
+                    Icon(
+                        Icons.Default.PhotoCamera,
+                        contentDescription = "Change profile photo",
+                        modifier = Modifier.padding(6.dp)
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -201,7 +242,8 @@ fun ProfileScreen(
                         value = editedEmail,
                         icon = Icons.Default.Mail,
                         isEditMode = isEditMode,
-                        onValueChange = { editedEmail = it }
+                        onValueChange = { editedEmail = it },
+                        errorText = uiState.emailError
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     ProfileField(
@@ -357,7 +399,8 @@ fun ProfileField(
     value: String,
     icon: ImageVector,
     isEditMode: Boolean,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    errorText: String? = null
 ) {
     Column {
         Text(
@@ -375,6 +418,7 @@ fun ProfileField(
                     Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                 },
                 shape = RoundedCornerShape(12.dp),
+                isError = errorText != null,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -383,6 +427,14 @@ fun ProfileField(
                 ),
                 singleLine = true
             )
+            if (errorText != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = errorText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         } else {
             Row(
                 modifier = Modifier

@@ -1,5 +1,7 @@
 package com.example.codecup.ui.viewmodels
 
+import android.net.Uri
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.codecup.data.AppTheme
@@ -16,7 +18,8 @@ data class ProfileUiState(
     val ordersCount: Int = 0,
     val points: Int = 0,
     val isEditMode: Boolean = false,
-    val themeMode: AppTheme = AppTheme.SYSTEM
+    val themeMode: AppTheme = AppTheme.SYSTEM,
+    val emailError: String? = null
 )
 
 class ProfileViewModel(
@@ -28,6 +31,10 @@ class ProfileViewModel(
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+
+    /** One-shot snackbar messages ("Profile updated"). */
+    private val _events = MutableSharedFlow<String>()
+    val events: SharedFlow<String> = _events.asSharedFlow()
 
     init {
         profileRepository.profile.onEach { user ->
@@ -54,13 +61,26 @@ class ProfileViewModel(
     }
 
     fun toggleEditMode() {
-        _uiState.update { it.copy(isEditMode = !it.isEditMode) }
+        _uiState.update { it.copy(isEditMode = !it.isEditMode, emailError = null) }
     }
 
+    /** Validates on save (ui_design §3.8): invalid email keeps edit mode with an inline error. */
     fun updateProfile(name: String, email: String, phone: String) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+            _uiState.update { it.copy(emailError = "Please enter a valid email address") }
+            return
+        }
         viewModelScope.launch {
-            profileRepository.updateProfile(name, email, phone)
-            _uiState.update { it.copy(isEditMode = false) }
+            profileRepository.updateProfile(name.trim(), email.trim(), phone.trim())
+            _uiState.update { it.copy(isEditMode = false, emailError = null) }
+            _events.emit("Profile updated")
+        }
+    }
+
+    fun updateAvatar(pickedUri: Uri) {
+        viewModelScope.launch {
+            val saved = profileRepository.updateAvatarFromUri(pickedUri)
+            _events.emit(if (saved) "Profile photo updated" else "Couldn't load that photo")
         }
     }
 }

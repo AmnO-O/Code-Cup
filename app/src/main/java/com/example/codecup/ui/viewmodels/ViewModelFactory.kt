@@ -37,7 +37,7 @@ class ViewModelFactory(
                 HomeViewModel(c.productRepository, c.cartRepository, c.profileRepository, c.rewardsRepository, c.favoritesRepository) as T
             }
             modelClass.isAssignableFrom(FavoritesViewModel::class.java) -> {
-                FavoritesViewModel(c.favoritesRepository, c.productRepository) as T
+                FavoritesViewModel(c.favoritesRepository, c.productRepository, c.cartRepository) as T
             }
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
                 CartViewModel(c.cartRepository, c.orderRepository, c.rewardsRepository, c.notificationsRepository, app) as T

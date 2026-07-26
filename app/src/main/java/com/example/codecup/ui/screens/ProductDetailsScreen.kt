@@ -97,7 +97,7 @@ fun ProductDetailsScreen(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Text(
+                        PulsingText(
                             text = "$${"%.2f".format(uiState.totalPrice)}",
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface

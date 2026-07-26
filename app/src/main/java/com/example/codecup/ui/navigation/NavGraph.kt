@@ -1,6 +1,15 @@
 package com.example.codecup.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,20 +20,55 @@ import com.example.codecup.ui.screens.*
 
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
+// ui_design §6: pushed screens slide in from the right; top-level (tab/drawer)
+// destinations cross-fade since they're peers, not a stack. Keep it under 250ms.
+private const val NAV_ANIM_MS = 240
+
+private fun fadeInSpec(): EnterTransition = fadeIn(animationSpec = tween(NAV_ANIM_MS))
+private fun fadeOutSpec(): ExitTransition = fadeOut(animationSpec = tween(NAV_ANIM_MS))
+
+private val fadeEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeInSpec() }
+private val fadeExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOutSpec() }
+
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
-    
-    NavHost(navController = navController, startDestination = "splash") {
-        composable("splash") {
+
+    NavHost(
+        navController = navController,
+        startDestination = "splash",
+        enterTransition = {
+            slideInHorizontally(animationSpec = tween(NAV_ANIM_MS)) { fullWidth -> fullWidth } + fadeInSpec()
+        },
+        exitTransition = {
+            slideOutHorizontally(animationSpec = tween(NAV_ANIM_MS)) { fullWidth -> -fullWidth / 4 } + fadeOutSpec()
+        },
+        popEnterTransition = {
+            slideInHorizontally(animationSpec = tween(NAV_ANIM_MS)) { fullWidth -> -fullWidth / 4 } + fadeInSpec()
+        },
+        popExitTransition = {
+            slideOutHorizontally(animationSpec = tween(NAV_ANIM_MS)) { fullWidth -> fullWidth } + fadeOutSpec()
+        }
+    ) {
+        composable(
+            "splash",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit
+        ) {
             SplashScreen(onTimeout = {
                 navController.navigate("home") {
                     popUpTo("splash") { inclusive = true }
                 }
             })
         }
-        
-        composable("home") {
+
+        composable(
+            "home",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             HomeScreen(
                 onProductClick = { productId ->
                     navController.navigate("details/$productId")
@@ -51,7 +95,13 @@ fun NavGraph() {
             )
         }
 
-        composable("favorites") {
+        composable(
+            "favorites",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             FavoritesScreen(
                 onProductClick = { productId ->
                     navController.navigate("details/$productId")
@@ -107,7 +157,8 @@ fun NavGraph() {
             OrderSuccessScreen(
                 orderId = orderId,
                 onTrackOrderClick = {
-                    navController.navigate("orders") {
+                    // Land on My Orders with the just-placed order highlighted
+                    navController.navigate("orders?highlight=$orderId") {
                         popUpTo("home") { saveState = true }
                     }
                 },
@@ -119,8 +170,22 @@ fun NavGraph() {
             )
         }
         
-        composable("orders") {
+        composable(
+            route = "orders?highlight={highlightId}",
+            arguments = listOf(
+                navArgument("highlightId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            ),
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) { backStackEntry ->
             MyOrdersScreen(
+                highlightOrderId = backStackEntry.arguments?.getString("highlightId"),
                 onNavigate = { route ->
                     if (route != "orders") {
                         navController.navigate(route) {
@@ -133,7 +198,13 @@ fun NavGraph() {
             )
         }
         
-        composable("rewards") {
+        composable(
+            "rewards",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             RewardsScreen(
                 onNavigate = { route ->
                     if (route != "rewards") {
@@ -160,7 +231,13 @@ fun NavGraph() {
             )
         }
         
-        composable("profile") {
+        composable(
+            "profile",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             ProfileScreen(
                 onNavigate = { route ->
                     if (route != "profile") {
@@ -187,7 +264,13 @@ fun NavGraph() {
             )
         }
 
-        composable("notifications") {
+        composable(
+            "notifications",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             NotificationsScreen(
                 onNavigate = { route ->
                     navController.navigate(route) {
@@ -199,7 +282,13 @@ fun NavGraph() {
             )
         }
 
-        composable("about") {
+        composable(
+            "about",
+            enterTransition = fadeEnter,
+            exitTransition = fadeExit,
+            popEnterTransition = fadeEnter,
+            popExitTransition = fadeExit
+        ) {
             AboutScreen(
                 onNavigate = { route ->
                     navController.navigate(route) {

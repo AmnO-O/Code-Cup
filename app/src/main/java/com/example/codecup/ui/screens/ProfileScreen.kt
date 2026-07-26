@@ -109,38 +109,20 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Avatar with Edit Trigger
-            Box(contentAlignment = Alignment.BottomEnd) {
-                Surface(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer
-                ) {
-                    AsyncImage(
-                        model = user.avatarUrl,
-                        contentDescription = "Avatar",
-                        modifier = Modifier.fillMaxSize().clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-                
-                Surface(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .shadow(4.dp, CircleShape)
-                        .clickable { /* Trigger photo picker */ },
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                ) {
-                    Icon(
-                        Icons.Default.PhotoCamera,
-                        contentDescription = "Change Photo",
-                        modifier = Modifier.padding(6.dp)
-                    )
-                }
+            // Avatar
+            Surface(
+                modifier = Modifier
+                    .size(100.dp)
+                    .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                AsyncImage(
+                    model = user.avatarUrl,
+                    contentDescription = "Avatar",
+                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
             }
             
             Spacer(modifier = Modifier.height(16.dp))

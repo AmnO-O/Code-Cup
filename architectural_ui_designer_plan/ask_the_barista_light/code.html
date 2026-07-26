@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ask the Barista - Artisan Coffee</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fe7e57",
+                        "tertiary": "#022400",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ddd9d5",
+                        "on-primary-fixed": "#2e1508",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "primary-container": "#F3E4D7",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#2B211B",
+                        "on-secondary-container": "#6f1a00",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#31302d",
+                        "surface-container": "#f1ede8",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#7a5646",
+                        "on-tertiary-container": "#7aa76b",
+                        "on-tertiary-fixed-variant": "#28501e",
+                        "on-surface-variant": "#50443f",
+                        "on-primary-fixed-variant": "#603f30",
+                        "inverse-primary": "#ecbca8",
+                        "inverse-on-surface": "#f4f0eb",
+                        "outline-variant": "#d4c3bc",
+                        "tertiary-container": "#143b0b",
+                        "surface": "#FFFFFF",
+                        "on-tertiary-fixed": "#022100",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#a53c1b",
+                        "outline": "#E4D6C9",
+                        "tertiary-fixed": "#c0f0ad",
+                        "surface-container-high": "#ebe8e3",
+                        "secondary-fixed": "#ffdbd1",
+                        "surface-bright": "#fdf9f4",
+                        "surface-container-highest": "#e5e2dd",
+                        "on-primary-container": "#be927f",
+                        "primary": "#31170b",
+                        "on-secondary-fixed-variant": "#842504",
+                        "background": "#fdf9f4",
+                        "surface-container-low": "#f7f3ee",
+                        "tertiary-fixed-dim": "#a4d393",
+                        "on-background": "#1c1c19",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ecbca8",
+                        "secondary-fixed-dim": "#ffb5a0",
+                        "primary-fixed": "#ffdbcc",
+                        "accent-container": "#FBE3DA",
+                        "on-secondary-fixed": "#3b0a00",
+                        "surface-variant": "#e5e2dd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin": "16px",
+                        "gutter": "12px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Inter"],
+                        "display-hero": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "price-display": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-hero": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-md": ["17px", { "lineHeight": "22px", "fontWeight": "500" }],
+                        "price-display": ["18px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background h-screen flex flex-col overflow-hidden font-body-md antialiased">
+<!-- TopAppBar (Transactional - Nav hidden, Back arrow shown) -->
+<header class="flex justify-between items-center w-full px-margin h-14 bg-background z-10 shrink-0">
+<button aria-label="Go back" class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-primary">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-primary font-bold text-center flex-1 pr-12 tracking-tight">Ask the Barista</h1>
+</header>
+<!-- Chat Canvas -->
+<main class="flex-1 overflow-y-auto px-margin py-lg space-y-lg no-scrollbar flex flex-col justify-end">
+<div class="space-y-sm flex flex-col w-full max-w-2xl mx-auto">
+<!-- Date Divider -->
+<div class="flex justify-center my-sm">
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Today, 9:41 AM</span>
+</div>
+<!-- Barista Message -->
+<div class="flex items-start gap-xs max-w-[85%] self-start">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 border border-outline">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+</div>
+<div class="bg-surface border border-outline rounded-2xl rounded-tl-none p-sm shadow-sm">
+<p class="font-body-md text-body-md text-on-surface">Hello! I'm your Artisan Barista. How can I craft your perfect cup today?</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-end justify-end max-w-[85%] self-end">
+<div class="bg-[#C1502E] text-on-primary rounded-2xl rounded-br-none p-sm shadow-sm">
+<p class="font-body-md text-body-md">I need something strong but refreshing. It's hot out!</p>
+</div>
+</div>
+<!-- Barista Message with Product Card -->
+<div class="flex items-start gap-xs max-w-[90%] self-start mt-md">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 border border-outline mt-1">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="bg-surface border border-outline rounded-2xl rounded-tl-none p-sm shadow-sm">
+<p class="font-body-md text-body-md text-on-surface">For a hot day, I highly recommend our Nitro Cold Brew. It's steeped for 18 hours and infused with nitrogen for a rich, creamy texture without the need for dairy. Very refreshing and packs a punch!</p>
+</div>
+<!-- Inline Product Card -->
+<div class="bg-surface border border-outline rounded-xl p-3 flex gap-3 items-center hover:bg-surface-bright transition-colors cursor-pointer w-64">
+<div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A close up shot of a tall glass of Nitro Cold Brew coffee resting on a rustic wooden table in a well lit artisanal cafe. Condensation covers the glass. The coffee is a deep rich dark amber, topped with a thick, cascading, creamy white nitrogen foam head. Warm, natural lighting highlights the texture of the foam." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJbgZBzHwwmlVdo3KVpysDcLOSvpfxC_7UiIXtKUGroq3RinJP1AxMierAlLSSlxVZvRZorPiMWUmtvqV50_EyGfrUh__EGJhIqxkApYyRyQhnSPRZglhM4tcrQnQm7zQFmvZ6zsp6LjXVVNSF8qdGOx16e2SP8QGV1YMibYWP7RWgH_3D3d4JZqT8zAaylxHBCsfpcd5m9D61ZhoDLwqtYSdBLZMEV2jRuXKSiSOfLVeJW2Fz4vvdqX4SgTzeAavfDAuGBU92VNE"/>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-title-md text-title-md text-primary truncate">Nitro Cold Brew</h4>
+<p class="font-caption text-caption text-on-surface-variant truncate">Smooth, creamy, bold</p>
+<p class="font-price-display text-price-display text-primary mt-1">$4.50</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Input Area (No Navigation Shell as this is a transactional flow) -->
+<footer class="bg-surface border-t border-outline px-margin py-3 pb-safe shrink-0">
+<div class="max-w-2xl mx-auto flex flex-col gap-sm">
+<!-- Suggestion Chips -->
+<div class="flex gap-xs overflow-x-auto no-scrollbar pb-1">
+<button class="px-4 py-1.5 rounded-full border border-outline bg-transparent hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant whitespace-nowrap transition-colors">
+                    Recommend a drink
+                </button>
+<button class="px-4 py-1.5 rounded-full border border-outline bg-transparent hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant whitespace-nowrap transition-colors">
+                    Low caffeine
+                </button>
+<button class="px-4 py-1.5 rounded-full border border-outline bg-transparent hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant whitespace-nowrap transition-colors">
+                    Dairy-free options
+                </button>
+</div>
+<!-- Input Field -->
+<div class="flex items-end gap-sm relative">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors shrink-0 mb-1">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="flex-1 relative">
+<textarea class="w-full bg-surface-container-lowest border border-outline rounded-[20px] py-3 pl-4 pr-12 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:border-primary resize-none outline-none overflow-hidden h-[48px]" placeholder="Type a message..." rows="1"></textarea>
+<button class="absolute right-2 bottom-1 w-10 h-10 rounded-full flex items-center justify-center text-[#C1502E] hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

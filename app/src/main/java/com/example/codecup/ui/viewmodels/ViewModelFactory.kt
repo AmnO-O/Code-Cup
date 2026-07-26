@@ -19,7 +19,7 @@ class ViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(userPreferencesRepository!!) as T
+                MainViewModel(userPreferencesRepository!!, profileRepository) as T
             }
             modelClass.isAssignableFrom(ProductDetailsViewModel::class.java) -> {
                 ProductDetailsViewModel(productId, productRepository, cartRepository, favoritesRepository!!) as T

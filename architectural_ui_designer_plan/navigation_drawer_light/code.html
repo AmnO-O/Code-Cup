@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coffee App Navigation Drawer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Poppins:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fe7e57",
+                        "tertiary": "#022400",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ddd9d5",
+                        "on-primary-fixed": "#2e1508",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "primary-container": "#F3E4D7",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#2B211B",
+                        "on-secondary-container": "#6f1a00",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#31302d",
+                        "surface-container": "#f1ede8",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#7a5646",
+                        "on-tertiary-container": "#7aa76b",
+                        "on-tertiary-fixed-variant": "#28501e",
+                        "on-surface-variant": "#50443f",
+                        "on-primary-fixed-variant": "#603f30",
+                        "inverse-primary": "#ecbca8",
+                        "inverse-on-surface": "#f4f0eb",
+                        "outline-variant": "#d4c3bc",
+                        "tertiary-container": "#143b0b",
+                        "surface": "#FFFFFF",
+                        "on-tertiary-fixed": "#022100",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#a53c1b",
+                        "outline": "#E4D6C9",
+                        "tertiary-fixed": "#c0f0ad",
+                        "surface-container-high": "#ebe8e3",
+                        "secondary-fixed": "#ffdbd1",
+                        "surface-bright": "#fdf9f4",
+                        "surface-container-highest": "#e5e2dd",
+                        "on-primary-container": "#be927f",
+                        "primary": "#31170b",
+                        "on-secondary-fixed-variant": "#842504",
+                        "background": "#fdf9f4",
+                        "surface-container-low": "#f7f3ee",
+                        "tertiary-fixed-dim": "#a4d393",
+                        "on-background": "#1c1c19",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ecbca8",
+                        "secondary-fixed-dim": "#ffb5a0",
+                        "primary-fixed": "#ffdbcc",
+                        "accent-container": "#FBE3DA",
+                        "on-secondary-fixed": "#3b0a00",
+                        "surface-variant": "#e5e2dd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin": "16px",
+                        "gutter": "12px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Inter"],
+                        "display-hero": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "price-display": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-hero": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-md": ["17px", { "lineHeight": "22px", "fontWeight": "500" }],
+                        "price-display": ["18px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md overflow-hidden antialiased">
+<!-- Mock Home Screen Content (Dimmed) -->
+<div class="relative w-full h-screen">
+<header class="flex justify-between items-center w-full px-margin h-14 bg-background z-10 relative">
+<button aria-label="Open menu" class="p-2 -ml-2 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-display-hero text-display-hero text-primary">Artisan Coffee</h1>
+<button aria-label="Shopping bag" class="p-2 -mr-2 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+</button>
+</header>
+<main class="p-margin pt-lg space-y-lg opacity-40 transition-opacity duration-300">
+<div class="w-full h-64 rounded-xl overflow-hidden shadow-sm relative">
+<img alt="Featured Coffee" class="object-cover w-full h-full" data-alt="A beautifully composed overhead shot of a freshly poured latte with intricate rosetta latte art. The cup is a matte ceramic off-white mug resting on a warm, textured natural wood table. Beside it lies a small silver spoon and a few scattered roasted coffee beans. The lighting is soft, warm, and natural morning light, creating gentle shadows that emphasize the artisanal, high-end coffee shop atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD60ZumeJqzKjw0SUlGIrZ4RaQCczVqKGJMqu9ZCmrMrxHaou1MiEkRPR-aJqWEdrFQneUZxlX1FbrlM3AvhG2TBndS0fAnG-2Oenl4soh18kbDEO-MyrpPsTSeUeWktJdDrDutoc3lhS7JmJC7-0YktqhYrKq4gxL7N3GISl73PltpYe52tOuCyVx3xnwK6j3_6-cNXiNQwGywiIht2ICZ1_V-QT99BJY8W5cbiog8i3h5rPqECuQY11y7gKf958_15alFy8ER7U"/>
+<div class="absolute bottom-0 left-0 right-0 p-md bg-gradient-to-t from-black/60 to-transparent">
+<h2 class="text-white font-headline-lg text-headline-lg">Morning Roast</h2>
+<p class="text-white/80 font-caption text-caption mt-1">Start your day with our signature blend</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<div class="bg-surface rounded-xl p-md outline outline-1 outline-outline flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary text-4xl mb-xs" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+<span class="font-title-md text-title-md text-primary mb-1">Cold Brew</span>
+<span class="font-price-display text-price-display text-primary-fixed-variant">$4.50</span>
+</div>
+<div class="bg-surface rounded-xl p-md outline outline-1 outline-outline flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary text-4xl mb-xs" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+<span class="font-title-md text-title-md text-primary mb-1">Pastries</span>
+<span class="font-price-display text-price-display text-primary-fixed-variant">From $3</span>
+</div>
+</div>
+</main>
+<!-- Scrum Overlay -->
+<div aria-hidden="true" class="absolute inset-0 bg-primary/40 z-20 backdrop-blur-[2px] transition-opacity duration-300"></div>
+<!-- Navigation Drawer -->
+<nav aria-label="Main Navigation" class="absolute top-0 left-0 h-full w-[85%] max-w-[360px] bg-surface z-30 shadow-2xl flex flex-col transition-transform duration-300 transform translate-x-0">
+<!-- Drawer Header / Profile Area -->
+<div class="p-lg bg-surface-container-low border-b border-outline/30 flex flex-col items-start pt-12">
+<div class="relative mb-md">
+<div class="w-16 h-16 rounded-full overflow-hidden outline outline-2 outline-offset-2 outline-primary-container">
+<img alt="Alex Johnson Profile Picture" class="object-cover w-full h-full" data-alt="A close-up portrait of an approachable young professional with a warm smile, wearing a casual stylish sweater in muted earth tones. The background is softly blurred, showing hints of a bright, modern cafe interior with warm natural lighting. The image conveys a friendly, inviting, and premium lifestyle aesthetic consistent with an artisanal coffee brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMbwAnqTM_7r040vkbJeJqT_2-3c-m2zi5SVlSib2olXqQUo4rCyKws3L6SE-s7E64i8nQD_Buv3zEDlOH1gnvbHi45wiGe4tbYIdQxOP8B-4SWjoyK7yRgPcEElcvtKUCrKq1xKClarnK8HsDcuG3cPchZNM30NMdaPg9IMwYGTPRTg2hXOnqxUU3HJvuRFaxUDffj6GOnNleraeED8MKO6skpYu8iwWTM4oyqJohG1JOfokwJRGL0I1MF5ZxPAS8ADbK_g2MS7A"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-secondary text-on-secondary rounded-full p-1 flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">Alex Johnson</h2>
+<div class="flex items-center gap-xs bg-primary-container text-on-primary-container px-sm py-1 rounded-full w-max">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-md text-label-md">850 pts</span>
+</div>
+</div>
+<!-- Drawer Menu List -->
+<div class="flex-1 overflow-y-auto py-sm px-sm space-y-1">
+<!-- Favorites -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
+<span class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex-1">Favorites</span>
+</a>
+<!-- Ask the Barista -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="forum" style="font-variation-settings: 'FILL' 0;">forum</span>
+<span class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex-1">Ask the Barista</span>
+</a>
+<!-- Notifications -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="notifications" style="font-variation-settings: 'FILL' 0;">notifications</span>
+<div class="absolute 1 top-0 right-0 w-2 h-2 bg-secondary rounded-full border border-surface"></div>
+</div>
+<span class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex-1">Notifications</span>
+<span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded-full">2</span>
+</a>
+<div class="h-px bg-outline-variant/50 my-sm mx-md"></div>
+<!-- Dark Mode Toggle -->
+<button class="w-full flex items-center justify-between px-md py-sm rounded-lg hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="dark_mode" style="font-variation-settings: 'FILL' 0;">dark_mode</span>
+<span class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">Dark Mode</span>
+</div>
+<!-- Toggle Switch (Off state) -->
+<div class="w-10 h-6 bg-surface-variant rounded-full p-1 flex items-center shadow-inner cursor-pointer relative outline outline-1 outline-outline-variant">
+<div class="w-4 h-4 bg-surface rounded-full shadow-sm transform translate-x-0 transition-transform"></div>
+</div>
+</button>
+<!-- Help & About -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg hover:bg-surface-container-high transition-colors group mt-auto" href="#">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="help" style="font-variation-settings: 'FILL' 0;">help</span>
+<span class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex-1">Help &amp; About</span>
+</a>
+</div>
+<!-- Drawer Footer -->
+<div class="p-md text-center border-t border-outline/30 mt-auto bg-surface">
+<p class="font-caption text-caption text-on-surface-variant">App Version 2.1.0</p>
+</div>
+</nav>
+</div>
+</body></html>

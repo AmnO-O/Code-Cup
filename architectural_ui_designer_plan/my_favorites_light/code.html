@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>My Favorites - Artisan Coffee</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fe7e57",
+                        "tertiary": "#022400",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ddd9d5",
+                        "on-primary-fixed": "#2e1508",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "primary-container": "#F3E4D7",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#2B211B",
+                        "on-secondary-container": "#6f1a00",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#31302d",
+                        "surface-container": "#f1ede8",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#7a5646",
+                        "on-tertiary-container": "#7aa76b",
+                        "on-tertiary-fixed-variant": "#28501e",
+                        "on-surface-variant": "#50443f",
+                        "on-primary-fixed-variant": "#603f30",
+                        "inverse-primary": "#ecbca8",
+                        "inverse-on-surface": "#f4f0eb",
+                        "outline-variant": "#d4c3bc",
+                        "tertiary-container": "#143b0b",
+                        "surface": "#FFFFFF",
+                        "on-tertiary-fixed": "#022100",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#a53c1b",
+                        "outline": "#E4D6C9",
+                        "tertiary-fixed": "#c0f0ad",
+                        "surface-container-high": "#ebe8e3",
+                        "secondary-fixed": "#ffdbd1",
+                        "surface-bright": "#fdf9f4",
+                        "surface-container-highest": "#e5e2dd",
+                        "on-primary-container": "#be927f",
+                        "primary": "#31170b",
+                        "on-secondary-fixed-variant": "#842504",
+                        "background": "#fdf9f4",
+                        "surface-container-low": "#f7f3ee",
+                        "tertiary-fixed-dim": "#a4d393",
+                        "on-background": "#1c1c19",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ecbca8",
+                        "secondary-fixed-dim": "#ffb5a0",
+                        "primary-fixed": "#ffdbcc",
+                        "accent-container": "#FBE3DA",
+                        "on-secondary-fixed": "#3b0a00",
+                        "surface-variant": "#e5e2dd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin": "16px",
+                        "gutter": "12px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Inter"],
+                        "display-hero": ["Poppins"],
+                        "title-md": ["Poppins"],
+                        "price-display": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "display-hero": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-md": ["17px", { "lineHeight": "22px", "fontWeight": "500" }],
+                        "price-display": ["18px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin h-14 bg-background docked full-width top-0 z-40 sticky">
+<button class="w-12 h-12 flex items-center justify-start text-primary active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-2xl" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-primary font-bold">My Favorites</h1>
+<div class="w-12 h-12"></div> <!-- Spacer for center alignment -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-margin pt-sm pb-xl overflow-y-auto">
+<!-- Filter/Sort Chips (Optional enhancement for Favorites) -->
+<div class="flex gap-sm overflow-x-auto pb-sm mb-md scrollbar-hide snap-x">
+<button class="snap-start flex-shrink-0 bg-primary-container border border-primary text-on-primary-container px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap">
+                All
+            </button>
+<button class="snap-start flex-shrink-0 bg-transparent border border-outline text-on-surface-variant px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap">
+                Beans
+            </button>
+<button class="snap-start flex-shrink-0 bg-transparent border border-outline text-on-surface-variant px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap">
+                Drinks
+            </button>
+<button class="snap-start flex-shrink-0 bg-transparent border border-outline text-on-surface-variant px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap">
+                Merch
+            </button>
+</div>
+<!-- 2-Column Grid for Products -->
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Product Card 1 -->
+<article class="bg-surface rounded-xl border border-outline overflow-hidden flex flex-col relative group">
+<button class="absolute top-xs right-xs z-10 w-8 h-8 flex items-center justify-center bg-surface/80 backdrop-blur-sm rounded-full">
+<span class="material-symbols-outlined fill text-secondary" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="aspect-square w-full bg-surface-container-low relative">
+<img class="w-full h-full object-cover" data-alt="A top-down studio shot of a pour-over coffee carafe with steaming Ethiopian Yirgacheffe coffee inside, placed on a light wooden coaster. The background is a clean, warm off-white surface, lit with soft natural daylight. The aesthetic is modern artisan, highlighting the amber tones of the coffee and creating a comforting, premium vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_7YcBvwzr58NAHaxjW0mV98ioHUG4iintomFI9bVw15sGq5RMQxxcx7OG9GijOP55oOpn1GtzpoJsuqFd3evuGFMsN0ofB7Zz_2lJdvgBEOCLK8eWKZUB6yx9Jjki27Kkfb7QbkNI16Ode8I5NldsyJG_LJK6rOOv_sihXfeXHBP5EVWCK1NUSupiP18gBEN8Zw9U_oERa7du5OfayHTt-byKcnIv_TyN4nQ-q3qb1BXpNvedBm4rC-EnUUrMWB_BR-BLabftliE"/>
+</div>
+<div class="p-sm flex flex-col flex-grow">
+<h2 class="font-title-md text-title-md text-on-surface line-clamp-1 mb-base">Ethiopian Yirgacheffe</h2>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2 mb-sm flex-grow">Floral notes with bright citrus acidity and a clean finish. Light roast.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-price-display text-price-display text-primary">$18.00</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="bg-surface rounded-xl border border-outline overflow-hidden flex flex-col relative group">
+<button class="absolute top-xs right-xs z-10 w-8 h-8 flex items-center justify-center bg-surface/80 backdrop-blur-sm rounded-full">
+<span class="material-symbols-outlined fill text-secondary" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="aspect-square w-full bg-surface-container-low relative">
+<img class="w-full h-full object-cover" data-alt="A tall glass of Nitro Cold Brew coffee with a cascading micro-foam head, sitting on a marble countertop. Condensation on the glass suggests it is ice cold. The lighting is bright and warm, illuminating the dark amber liquid against a creamy, minimalist background. The style is crisp, professional, and refreshing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxBf31b0RbbzFuIKOqr3IvP6fr5J5GVu498faX4V7xzkdnvkFkbRSPQXGPg0LC1CYBz_mmwbFcPlj2xxDxRGS2x-rYJ3XB9WMf5vgvGsnj1arboAFP-3o9lCAwlUGgJ_L2NbUqdJjQ-viSP92iDNJB_SESCDMOMFrLpGLQmGHns9E-JT_0Oc3Ux_Hber6hSilnuxGH1-c4G5_oMQrYlj1ojK3O_N883aMqbGg8CCdqFZ_C7rjvd13ZgTDjZry9awv_EHbFmKNUX0I"/>
+</div>
+<div class="p-sm flex flex-col flex-grow">
+<h2 class="font-title-md text-title-md text-on-surface line-clamp-1 mb-base">Nitro Cold Brew</h2>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2 mb-sm flex-grow">Smooth, velvety texture with natural sweetness. Infused with nitrogen.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-price-display text-price-display text-primary">$5.50</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="bg-surface rounded-xl border border-outline overflow-hidden flex flex-col relative group">
+<button class="absolute top-xs right-xs z-10 w-8 h-8 flex items-center justify-center bg-surface/80 backdrop-blur-sm rounded-full">
+<span class="material-symbols-outlined fill text-secondary" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="aspect-square w-full bg-surface-container-low relative">
+<img class="w-full h-full object-cover" data-alt="A beautifully poured Cortado in a small glass tumbler, showing distinct layers of espresso and steamed milk, topped with delicate latte art. Resting on a small ceramic saucer on a warm wooden table. The scene is bathed in soft morning light, creating a cozy, artisanal coffee shop atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDjwT9S4O8RWB1fThCOwT5RjelvOrUFEADNFgj229EF8253VFylUkyK-rxIi5pTP_DIBcVBXYtKomaBYoInnSS46ZRZ_hQ-BaALjn9Jh85cyqso-_IHOPQDM7f0YqAyiMD32yKAACMyg5YzJpxyUvQ81B_alseNe3NjA0YJBdV9QYsl2WtTT7DpnM6AwsYuvxB--rhkO9LyPOserv6bLCxZ5rVrZsAJqqKaepfZwPI0eXVdakGO5HghPwmIyBKQJDTlE36ynP0OJE"/>
+</div>
+<div class="p-sm flex flex-col flex-grow">
+<h2 class="font-title-md text-title-md text-on-surface line-clamp-1 mb-base">Classic Cortado</h2>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2 mb-sm flex-grow">Equal parts espresso and warm milk to reduce acidity.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-price-display text-price-display text-primary">$4.50</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 4 -->
+<article class="bg-surface rounded-xl border border-outline overflow-hidden flex flex-col relative group">
+<button class="absolute top-xs right-xs z-10 w-8 h-8 flex items-center justify-center bg-surface/80 backdrop-blur-sm rounded-full">
+<span class="material-symbols-outlined fill text-secondary" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="aspect-square w-full bg-surface-container-low relative">
+<img class="w-full h-full object-cover" data-alt="A matte ceramic coffee dripper (V60 style) sitting atop a matching mug. The objects are minimalist and elegant, colored in a soft cream and placed against a warm beige background. The lighting is highly diffused, giving the objects a soft, tactile, high-end design catalog feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDopLzM7U5xcdeB1hN-Wqu6UjwLf9sj1H1E9x53mB_BL5Hr7mjkYux51buj_gFrxJ7q9lkpGzwVmGwTnJ90MPEIdYSvQQ6oDms4PuXQj056RSrIBdcoiqI8K6EQAwlF5MBK7_awN7HnD683NwQWMV013uguLUwcHzWSLn-CIfoUaUnCa1rdD3Y0bFkZMJLrS_-XmTeD_0ClTF03_tG0ZESd8AFE2ftxKgO_2XSPyKZvYAPgF-7DQ60HUmUeqrS11hb6xDlUv_ZstTg"/>
+</div>
+<div class="p-sm flex flex-col flex-grow">
+<h2 class="font-title-md text-title-md text-on-surface line-clamp-1 mb-base">Ceramic V60</h2>
+<p class="font-caption text-caption text-on-surface-variant line-clamp-2 mb-sm flex-grow">Artisan-crafted ceramic pour-over brewer. Size 02.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-price-display text-price-display text-primary">$28.00</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Suppressed BottomNavBar: The prompt requests a specific 'My Favorites' screen with a back arrow, implying a sub-page or focused journey, not a top-level destination. -->
+</body></html>

@@ -1,0 +1,7 @@
+- [x] Explore HTML/CSS design references
+- [x] Update `AppDrawer.kt` with new design
+- [x] Add new routes to `NavGraph.kt`
+- [x] Create `BaristaScreen.kt`
+- [x] Create `NotificationsScreen.kt`
+- [x] Create `AboutScreen.kt`
+- [x] Verify build and navigation

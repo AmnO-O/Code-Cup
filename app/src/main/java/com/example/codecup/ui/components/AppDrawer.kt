@@ -67,7 +67,7 @@ fun AppDrawer(
     val isDarkMode = themeMode == AppTheme.DARK
 
     ModalDrawerSheet(
-        drawerContainerColor = Color(0xFFFFFFFF),
+        drawerContainerColor = MaterialTheme.colorScheme.surface,
         drawerTonalElevation = 0.dp,
         drawerShape = RoundedCornerShape(topEnd = 0.dp, bottomEnd = 0.dp),
         modifier = Modifier.width(320.dp)
@@ -109,7 +109,7 @@ fun AppDrawer(
 
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-                    color = Color(0xFFD4C3BC).copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
 
                 // Dark Mode Toggle Item
@@ -132,14 +132,14 @@ fun AppDrawer(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(width = 1.dp, color = Color(0xFFE4D6C9).copy(alpha = 0.3f), shape = RoundedCornerShape(0.dp))
+                    .border(width = 1.dp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), shape = RoundedCornerShape(0.dp))
                     .padding(vertical = 20.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "App Version 2.1.0",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF50443F).copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
             }
         }
@@ -151,7 +151,7 @@ fun DrawerHeader(user: UserProfile, points: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF7F3EE))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(start = 24.dp, top = 48.dp, bottom = 24.dp)
     ) {
         Box(modifier = Modifier.padding(bottom = 16.dp)) {
@@ -159,7 +159,7 @@ fun DrawerHeader(user: UserProfile, points: Int) {
             Surface(
                 modifier = Modifier
                     .size(64.dp)
-                    .border(2.dp, Color(0xFFF3E4D7), CircleShape),
+                    .border(2.dp, MaterialTheme.colorScheme.outline, CircleShape),
                 shape = CircleShape
             ) {
                 AsyncImage(
@@ -176,7 +176,7 @@ fun DrawerHeader(user: UserProfile, points: Int) {
                     .align(Alignment.BottomEnd)
                     .offset(x = 2.dp, y = 2.dp),
                 shape = CircleShape,
-                color = Color(0xFFA53C1B)
+                color = MaterialTheme.colorScheme.secondary
             ) {
                 Icon(
                     imageVector = Icons.Default.Verified,
@@ -191,14 +191,14 @@ fun DrawerHeader(user: UserProfile, points: Int) {
             text = user.name,
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF31170B)
+                color = MaterialTheme.colorScheme.primary
             )
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
         Surface(
-            color = Color(0xFFF3E4D7),
+            color = MaterialTheme.colorScheme.outline,
             shape = CircleShape
         ) {
             Row(
@@ -209,14 +209,14 @@ fun DrawerHeader(user: UserProfile, points: Int) {
                     imageVector = Icons.Default.Stars,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
-                    tint = Color(0xFFBE927F)
+                    tint = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "$points pts",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFBE927F)
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 )
             }
@@ -247,14 +247,14 @@ fun DrawerItem(
                 )
                 if (badgeCount > 0) {
                     Surface(
-                        color = Color(0xFFE5E2DD),
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = CircleShape
                     ) {
                         Text(
                             text = badgeCount.toString(),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF50443F)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -270,14 +270,14 @@ fun DrawerItem(
                 Icon(
                     imageVector = destination.icon,
                     contentDescription = null,
-                    tint = if (isSelected) Color(0xFF31170B) else Color(0xFF50443F)
+                    tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (badgeCount > 0) {
                     Box(
                         modifier = Modifier
                             .size(8.dp)
-                            .background(Color(0xFFA53C1B), CircleShape)
-                            .border(1.5.dp, Color.White, CircleShape)
+                            .background(MaterialTheme.colorScheme.secondary, CircleShape)
+                            .border(1.5.dp, MaterialTheme.colorScheme.surface, CircleShape)
                             .align(Alignment.TopEnd)
                             .offset(x = 2.dp, y = (-2).dp)
                     )
@@ -288,10 +288,10 @@ fun DrawerItem(
         colors = NavigationDrawerItemDefaults.colors(
             selectedContainerColor = Color(0xFFF1EDE8),
             unselectedContainerColor = Color.Transparent,
-            selectedIconColor = Color(0xFF31170B),
-            unselectedIconColor = Color(0xFF50443F),
-            selectedTextColor = Color(0xFF31170B),
-            unselectedTextColor = Color(0xFF2B211B)
+            selectedIconColor = MaterialTheme.colorScheme.primary,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedTextColor = MaterialTheme.colorScheme.primary,
+            unselectedTextColor = MaterialTheme.colorScheme.onSurface
         ),
         modifier = Modifier.padding(vertical = 2.dp)
     )
@@ -313,7 +313,7 @@ fun DarkModeToggleItem(
         Icon(
             imageVector = Icons.Default.DarkMode,
             contentDescription = null,
-            tint = Color(0xFF50443F)
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
@@ -321,7 +321,7 @@ fun DarkModeToggleItem(
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF2B211B)
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
         Switch(
@@ -329,10 +329,10 @@ fun DarkModeToggleItem(
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = Color(0xFF31170B),
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xFFE5E2DD),
-                uncheckedBorderColor = Color(0xFFD4C3BC)
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedBorderColor = MaterialTheme.colorScheme.outlineVariant
             )
         )
     }

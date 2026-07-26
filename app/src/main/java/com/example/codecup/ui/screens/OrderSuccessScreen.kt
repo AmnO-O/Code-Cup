@@ -29,7 +29,7 @@ fun OrderSuccessScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = CoffeeBackground
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
@@ -44,14 +44,14 @@ fun OrderSuccessScreen(
                         .size(96.dp)
                         .shadow(4.dp, CircleShape),
                     shape = CircleShape,
-                    color = CoffeeSurface
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
                             modifier = Modifier.size(48.dp),
-                            tint = CoffeeSecondary
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
@@ -61,7 +61,7 @@ fun OrderSuccessScreen(
                 Text(
                     text = "Order Placed!",
                     style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                    color = CoffeePrimary,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
                 
@@ -70,7 +70,7 @@ fun OrderSuccessScreen(
                 Text(
                     text = "Your artisan coffee is being crafted with care. We'll let you know when it's on the way.",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = CoffeeOnSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
@@ -81,8 +81,8 @@ fun OrderSuccessScreen(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    color = CoffeeSurface,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CoffeeOutline)
+                    color = MaterialTheme.colorScheme.surface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Column(
                         modifier = Modifier.padding(24.dp),
@@ -94,7 +94,7 @@ fun OrderSuccessScreen(
                                 fontWeight = FontWeight.Medium,
                                 letterSpacing = 2.sp
                             ),
-                            color = CoffeeOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -103,7 +103,7 @@ fun OrderSuccessScreen(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 4.sp
                             ),
-                            color = CoffeePrimary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -125,8 +125,8 @@ fun OrderSuccessScreen(
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CoffeePrimaryContainer,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
                     Text("Back to Home", fontWeight = FontWeight.Bold)

@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.codecup.ui.theme.CoffeeOnSurfaceVariant
-import com.example.codecup.ui.theme.CoffeePrimary
 
 @Composable
 fun EmptyState(
@@ -34,20 +32,20 @@ fun EmptyState(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
-            tint = CoffeePrimary.copy(alpha = 0.2f)
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            color = CoffeePrimary,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            color = CoffeeOnSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
         if (action != null) {

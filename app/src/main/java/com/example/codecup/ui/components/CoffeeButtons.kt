@@ -10,16 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.codecup.ui.theme.CoffeePrimary
-import com.example.codecup.ui.theme.CoffeeSecondary
-
 @Composable
 fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    containerColor: Color = CoffeeSecondary,
-    contentColor: Color = Color.White,
+    containerColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
     content: @Composable RowScope.() -> Unit
 ) {
     Button(

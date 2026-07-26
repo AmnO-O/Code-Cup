@@ -67,7 +67,7 @@ fun BaristaScreen(
                         "Ask the Barista", 
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFF31170B)
+                        color = MaterialTheme.colorScheme.primary
                     ) 
                 },
                 navigationIcon = {
@@ -75,12 +75,12 @@ fun BaristaScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack, 
                             contentDescription = "Back",
-                            tint = Color(0xFF31170B)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFDF9F4)
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
@@ -92,7 +92,7 @@ fun BaristaScreen(
                 onSuggestionClick = { viewModel.sendMessage(it) }
             )
         },
-        containerColor = Color(0xFFFDF9F4)
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         LazyColumn(
             state = listState,
@@ -127,14 +127,14 @@ fun BaristaScreen(
 fun DateDivider() {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Surface(
-            color = Color(0xFFF1EDE8),
+            color = MaterialTheme.colorScheme.surfaceVariant,
             shape = CircleShape
         ) {
             Text(
                 text = "Today, 9:41 AM",
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelSmall,
-                color = Color(0xFF50443F)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -163,20 +163,20 @@ fun MessageBubble(
             horizontalAlignment = if (isBarista) Alignment.Start else Alignment.End
         ) {
             Surface(
-                color = if (isBarista) Color.White else Color(0xFFC1502E),
+                color = if (isBarista) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(
                     topStart = 16.dp,
                     topEnd = 16.dp,
                     bottomStart = if (isBarista) 0.dp else 16.dp,
                     bottomEnd = if (isBarista) 16.dp else 0.dp
                 ),
-                border = if (isBarista) BorderStroke(1.dp, Color(0xFFE4D6C9)) else null,
+                border = if (isBarista) BorderStroke(1.dp, MaterialTheme.colorScheme.outline) else null,
                 tonalElevation = if (isBarista) 1.dp else 0.dp
             ) {
                 Text(
                     text = message.text,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    color = if (isBarista) Color(0xFF2B211B) else Color.White,
+                    color = if (isBarista) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -198,15 +198,15 @@ fun BaristaAvatar() {
     Surface(
         modifier = Modifier.size(32.dp),
         shape = CircleShape,
-        color = Color(0xFFF3E4D7),
-        border = BorderStroke(1.dp, Color(0xFFE4D6C9))
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 Icons.Default.LocalCafe,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = Color(0xFF31170B)
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -223,8 +223,8 @@ fun RecommendationCard(
             .width(260.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        color = Color.White,
-        border = BorderStroke(1.dp, Color(0xFFE4D6C9))
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -243,19 +243,19 @@ fun RecommendationCard(
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFF31170B),
+                    color = MaterialTheme.colorScheme.primary,
                     maxLines = 1
                 )
                 Text(
                     text = product.description,
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF50443F),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
                 Text(
                     text = "$${"%.2f".format(product.price)}",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF31170B)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
             Surface(
@@ -263,13 +263,13 @@ fun RecommendationCard(
                     .size(28.dp)
                     .clickable(onClick = onAddToCart),
                 shape = CircleShape,
-                color = Color(0xFFF3E4D7)
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = "Add to cart",
                     modifier = Modifier.size(16.dp),
-                    tint = Color(0xFF31170B)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -285,7 +285,7 @@ fun ChatInputArea(
 ) {
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         LazyRow(
@@ -308,10 +308,10 @@ fun ChatInputArea(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 4.dp),
-                placeholder = { Text("Type a message...", color = Color(0xFF50443F)) },
+                placeholder = { Text("Type a message...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFFDF9F4),
-                    unfocusedContainerColor = Color(0xFFFDF9F4),
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
@@ -322,7 +322,7 @@ fun ChatInputArea(
             IconButton(
                 onClick = onSendClick,
                 modifier = Modifier.size(40.dp),
-                colors = IconButtonDefaults.iconButtonColors(contentColor = Color(0xFFC1502E))
+                colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
             ) {
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
             }
@@ -335,14 +335,14 @@ fun SuggestionChip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.clickable(onClick = onClick),
         shape = CircleShape,
-        border = BorderStroke(1.dp, Color(0xFFE4D6C9)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         color = Color.Transparent
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
-            color = Color(0xFF50443F)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -356,7 +356,7 @@ fun TypingIndicator() {
         Text(
             "Barista is typing...",
             style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF50443F),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(4.dp)
         )
     }

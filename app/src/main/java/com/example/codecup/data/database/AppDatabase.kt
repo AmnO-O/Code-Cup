@@ -47,19 +47,16 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         /**
-         * Seeds the menu when the database file is first created, and re-seeds after a
-         * destructive migration (onOpen guard keeps this idempotent — it only inserts
-         * when the products table is empty, never duplicating rows on normal launches).
+         * Upserts the app-defined menu on every open: first launch seeds it, later
+         * launches refresh names/prices/images in place. REPLACE on the stable primary
+         * keys makes this idempotent — no duplicate rows are possible.
          */
         private val seedCallback = object : Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
                 val database = Instance ?: return
                 CoroutineScope(Dispatchers.IO).launch {
-                    val dao = database.productDao()
-                    if (dao.count() == 0) {
-                        dao.insertAll(SeedData.products)
-                    }
+                    database.productDao().insertAll(SeedData.products)
                 }
             }
         }

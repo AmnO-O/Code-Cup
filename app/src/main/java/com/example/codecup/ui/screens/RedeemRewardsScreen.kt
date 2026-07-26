@@ -23,6 +23,7 @@ import coil.compose.AsyncImage
 import com.example.codecup.models.Product
 import com.example.codecup.models.sampleProducts
 import com.example.codecup.ui.components.AppHeader
+import com.example.codecup.ui.components.ConfettiEffect
 import com.example.codecup.ui.components.PrimaryButton
 import com.example.codecup.ui.theme.*
 import com.example.codecup.ui.viewmodels.RedeemRewardsViewModel
@@ -63,58 +64,65 @@ fun RedeemRewardsScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            AppHeader(title = "Redeem Rewards", onBackClick = onBackClick)
-        },
-        containerColor = CoffeeBackground
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Balance Banner
-            item {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    color = CoffeeAccentContainer
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                AppHeader(title = "Redeem Rewards", onBackClick = onBackClick)
+            },
+            containerColor = CoffeeBackground
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Balance Banner
+                item {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        color = CoffeeAccentContainer
                     ) {
-                        Text(
-                            text = "You have ",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CoffeeOnSurface
-                        )
-                        Text(
-                            text = "${uiState.pointsBalance} points",
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            color = CoffeeSecondary
-                        )
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "You have ",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = CoffeeOnSurface
+                            )
+                            Text(
+                                text = "${uiState.pointsBalance} points",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                color = CoffeeSecondary
+                            )
+                        }
                     }
                 }
-            }
-            
-            items(sampleProducts) { product ->
-                val pointCost = (product.price * 25).toInt() // Example: $1 = 25 pts
-                val canRedeem = uiState.pointsBalance >= pointCost
                 
-                RedeemItemRow(
-                    product = product,
-                    pointCost = pointCost,
-                    canRedeem = canRedeem,
-                    pointsBalance = uiState.pointsBalance,
-                    onRedeemClick = { viewModel.initiateRedeem(product) }
-                )
+                items(sampleProducts) { product ->
+                    val pointCost = (product.price * 25).toInt() // Example: $1 = 25 pts
+                    val canRedeem = uiState.pointsBalance >= pointCost
+                    
+                    RedeemItemRow(
+                        product = product,
+                        pointCost = pointCost,
+                        canRedeem = canRedeem,
+                        pointsBalance = uiState.pointsBalance,
+                        onRedeemClick = { viewModel.initiateRedeem(product) }
+                    )
+                }
             }
         }
+
+        ConfettiEffect(
+            trigger = uiState.showCelebration,
+            onAnimationEnd = { viewModel.dismissCelebration() }
+        )
     }
 }
 

@@ -23,7 +23,8 @@ data class RedeemRewardsUiState(
     val isRedeeming: Boolean = false,
     val redeemSuccess: Boolean = false,
     val showConfirmDialog: Boolean = false,
-    val selectedProduct: Product? = null
+    val selectedProduct: Product? = null,
+    val showCelebration: Boolean = false
 )
 
 class RedeemRewardsViewModel(
@@ -93,9 +94,20 @@ class RedeemRewardsViewModel(
                     // So we just reset state
                 }
                 
-                _uiState.update { it.copy(isRedeeming = false, redeemSuccess = takeNow, selectedProduct = null) }
+                _uiState.update { 
+                    it.copy(
+                        isRedeeming = false, 
+                        redeemSuccess = takeNow, 
+                        selectedProduct = null,
+                        showCelebration = takeNow
+                    ) 
+                }
             }
         }
+    }
+    
+    fun dismissCelebration() {
+        _uiState.update { it.copy(showCelebration = false) }
     }
     
     fun resetSuccess() {

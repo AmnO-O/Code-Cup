@@ -1,48 +1,47 @@
-# Fix Redemption Flow and Add Order Simulation
+# Celebration Effect for Rewards and Redemption
 
-Refine the rewards redemption process and add background status simulation for free orders.
+Add a celebratory fireworks/confetti effect when a user successfully redeems a reward or claims a loyalty bonus.
 
 ## Proposed Changes
 
-### [Component] ViewModels & Logic
+### [Component] UI Components
+
+#### [MODIFY] [ConfettiEffect.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/ConfettiEffect.kt)
+- Update the `ConfettiEffect` to be triggered by a state change.
+- Modify the animation to run once (e.g., 3-5 seconds) instead of infinitely repeating.
+- Tweak the particle physics to feel more like a burst of fireworks (upward burst then falling).
+
+### [Component] ViewModels
 
 #### [MODIFY] [RedeemRewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RedeemRewardsViewModel.kt)
-- Add `context: Context?` to constructor.
-- Update `confirmRedeem(takeNow: Boolean)`:
-    - If `takeNow` is `false`, just `dismissDialog()` without deducting points.
-    - If `takeNow` is `true`, enqueue `OrderStatusWorker` to simulate the order status changes (Received -> Preparing -> Ready).
+- Add `showCelebration: Boolean` to `RedeemRewardsUiState`.
+- Trigger `showCelebration = true` upon successful redemption.
+- Add a way to reset the celebration state.
 
 #### [MODIFY] [RewardsViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/RewardsViewModel.kt)
-- Add `context: Context?` to constructor.
-- Update `claimReward(choice: RewardChoice)`:
-    - If `choice` is `FREE_DRINK`, enqueue `OrderStatusWorker` for the automatically placed free order.
-
-#### [MODIFY] [ViewModelFactory.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/ViewModelFactory.kt)
-- Pass `context` to `RewardsViewModel` and `RedeemRewardsViewModel`.
+- Add `showCelebration: Boolean` to `RewardsUiState`.
+- Trigger `showCelebration = true` upon claiming a reward.
+- Add a way to reset the celebration state.
 
 ### [Component] UI Screens
 
 #### [MODIFY] [RedeemRewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RedeemRewardsScreen.kt)
-- Rename the "Save for Later" button in the `AlertDialog` to "Cancel" to better reflect the new non-deductive behavior.
+- Overlay the `ConfettiEffect` when `uiState.showCelebration` is true.
 
-#### [MODIFY] [MyOrdersScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/MyOrdersScreen.kt)
-- Update the `PrimaryButton` in `OngoingOrderCard`:
-    - Disable the button if `order.status != OrderStatus.Ready`.
-    - Change the button text to "Preparing..." if not ready.
+#### [MODIFY] [RewardsScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/RewardsScreen.kt)
+- Overlay the `ConfettiEffect` when `uiState.showCelebration` is true.
 
 ## Verification Plan
 
 ### Automated Tests
-- Build the project and verify dependency injection.
+- Build the project and ensure animations are correctly handled.
 
 ### Manual Verification
-1. **Redeem Flow**:
-    - Click "Redeem" -> Select "Cancel" -> Verify points are NOT deducted.
-    - Click "Redeem" -> Select "Order Now" -> Verify points ARE deducted and order simulation starts.
-2. **Order Simulation**:
-    - Place a $0 order (Redeem or Reward).
-    - Navigate to **My Orders**.
-    - Verify the status bar progresses from **Received** to **Preparing** to **Ready** over ~15 seconds.
-3. **Pick Up Logic**:
-    - While the order is "Preparing", verify the "Pick Up" button is disabled.
-    - Once the status reaches "Ready", verify the button becomes enabled and allows completion.
+1. **Redeem Celebration**:
+    - Navigate to **Redeem Rewards**.
+    - Confirm an order.
+    - Verify that a celebration effect appears on the screen for a few seconds.
+2. **Loyalty Celebration**:
+    - Go to **Rewards**.
+    - Claim a reward (Points or Free Drink).
+    - Verify the celebration effect triggers.

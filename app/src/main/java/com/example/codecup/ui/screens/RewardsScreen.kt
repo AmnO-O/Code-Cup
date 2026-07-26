@@ -57,117 +57,124 @@ fun RewardsScreen(
         )
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            AppDrawer(
-                currentRoute = "rewards",
-                onNavigate = onNavigate,
-                onCloseDrawer = { scope.launch { drawerState.close() } }
-            )
-        }
-    ) {
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                AppHeader(
-                    title = "Rewards",
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
-                        }
-                    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                AppDrawer(
+                    currentRoute = "rewards",
+                    onNavigate = onNavigate,
+                    onCloseDrawer = { scope.launch { drawerState.close() } }
                 )
-            },
-            bottomBar = {
-                BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)
-            },
-            containerColor = MaterialTheme.colorScheme.background
-        ) { innerPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-            // Loyalty Card
-            item {
-                LoyaltyCard(
-                    stampsEarned = user.stamps,
-                    onClick = {
-                        if (user.stamps >= 8) {
-                            viewModel.onStampsCompleted()
-                        } else {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Collect 8 stamps to get a free drink! (${8 - user.stamps} left)")
+            }
+        ) {
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                topBar = {
+                    AppHeader(
+                        title = "Rewards",
+                        navigationIcon = {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            }
+                        }
+                    )
+                },
+                bottomBar = {
+                    BottomNavBar(currentRoute = NavDestination.Rewards.route, onNavigate = onNavigate)
+                },
+                containerColor = MaterialTheme.colorScheme.background
+            ) { innerPadding ->
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Loyalty Card
+                    item {
+                        LoyaltyCard(
+                            stampsEarned = user.stamps,
+                            onClick = {
+                                if (user.stamps >= 8) {
+                                    viewModel.onStampsCompleted()
+                                } else {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Collect 8 stamps to get a free drink! (${8 - user.stamps} left)")
+                                    }
+                                }
+                            }
+                        )
+                    }
+                    
+                    // Points Banner
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.size(48.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Stars,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(8.dp),
+                                        tint = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Total Points",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
+                                    )
+                                    Text(
+                                        text = "${user.points} pts",
+                                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                }
+                                TextButton(onClick = onRedeemClick) {
+                                    Text("Redeem", color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Bold)
+                                }
                             }
                         }
                     }
-                )
-            }
-            
-            // Points Banner
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Stars,
-                                contentDescription = null,
-                                modifier = Modifier.padding(8.dp),
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Total Points",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
-                            )
-                            Text(
-                                text = "${user.points} pts",
-                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                        }
-                        TextButton(onClick = onRedeemClick) {
-                            Text("Redeem", color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Bold)
-                        }
+                    
+                    // Points History
+                    item {
+                        Text(
+                            text = "Points History",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    
+                    items(user.pointsHistory) { history ->
+                        PointsHistoryRow(history)
                     }
                 }
             }
-            
-            // Points History
-            item {
-                Text(
-                    text = "Points History",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            
-            items(user.pointsHistory) { history ->
-                PointsHistoryRow(history)
-            }
         }
+
+        ConfettiEffect(
+            trigger = uiState.showCelebration,
+            onAnimationEnd = { viewModel.dismissCelebration() }
+        )
     }
-}
 }
 
 @Composable

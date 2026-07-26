@@ -1,7 +1,6 @@
-- [x] Update `ProfileRepository.kt` with free drink logic
-- [ ] Update `RedeemRewardsViewModel.kt` with simulation & cancel logic `[/]`
-- [ ] Update `RewardsViewModel.kt` with simulation logic `[ ]`
-- [ ] Update `ViewModelFactory.kt` for dependency injection `[ ]`
-- [ ] Refine `RedeemRewardsScreen.kt` dialog `[ ]`
-- [ ] Update `MyOrdersScreen.kt` to disable pick-up button `[ ]`
-- [ ] Verify build and simulation `[ ]`
+- [x] Update `ConfettiEffect.kt` for burst animation
+- [x] Add celebration state to `RedeemRewardsViewModel.kt`
+- [x] Add celebration state to `RewardsViewModel.kt`
+- [x] Show celebration in `RedeemRewardsScreen.kt`
+- [x] Show celebration in `RewardsScreen.kt`
+- [x] Verify animations

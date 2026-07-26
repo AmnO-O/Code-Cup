@@ -24,7 +24,8 @@ enum class RewardChoice {
 data class RewardsUiState(
     val user: UserProfile = UserProfile(),
     val isLoading: Boolean = false,
-    val showRewardChoiceDialog: Boolean = false
+    val showRewardChoiceDialog: Boolean = false,
+    val showCelebration: Boolean = false
 )
 
 class RewardsViewModel(
@@ -102,8 +103,12 @@ class RewardsViewModel(
                 }
             }
             
-            _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { it.copy(isLoading = false, showCelebration = true) }
         }
+    }
+
+    fun dismissCelebration() {
+        _uiState.update { it.copy(showCelebration = false) }
     }
 
     fun resetLoyaltyCard() {

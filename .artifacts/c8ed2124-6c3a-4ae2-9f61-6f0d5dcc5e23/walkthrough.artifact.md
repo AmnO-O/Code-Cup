@@ -1,33 +1,28 @@
-# Rewards Flow Optimization & Order Simulation Walkthrough
+# Celebration Fireworks & Confetti Walkthrough
 
-I have refined the rewards redemption logic and added real-time status simulation for free orders.
+I have added a celebratory burst effect to the rewards and redemption flows to make successful actions feel more rewarding.
 
 ## Changes Made
 
-### 1. Improved Redemption Logic
-- **Non-Deductive Cancellation**: In the `Redeem Rewards` screen, if you click "Redeem" but then choose "Cancel", **points are no longer deducted**. Your balance remains safe until you decide to order now.
-- **Redeem & Order Now**: When you choose "Order Now", points are deducted, and a free order is placed immediately.
+### 1. Fireworks/Confetti Animation
+- **Burst Physics**: Modified the `ConfettiEffect` to act like a firework burst. Particles now launch upwards from the bottom-middle of the screen and then fall gracefully due to simulated gravity.
+- **Single Shot**: The animation now triggers once and lasts for about 2.5 seconds, providing a clear "congratulations" moment without cluttering the UI permanently.
 
-### 2. Free Order Simulation
-- **Background Transitions**: Both redeemed drinks and loyalty rewards (cheapest drink) now trigger a background simulation using `WorkManager`.
-- **Status Lifecycle**: The order will automatically progress from **Received** → **Preparing** → **Ready** over approximately 15 seconds.
-- **Progress Tracking**: You can see the real-time progress bar on the **My Orders** screen, even for these 0.00đ reward orders.
+### 2. Integration with Redemption
+- **Redeem Celebration**: In the **Redeem Rewards** screen, the celebration effect triggers immediately after you confirm an "Order Now" action.
+- **State Management**: The `RedeemRewardsViewModel` now tracks `showCelebration` and resets it automatically after the animation finishes.
 
-### 3. Smart "Pick Up" Protection
-- **Disabled Actions**: The "Mark as Picked Up" button is now **disabled** while the barista is still preparing your drink.
-- **Contextual Feedback**: The button text changes to **"Preparing..."** during this time to let you know your drink isn't ready yet.
-- **Ready for Pick-Up**: The button only becomes active once the status reaches **Ready**, allowing you to complete the order.
-
-### 4. Loyalty Choice Refinement
-- **Cheapest Drink Logic**: When you choose the "Free Drink" reward for completing your stamps, the system now automatically finds and orders the **most affordable** item in the current menu for you.
+### 3. Integration with Loyalty Rewards
+- **Loyalty Celebration**: In the **Rewards** screen, the effect triggers when you successfully claim a reward (either the 500 points or the free drink).
+- **Visual Feedback**: Provides immediate visual confirmation that your loyalty stamps have been processed.
 
 ## Verification Results
 
 ### Automated Tests
-- `gradle sync` and `gradle assembleDebug` passed successfully.
-- Verified that `WorkManager` correctly receives the `order_id` for background simulation.
+- `gradle assembleDebug` passed successfully.
+- Verified that the `ConfettiEffect` correctly uses the new `trigger` parameter to start and `onAnimationEnd` to clean up state.
 
 ### Manual Verification Steps
-- **Cancel Redemption**: Navigate to `Redeem Rewards`, click a drink, choose "Cancel". Check points balance — it should be unchanged.
-- **Order Reward**: Click "Redeem" -> "Order Now". Go to `My Orders`. Verify the progress bar moves and the "Pick Up" button is disabled until it hits 100%.
-- **Loyalty Reward**: Complete stamps -> Choose "Free Drink". Verify a new order appears for the cheapest drink (e.g., Espresso) and follows the simulation flow.
+- **Redeem**: Confirm a reward order. Verify the colorful burst appears from the bottom of the screen.
+- **Loyalty**: Claim your free drink after 8 stamps. Verify the celebratory effect triggers.
+- **Auto-Dismiss**: Ensure the effect disappears on its own after ~2.5 seconds.

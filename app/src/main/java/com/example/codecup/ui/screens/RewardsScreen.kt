@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.codecup.models.PointsHistoryItem
 import com.example.codecup.ui.components.*
 import com.example.codecup.ui.theme.*
+import com.example.codecup.ui.viewmodels.RewardChoice
 import com.example.codecup.ui.viewmodels.RewardsViewModel
 import com.example.codecup.ui.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -34,6 +35,27 @@ fun RewardsScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    if (uiState.showRewardChoiceDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissDialog() },
+            title = { Text("Loyalty Reward") },
+            text = { Text("You've completed your stamps! What would you like to claim?") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.claimReward(RewardChoice.POINTS) }) {
+                    Text("500 Points")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.claimReward(RewardChoice.FREE_DRINK) }) {
+                    Text("Free Drink (Now)")
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            textContentColor = MaterialTheme.colorScheme.onSurface
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -75,10 +97,7 @@ fun RewardsScreen(
                     stampsEarned = user.stamps,
                     onClick = {
                         if (user.stamps >= 8) {
-                            viewModel.resetLoyaltyCard()
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Reward Redeemed! Enjoy your free drink.")
-                            }
+                            viewModel.onStampsCompleted()
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar("Collect 8 stamps to get a free drink! (${8 - user.stamps} left)")

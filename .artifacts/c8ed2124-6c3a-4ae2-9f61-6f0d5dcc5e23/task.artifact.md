@@ -1,7 +1,7 @@
-- [x] Explore HTML/CSS design references
-- [x] Update `AppDrawer.kt` with new design
-- [x] Add new routes to `NavGraph.kt`
-- [x] Create `BaristaScreen.kt`
-- [x] Create `NotificationsScreen.kt`
-- [x] Create `AboutScreen.kt`
-- [x] Verify build and navigation
+- [x] Update `ProfileRepository.kt` with free drink logic
+- [ ] Update `RedeemRewardsViewModel.kt` with simulation & cancel logic `[/]`
+- [ ] Update `RewardsViewModel.kt` with simulation logic `[ ]`
+- [ ] Update `ViewModelFactory.kt` for dependency injection `[ ]`
+- [ ] Refine `RedeemRewardsScreen.kt` dialog `[ ]`
+- [ ] Update `MyOrdersScreen.kt` to disable pick-up button `[ ]`
+- [ ] Verify build and simulation `[ ]`

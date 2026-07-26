@@ -42,6 +42,7 @@ fun MyOrdersScreen(
     val tabs = listOf("Ongoing", "History")
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -54,6 +55,7 @@ fun MyOrdersScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 AppHeader(
                     title = "My Orders",
@@ -110,7 +112,15 @@ fun MyOrdersScreen(
             Spacer(modifier = Modifier.height(24.dp))
             
             if (selectedTab == 0) {
-                OngoingOrdersList(uiState.ongoingOrders, onMarkPickedUp = { viewModel.markAsPickedUp(it) })
+                OngoingOrdersList(
+                    orders = uiState.ongoingOrders,
+                    onMarkPickedUp = { viewModel.markAsPickedUp(it) },
+                    onNotReadyClick = {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Please wait a moment, your drink is being prepared!")
+                        }
+                    }
+                )
             } else {
                 OrdersHistoryList(uiState.orderHistory)
             }
@@ -120,7 +130,11 @@ fun MyOrdersScreen(
 }
 
 @Composable
-fun OngoingOrdersList(orders: List<Order>, onMarkPickedUp: (String) -> Unit) {
+fun OngoingOrdersList(
+    orders: List<Order>,
+    onMarkPickedUp: (String) -> Unit,
+    onNotReadyClick: () -> Unit
+) {
     if (orders.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("No active orders", color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -128,7 +142,7 @@ fun OngoingOrdersList(orders: List<Order>, onMarkPickedUp: (String) -> Unit) {
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(orders) { order ->
-                OngoingOrderCard(order, onMarkPickedUp)
+                OngoingOrderCard(order, onMarkPickedUp, onNotReadyClick)
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -136,7 +150,11 @@ fun OngoingOrdersList(orders: List<Order>, onMarkPickedUp: (String) -> Unit) {
 }
 
 @Composable
-fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
+fun OngoingOrderCard(
+    order: Order,
+    onMarkPickedUp: (String) -> Unit,
+    onNotReadyClick: () -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -235,13 +253,26 @@ fun OngoingOrderCard(order: Order, onMarkPickedUp: (String) -> Unit) {
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
+                val isReady = order.status == OrderStatus.Ready
                 PrimaryButton(
-                    onClick = { onMarkPickedUp(order.id) },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = { 
+                        if (isReady) {
+                            onMarkPickedUp(order.id)
+                        } else {
+                            onNotReadyClick()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = if (isReady) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (isReady) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Mark as Picked Up")
+                    if (isReady) {
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Mark as Picked Up")
+                    } else {
+                        Text("Preparing...")
+                    }
                 }
             }
         }

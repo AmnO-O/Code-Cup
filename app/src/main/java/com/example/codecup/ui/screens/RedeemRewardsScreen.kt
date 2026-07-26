@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +31,7 @@ import com.example.codecup.ui.viewmodels.ViewModelFactory
 @Composable
 fun RedeemRewardsScreen(
     onBackClick: () -> Unit,
-    viewModel: RedeemRewardsViewModel = viewModel(factory = ViewModelFactory())
+    viewModel: RedeemRewardsViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -39,6 +40,27 @@ fun RedeemRewardsScreen(
             // Potentially show a snackbar or navigate back
             viewModel.resetSuccess()
         }
+    }
+
+    if (uiState.showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissDialog() },
+            title = { Text("Redeem Reward") },
+            text = { Text("Do you want to order this drink now?") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.confirmRedeem(takeNow = true) }) {
+                    Text("Order Now")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.confirmRedeem(takeNow = false) }) {
+                    Text("Cancel")
+                }
+            },
+            containerColor = CoffeeSurface,
+            titleContentColor = CoffeePrimary,
+            textContentColor = CoffeeOnSurface
+        )
     }
 
     Scaffold(
@@ -89,7 +111,7 @@ fun RedeemRewardsScreen(
                     pointCost = pointCost,
                     canRedeem = canRedeem,
                     pointsBalance = uiState.pointsBalance,
-                    onRedeemClick = { viewModel.redeemProduct(product) }
+                    onRedeemClick = { viewModel.initiateRedeem(product) }
                 )
             }
         }

@@ -40,10 +40,10 @@ class ViewModelFactory(
                 ProfileViewModel(profileRepository, userPreferencesRepository!!) as T
             }
             modelClass.isAssignableFrom(RewardsViewModel::class.java) -> {
-                RewardsViewModel(profileRepository) as T
+                RewardsViewModel(profileRepository, orderRepository, productRepository, context) as T
             }
             modelClass.isAssignableFrom(RedeemRewardsViewModel::class.java) -> {
-                RedeemRewardsViewModel(profileRepository) as T
+                RedeemRewardsViewModel(profileRepository, orderRepository, context) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

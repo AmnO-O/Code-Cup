@@ -72,6 +72,14 @@ class ProfileRepository {
         }
     }
 
+    fun clearStamps() {
+        _profile.update { it.copy(stamps = 0) }
+    }
+
+    fun addFreeDrink() {
+        _profile.update { it.copy(freeDrinks = it.freeDrinks + 1) }
+    }
+
     fun resetStamps() {
         _profile.update { 
             if (it.stamps >= 8) {

@@ -28,7 +28,7 @@ data class UserProfile(
         const val DEFAULT_PHONE = "+1 (555) 123-4567"
         const val DEFAULT_JOINED_YEAR = "2026"
         const val DEFAULT_AVATAR_URL =
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuAl3oL7Ez9iBCbgtJa5MHZ4oztckVgwX8ME-c7JHzd7GUNKxhcjFfdY8TxbHWuhqwiY7Vw8NmjC-l6D6-_FKJgSK0sCrcQAleIINZIym-2nsHOz-e6v3JbksXLs7q7HhLoGTf1laO1OY6IdGM8uOEPwnnCYGJ2wJtYNysZ1g8xlCub13bU1Y8J9-ECTUsQlNQSIdXY7LJ-j3VVkYtq6gCL1gVUmnbXZHDHDjMyj8B0k0TEOBuaz_p1t"
+            "android.resource://com.example.codecup/drawable/hcmus_avatar"
     }
 }
 
@@ -43,11 +43,16 @@ class ProfileRepository(private val context: Context) {
     }
 
     val profile: Flow<UserProfile> = context.profileDataStore.data.map { prefs ->
+        val avatarUrl = prefs[Keys.AVATAR]
         UserProfile(
             name = prefs[Keys.NAME] ?: UserProfile.DEFAULT_NAME,
             email = prefs[Keys.EMAIL] ?: UserProfile.DEFAULT_EMAIL,
             phone = prefs[Keys.PHONE] ?: UserProfile.DEFAULT_PHONE,
-            avatarUrl = prefs[Keys.AVATAR] ?: UserProfile.DEFAULT_AVATAR_URL
+            avatarUrl = if (avatarUrl == null || avatarUrl.startsWith("https://lh3.googleusercontent.com")) {
+                UserProfile.DEFAULT_AVATAR_URL
+            } else {
+                avatarUrl
+            }
         )
     }
 

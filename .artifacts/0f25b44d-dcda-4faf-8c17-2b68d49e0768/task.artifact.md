@@ -1,0 +1,3 @@
+- [x] Restore `android.disallowKotlinSourceSets=false` in `gradle.properties`
+- [x] Add `android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE` to `gradle.properties`
+- [x] Run Gradle Sync and Build to verify the fix

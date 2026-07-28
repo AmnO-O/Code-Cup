@@ -21,7 +21,8 @@ import kotlin.random.Random
 data class CartUiState(
     val cartItems: List<CartItem> = emptyList(),
     val totalPrice: Double = 0.0,
-    val lastPlacedOrderId: String? = null
+    val lastPlacedOrderId: String? = null,
+    val deliveryAddress: String = "123 Artisan Lane, Coffee City"
 )
 
 class CartViewModel(
@@ -58,6 +59,10 @@ class CartViewModel(
         }
     }
 
+    fun updateAddress(newAddress: String) {
+        _uiState.update { it.copy(deliveryAddress = newAddress) }
+    }
+
     /**
      * Commits the cart into a persisted Order and clears the cart. Stamps/points are
      * NOT awarded here — the rubric grants them when the order is completed (picked up).
@@ -72,7 +77,8 @@ class CartViewModel(
             dateMillis = System.currentTimeMillis(),
             items = items,
             totalPrice = _uiState.value.totalPrice,
-            status = OrderStatus.Received
+            status = OrderStatus.Received,
+            deliveryAddress = _uiState.value.deliveryAddress
         )
 
         viewModelScope.launch {

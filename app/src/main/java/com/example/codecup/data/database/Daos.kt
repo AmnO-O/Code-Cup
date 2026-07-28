@@ -70,6 +70,9 @@ interface OrderDao {
     @Query("UPDATE orders SET status = :status WHERE id = :orderId")
     suspend fun updateStatus(orderId: String, status: String)
 
+    @Query("UPDATE orders SET deliveryAddress = :address WHERE id = :orderId")
+    suspend fun updateAddress(orderId: String, address: String)
+
     @Query("SELECT COUNT(*) FROM orders")
     fun orderCount(): Flow<Int>
 }

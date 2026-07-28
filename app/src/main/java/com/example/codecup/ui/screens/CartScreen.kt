@@ -33,6 +33,18 @@ fun CartScreen(
     viewModel: CartViewModel = viewModel(factory = ViewModelFactory(context = LocalContext.current))
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showEditAddressDialog by remember { mutableStateOf(false) }
+
+    if (showEditAddressDialog) {
+        EditAddressDialog(
+            currentAddress = uiState.deliveryAddress,
+            onDismiss = { showEditAddressDialog = false },
+            onConfirm = {
+                viewModel.updateAddress(it)
+                showEditAddressDialog = false
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -51,6 +63,11 @@ fun CartScreen(
                     tonalElevation = 8.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        DeliveryAddressSection(
+                            address = uiState.deliveryAddress,
+                            onEditClick = { showEditAddressDialog = true }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween

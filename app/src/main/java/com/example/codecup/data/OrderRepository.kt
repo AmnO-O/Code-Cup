@@ -24,7 +24,8 @@ class OrderRepository(private val orderDao: OrderDao) {
                 id = order.id,
                 dateMillis = order.dateMillis,
                 totalPrice = order.totalPrice,
-                status = order.status.name
+                status = order.status.name,
+                deliveryAddress = order.deliveryAddress
             ),
             order.items.map { item ->
                 OrderItemEntity(
@@ -45,6 +46,10 @@ class OrderRepository(private val orderDao: OrderDao) {
     suspend fun updateOrderStatus(orderId: String, newStatus: OrderStatus) {
         orderDao.updateStatus(orderId, newStatus.name)
     }
+
+    suspend fun updateOrderAddress(orderId: String, newAddress: String) {
+        orderDao.updateAddress(orderId, newAddress)
+    }
 }
 
 private fun OrderWithItems.toDomain() = Order(
@@ -52,6 +57,7 @@ private fun OrderWithItems.toDomain() = Order(
     dateMillis = order.dateMillis,
     totalPrice = order.totalPrice,
     status = runCatching { OrderStatus.valueOf(order.status) }.getOrDefault(OrderStatus.Received),
+    deliveryAddress = order.deliveryAddress,
     items = items.map { row ->
         CartItem(
             id = row.itemId.toString(),

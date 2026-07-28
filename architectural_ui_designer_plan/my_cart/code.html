@@ -111,7 +111,7 @@
       min-height: max(884px, 100dvh);
     }
   </style>
-  </head>
+</head>
 <body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-14 pb-[160px] md:pb-24">
 <!-- TopAppBar -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-background dark:bg-on-background w-full">
@@ -176,7 +176,18 @@
 </main>
 <!-- Bottom Checkout Area -->
 <div class="fixed bottom-0 left-0 right-0 bg-surface rounded-t-xl shadow-[0_-4px_16px_rgba(49,23,11,0.05)] border-t border-outline px-margin py-md pb-[calc(16px+env(safe-area-inset-bottom))] z-40 max-w-2xl mx-auto w-full">
-<div class="flex justify-between items-center mb-md">
+<div class="mb-md">
+<h2 class="font-title-md text-title-md text-on-surface mb-xs">Delivery Address</h2>
+<div class="flex items-center justify-between bg-surface-container-low rounded-xl p-sm border border-outline">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-body-md text-on-surface">123 Artisan Lane, Coffee City</span>
+</div>
+<button class="text-secondary font-title-md hover:bg-secondary-container/10 px-xs py-1 rounded-lg transition-colors">
+      Edit
+    </button>
+</div>
+</div><div class="flex justify-between items-center mb-md">
 <span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
 <span class="font-price-display text-price-display text-primary">$13.00</span>
 </div>

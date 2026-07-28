@@ -132,6 +132,7 @@ fun MyOrdersScreen(
                     orders = uiState.ongoingOrders,
                     highlightOrderId = highlightOrderId,
                     onMarkPickedUp = { viewModel.markAsPickedUp(it) },
+                    onEditAddress = { id, addr -> viewModel.updateOrderAddress(id, addr) },
                     onNotReadyClick = {
                         scope.launch {
                             snackbarHostState.showSnackbar("Please wait a moment, your drink is being prepared!")
@@ -155,6 +156,7 @@ fun OngoingOrdersList(
     orders: List<Order>,
     highlightOrderId: String?,
     onMarkPickedUp: (String) -> Unit,
+    onEditAddress: (String, String) -> Unit,
     onNotReadyClick: () -> Unit,
     onOrderNow: () -> Unit
 ) {
@@ -176,6 +178,7 @@ fun OngoingOrdersList(
                     order = order,
                     isHighlighted = order.id == highlightOrderId,
                     onMarkPickedUp = onMarkPickedUp,
+                    onEditAddress = { onEditAddress(order.id, it) },
                     onNotReadyClick = onNotReadyClick
                 )
             }
@@ -188,9 +191,23 @@ fun OngoingOrdersList(
 fun OngoingOrderCard(
     order: Order,
     onMarkPickedUp: (String) -> Unit,
+    onEditAddress: (String) -> Unit,
     onNotReadyClick: () -> Unit,
     isHighlighted: Boolean = false
 ) {
+    var showEditDialog by remember { mutableStateOf(false) }
+
+    if (showEditDialog) {
+        EditAddressDialog(
+            currentAddress = order.deliveryAddress,
+            onDismiss = { showEditDialog = false },
+            onConfirm = {
+                onEditAddress(it)
+                showEditDialog = false
+            }
+        )
+    }
+
     // One-time background pulse on the order the user just placed (ui_design §3.5)
     val highlightFraction = remember { Animatable(if (isHighlighted) 1f else 0f) }
     LaunchedEffect(Unit) {
@@ -272,6 +289,19 @@ fun OngoingOrderCard(
                     }
                 }
                 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                DeliveryAddressSection(
+                    address = order.deliveryAddress,
+                    onEditClick = { showEditDialog = true },
+                    titleStyle = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    ),
+                    titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconColor = MaterialTheme.colorScheme.secondary
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Progress

@@ -31,7 +31,8 @@ data class OrderEntity(
     @PrimaryKey val id: String,
     val dateMillis: Long,
     val totalPrice: Double,
-    val status: String
+    val status: String,
+    val deliveryAddress: String = "123 Artisan Lane, Coffee City"
 )
 
 /** Line items snapshot the product name/image so history stays intact even if the menu changes. */

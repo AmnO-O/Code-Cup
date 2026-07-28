@@ -16,7 +16,8 @@ data class Order(
     val dateMillis: Long,
     val items: List<CartItem>,
     val totalPrice: Double,
-    val status: OrderStatus
+    val status: OrderStatus,
+    val deliveryAddress: String = "123 Artisan Lane, Coffee City"
 ) {
     val date: String
         get() = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault()).format(Date(dateMillis))

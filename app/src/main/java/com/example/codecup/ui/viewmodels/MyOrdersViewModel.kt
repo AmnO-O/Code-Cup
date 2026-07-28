@@ -76,4 +76,11 @@ class MyOrdersViewModel(
             _events.emit("Order added to cart")
         }
     }
+
+    fun updateOrderAddress(orderId: String, newAddress: String) {
+        viewModelScope.launch {
+            orderRepository.updateOrderAddress(orderId, newAddress)
+            _events.emit("Delivery address updated")
+        }
+    }
 }

@@ -68,11 +68,15 @@ class BaristaViewModel(
                 CartItem(
                     product = product,
                     quantity = 1,
-                    size = PriceCalculator.SIZE_MEDIUM,
+                    size = if (product.category == "Cakes") PriceCalculator.SIZE_SLICE else PriceCalculator.SIZE_MEDIUM,
                     shots = PriceCalculator.SHOTS_DOUBLE,
                     iceLevel = PriceCalculator.ICE_REGULAR,
                     totalPrice = PriceCalculator.totalPrice(
-                        product.price, PriceCalculator.SIZE_MEDIUM, PriceCalculator.SHOTS_DOUBLE, 1
+                        product.price, 
+                        if (product.category == "Cakes") PriceCalculator.SIZE_SLICE else PriceCalculator.SIZE_MEDIUM, 
+                        PriceCalculator.SHOTS_DOUBLE, 
+                        1,
+                        product.category
                     )
                 )
             )

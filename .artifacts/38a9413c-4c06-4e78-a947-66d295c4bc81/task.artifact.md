@@ -1,0 +1,5 @@
+- [x] Make `onEditClick` optional in `DeliveryAddressSection`
+- [x] Remove address editing logic from `MyOrdersViewModel`
+- [x] Implement swipe-to-dismiss for ongoing orders in `MyOrdersScreen`
+- [x] Remove "Cancel Order" button and address edit dialog from `MyOrdersScreen`
+- [x] Verify address is static and swipe-to-dismiss works only when cancellable

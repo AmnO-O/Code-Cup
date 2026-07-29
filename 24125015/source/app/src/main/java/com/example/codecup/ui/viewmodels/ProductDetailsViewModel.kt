@@ -52,7 +52,12 @@ class ProductDetailsViewModel(
     private fun loadProduct() {
         viewModelScope.launch {
             val product = productRepository.getProductById(productId)
-            _uiState.update { it.copy(product = product) }
+            _uiState.update { 
+                it.copy(
+                    product = product,
+                    selectedSize = if (product?.category == "Cakes") PriceCalculator.SIZE_SLICE else it.selectedSize
+                ) 
+            }
             recalculatePrice()
         }
     }
@@ -99,7 +104,13 @@ class ProductDetailsViewModel(
     private fun recalculatePrice() {
         val state = _uiState.value
         val product = state.product ?: return
-        val total = PriceCalculator.totalPrice(product.price, state.selectedSize, state.selectedShots, state.quantity)
+        val total = PriceCalculator.totalPrice(
+            product.price, 
+            state.selectedSize, 
+            state.selectedShots, 
+            state.quantity,
+            product.category
+        )
         _uiState.update { it.copy(totalPrice = total) }
     }
 

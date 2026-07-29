@@ -1,0 +1,6 @@
+- `[x]` Create target directories in `24125015/source/`
+- `[x]` Copy root configuration files to `24125015/source/`
+- `[x]` Copy `gradle/` configuration to `24125015/source/gradle/`
+- `[x]` Copy `app/` module configuration to `24125015/source/app/`
+- `[x]` Copy `app/src/` directory tree to `24125015/source/app/src/`
+- `[x]` Verify final structure matches the requirement

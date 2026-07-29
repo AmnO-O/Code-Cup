@@ -90,6 +90,7 @@ class CartViewModel(
 
             val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
                 .setInputData(workDataOf(OrderStatusWorker.KEY_ORDER_ID to orderId))
+                .addTag("order_$orderId")
                 .build()
             WorkManager.getInstance(context).enqueue(workRequest)
 

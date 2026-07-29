@@ -50,6 +50,10 @@ class OrderRepository(private val orderDao: OrderDao) {
     suspend fun updateOrderAddress(orderId: String, newAddress: String) {
         orderDao.updateAddress(orderId, newAddress)
     }
+
+    suspend fun deleteOrder(orderId: String) {
+        orderDao.deleteOrder(orderId)
+    }
 }
 
 private fun OrderWithItems.toDomain() = Order(

@@ -55,7 +55,7 @@ class CartRepositoryTest {
         size = size,
         shots = PriceCalculator.SHOTS_DOUBLE,
         iceLevel = PriceCalculator.ICE_REGULAR,
-        totalPrice = PriceCalculator.totalPrice(latte.price, size, PriceCalculator.SHOTS_DOUBLE, quantity)
+        totalPrice = PriceCalculator.totalPrice(latte.price, size, PriceCalculator.SHOTS_DOUBLE, quantity, latte.category)
     )
 
     @Test

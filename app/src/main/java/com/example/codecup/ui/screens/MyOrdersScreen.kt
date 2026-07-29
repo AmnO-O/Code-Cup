@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
@@ -132,7 +133,7 @@ fun MyOrdersScreen(
                     orders = uiState.ongoingOrders,
                     highlightOrderId = highlightOrderId,
                     onMarkPickedUp = { viewModel.markAsPickedUp(it) },
-                    onEditAddress = { id, addr -> viewModel.updateOrderAddress(id, addr) },
+                    onCancelOrder = { viewModel.cancelOrder(it) },
                     onNotReadyClick = {
                         scope.launch {
                             snackbarHostState.showSnackbar("Please wait a moment, your drink is being prepared!")
@@ -156,7 +157,7 @@ fun OngoingOrdersList(
     orders: List<Order>,
     highlightOrderId: String?,
     onMarkPickedUp: (String) -> Unit,
-    onEditAddress: (String, String) -> Unit,
+    onCancelOrder: (String) -> Unit,
     onNotReadyClick: () -> Unit,
     onOrderNow: () -> Unit
 ) {
@@ -173,14 +174,52 @@ fun OngoingOrdersList(
         )
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(orders) { order ->
-                OngoingOrderCard(
-                    order = order,
-                    isHighlighted = order.id == highlightOrderId,
-                    onMarkPickedUp = onMarkPickedUp,
-                    onEditAddress = { onEditAddress(order.id, it) },
-                    onNotReadyClick = onNotReadyClick
+            items(orders, key = { it.id }) { order ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        if (it == SwipeToDismissBoxValue.EndToStart && order.isCancellable) {
+                            onCancelOrder(order.id)
+                            true
+                        } else {
+                            false
+                        }
+                    }
                 )
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    modifier = Modifier.animateItem(),
+                    backgroundContent = {
+                        val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart && order.isCancellable) {
+                            MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                        } else {
+                            Color.Transparent
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color, RoundedCornerShape(16.dp))
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            if (order.isCancellable) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Cancel Order",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    },
+                    enableDismissFromStartToEnd = false
+                ) {
+                    OngoingOrderCard(
+                        order = order,
+                        isHighlighted = order.id == highlightOrderId,
+                        onMarkPickedUp = onMarkPickedUp,
+                        onNotReadyClick = onNotReadyClick
+                    )
+                }
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -191,23 +230,9 @@ fun OngoingOrdersList(
 fun OngoingOrderCard(
     order: Order,
     onMarkPickedUp: (String) -> Unit,
-    onEditAddress: (String) -> Unit,
     onNotReadyClick: () -> Unit,
     isHighlighted: Boolean = false
 ) {
-    var showEditDialog by remember { mutableStateOf(false) }
-
-    if (showEditDialog) {
-        EditAddressDialog(
-            currentAddress = order.deliveryAddress,
-            onDismiss = { showEditDialog = false },
-            onConfirm = {
-                onEditAddress(it)
-                showEditDialog = false
-            }
-        )
-    }
-
     // One-time background pulse on the order the user just placed (ui_design §3.5)
     val highlightFraction = remember { Animatable(if (isHighlighted) 1f else 0f) }
     LaunchedEffect(Unit) {
@@ -293,7 +318,7 @@ fun OngoingOrderCard(
 
                 DeliveryAddressSection(
                     address = order.deliveryAddress,
-                    onEditClick = { showEditDialog = true },
+                    onEditClick = null,
                     titleStyle = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp

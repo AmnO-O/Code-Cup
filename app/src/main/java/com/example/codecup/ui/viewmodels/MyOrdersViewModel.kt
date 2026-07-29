@@ -2,6 +2,8 @@ package com.example.codecup.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
+import android.content.Context
 import com.example.codecup.data.CartRepository
 import com.example.codecup.data.NotificationsRepository
 import com.example.codecup.data.OrderRepository
@@ -22,7 +24,8 @@ class MyOrdersViewModel(
     private val orderRepository: OrderRepository,
     private val rewardsRepository: RewardsRepository,
     private val cartRepository: CartRepository,
-    private val notificationsRepository: NotificationsRepository
+    private val notificationsRepository: NotificationsRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyOrdersUiState())
@@ -77,10 +80,11 @@ class MyOrdersViewModel(
         }
     }
 
-    fun updateOrderAddress(orderId: String, newAddress: String) {
+    fun cancelOrder(orderId: String) {
         viewModelScope.launch {
-            orderRepository.updateOrderAddress(orderId, newAddress)
-            _events.emit("Delivery address updated")
+            orderRepository.deleteOrder(orderId)
+            WorkManager.getInstance(context).cancelAllWorkByTag("order_$orderId")
+            _events.emit("Order #$orderId cancelled")
         }
     }
 }

@@ -1,5 +1,6 @@
-- [x] Add `clearAllOrders` to `OrderDao`
-- [x] Add `clearOrderHistory` to `OrderRepository`
-- [x] Implement `resetOrderHistory` in `ProfileViewModel`
-- [x] Add "Danger Zone" section and confirmation dialog to `ProfileScreen`
-- [x] Verify order history reset functionality
+- [x] Delete `24125015.zip` (142MB)
+- [x] Delete `24125015/` directory
+- [x] Delete `screenshot_wg68fneb.png`
+- [x] Enable `isMinifyEnabled` and `isShrinkResources` in `app/build.gradle.kts`
+- [x] Run `./gradlew clean` to remove build artifacts
+- [x] Verify project size

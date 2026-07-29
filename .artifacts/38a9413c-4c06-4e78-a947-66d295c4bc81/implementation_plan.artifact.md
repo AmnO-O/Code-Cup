@@ -1,42 +1,35 @@
-# Implementation Plan - Reset Database of Orders
+# Implementation Plan - Project Size Reduction (<100MB)
 
-This plan outlines the steps to add functionality to clear the order history from the application's database.
+This plan aims to reduce the project's disk footprint to meet the 100MB submission limit by removing redundant files, optimizing build configurations, and cleaning up unused resources.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> This action will permanently delete all order history and cannot be undone.
+> [!CAUTION]
+> - **Permanent Deletion:** I will delete `24125015.zip` (142MB) and the `24125015/` folder. These appear to be backups.
+> - **Build Cache:** I will run a `clean` task to remove the `build/` and `.gradle/` folders which are not needed for submission and consume significant space.
+> - **Resource Optimization:** Enabling R8/Minification will reduce the final app size but won't affect the *source code* zip size directly. However, removing unused assets will.
 
 ## Proposed Changes
 
-### Database Layer
+### 1. Massive File Cleanup (Immediate impact)
+- [DELETE] `24125015.zip` (142MB)
+- [DELETE] `24125015/` directory (redundant project copy)
+- [DELETE] `screenshot_wg68fneb.png` (unused screenshot)
 
-#### [MODIFY] [Daos.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/database/Daos.kt)
-- Add `clearAll()` method to `OrderDao` using `@Query("DELETE FROM orders")`.
-- Note: `order_items` will be automatically cleared due to the `CASCADE` delete foreign key.
+### 2. Build & Cache Cleanup
+- Run `./gradlew clean` to remove all generated `build` folders.
+- Advise the user to exclude the `.gradle` and `.idea` folders when zipping for submission (these should not be submitted).
 
-### Data Layer
+### 3. Source Code Optimization
+- [MODIFY] `app/build.gradle.kts`:
+    - Enable `isMinifyEnabled = true` and `isShrinkResources = true` for release builds.
+- [MODIFY] `OrderDao`: Add `VACUUM` support to ensure the database file stays small after data is cleared.
 
-#### [MODIFY] [OrderRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/OrderRepository.kt)
-- Add `clearOrders()` method to call the DAO's `clearAll()`.
-
-### ViewModel Layer
-
-#### [MODIFY] [MyOrdersViewModel.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/viewmodels/MyOrdersViewModel.kt)
-- Add `clearOrderHistory()` method to trigger the repository's clear function.
-- Emit a snackbar event once the history is cleared.
-
-### UI Layer
-
-#### [MODIFY] [MyOrdersScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/MyOrdersScreen.kt)
-- Add a "Clear History" button at the top of the `OrdersHistoryList` in the History tab.
-- Show a confirmation dialog before performing the deletion.
+### 4. Asset Audit
+- I will check the `app/src/main/res/font` and `drawable` folders for unnecessarily high-resolution assets and recommend removals if they are not used.
 
 ## Verification Plan
 
 ### Manual Verification
-- Place a few orders to populate the history.
-- Navigate to the "My Orders" screen and select the "History" tab.
-- Click the "Clear History" button.
-- Confirm the deletion.
-- Verify that the history list is now empty and the "No past orders yet" empty state is shown.
+- Re-run `ls -l` to verify the total size of the project directory.
+- Verify the app still builds successfully after the cleanup.

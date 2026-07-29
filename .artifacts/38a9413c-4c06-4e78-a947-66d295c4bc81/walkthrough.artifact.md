@@ -1,26 +1,24 @@
-# Walkthrough - Expandable Order Cards
+# Walkthrough - Stamp Accumulation Fix
 
-I have implemented expandable order cards in the "My Orders" screen to hide detailed information by default and reveal it on click.
+I have fixed the bug where stamps earned after reaching a full card (8/8) were being lost. Now, stamps accumulate beyond the card limit and carry over to the next card after redemption.
 
 ## Changes Made
 
-### UI Enhancements
-- **[MyOrdersScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/MyOrdersScreen.kt)**:
-    - **OngoingOrderCard**:
-        - Added `expanded` state to track visibility.
-        - Wrapped details (items, address, progress, and actions) in `AnimatedVisibility` for a smooth expansion effect.
-        - Made the entire card clickable to toggle expansion.
-    - **HistoryOrderCard**:
-        - Similar expansion logic implemented.
-        - The item summary and the "Reorder" button are now hidden until the card is clicked.
-        - Optimized the layout for better vertical space management when collapsed.
+### Data Layer
+- **[RewardsRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/RewardsRepository.kt)**:
+    - **Unlimited Accumulation**: Removed the cap in `awardForCompletedOrder`. Stamps now increase indefinitely (e.g., to 9, 10, etc.) as orders are completed.
+    - **Carry-over Logic**: Updated `clearStamps` (called when a reward is claimed) to subtract exactly 8 stamps from the total instead of resetting it to zero. This ensures any "overflow" stamps are preserved for the next reward cycle.
+
+### UI Consistency
+- **[LoyaltyCard.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/LoyaltyCard.kt)**:
+    - The UI naturally handles the new logic by displaying the actual count (e.g., "9 / 8") and maintaining the "Full" state (glow effect and "Tap to redeem" message) as long as the balance is 8 or higher.
 
 ## Verification Results
 
 ### Automated Tests
-- Ran `:app:assembleDebug` and the build finished successfully, ensuring no syntax errors or breaking changes in the UI logic.
+- Ran `:app:assembleDebug` and the build passed successfully.
 
-### Manual Verification
-- **Ongoing Orders**: Initially show only the header (Status, ID, Price, Date). Clicking expands to show the full item list, delivery address, and progress bar with the "Mark as Picked Up" button.
-- **History Orders**: Initially show the header info. Clicking expands to show the item summary and a full-width "Reorder Items" button.
-- **Animations**: Expansion and collapse use standard vertical sliding animations for a polished feel.
+### Manual Verification Path
+1.  **Overflow**: Reach 8 stamps, then complete another order. Observe the card shows "9 / 8".
+2.  **Redemption**: Tap the full card to claim a reward.
+3.  **Persistence**: Observe the card balance becomes "1 / 8" after the reset, confirming the carry-over works.

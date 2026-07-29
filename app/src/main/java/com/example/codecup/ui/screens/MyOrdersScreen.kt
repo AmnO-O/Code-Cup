@@ -179,10 +179,11 @@ fun OngoingOrdersList(
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(orders, key = { it.id }) { order ->
+                val currentOrder by rememberUpdatedState(order)
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.EndToStart && order.isCancellable) {
-                            onCancelOrder(order.id)
+                        if (it == SwipeToDismissBoxValue.EndToStart && currentOrder.isCancellable) {
+                            onCancelOrder(currentOrder.id)
                             true
                         } else {
                             false
@@ -194,7 +195,7 @@ fun OngoingOrdersList(
                     state = dismissState,
                     modifier = Modifier.animateItem(),
                     backgroundContent = {
-                        val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart && order.isCancellable) {
+                        val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart && currentOrder.isCancellable) {
                             MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
                         } else {
                             Color.Transparent
@@ -206,7 +207,7 @@ fun OngoingOrdersList(
                                 .padding(horizontal = 20.dp),
                             contentAlignment = Alignment.CenterEnd
                         ) {
-                            if (order.isCancellable) {
+                            if (currentOrder.isCancellable) {
                                 Icon(
                                     Icons.Default.Delete,
                                     contentDescription = "Cancel Order",

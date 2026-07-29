@@ -1,45 +1,33 @@
-# Implementation Plan - Expandable Order Details
+# Implementation Plan - Fix Stamp Accumulation Bug
 
-Implement expandable order cards in the "My Orders" screen. Details like item lists, delivery addresses, and progress indicators will be hidden by default and revealed when the user clicks on the order card.
+Address the issue where stamps stop accumulating at 8/8, causing users to lose stamps earned from orders placed before they redeem their full card.
 
 ## User Review Required
 
-> [!NOTE]
-> For **Ongoing Orders**, the status, order ID, total price, and date will remain visible. The item list, delivery address, and progress/action section will be hidden until expanded.
-> For **History Orders**, the order ID, total price, and date will remain visible. The item summary and reorder button will be hidden until expanded.
+> [!IMPORTANT]
+> The stamps will now accumulate beyond 8. For example, if you have 8 stamps and complete another order, you will have 9 stamps. When you "Reset" the card to claim your reward, it will subtract 8 stamps, leaving the remaining 1 stamp for your next card.
 
 ## Proposed Changes
 
-### UI Layer
+### Data Layer
 
-#### [MODIFY] [MyOrdersScreen.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/screens/MyOrdersScreen.kt)
-- Add `import androidx.compose.animation.AnimatedVisibility` and `import androidx.compose.foundation.clickable`.
-- **OngoingOrderCard**:
-    - Add `expanded` state using `remember { mutableStateOf(false) }`.
-    - Apply `Modifier.clickable { expanded = !expanded }` to the `Surface`.
-    - Wrap the following in `AnimatedVisibility`:
-        - `HorizontalDivider`
-        - Order items list
-        - `DeliveryAddressSection`
-        - Progress indicator section
-        - Action button ("Mark as Picked Up")
-- **HistoryOrderCard**:
-    - Add `expanded` state.
-    - Change layout to a `Column` to allow vertical expansion.
-    - Move header info into a `Row`.
-    - Wrap `itemsSummary` and the reorder button section in `AnimatedVisibility`.
+#### [MODIFY] [RewardsRepository.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/data/RewardsRepository.kt)
+- Update `awardForCompletedOrder` to remove the `.coerceAtMost(STAMPS_PER_CARD)` cap on stamps.
+- Update `clearStamps` to subtract `STAMPS_PER_CARD` from the current stamp count instead of setting it to 0. Use `coerceAtLeast(0)` as a safety measure.
+
+### UI Components
+
+#### [MODIFY] [LoyaltyCard.kt](file:///C:/Users/LAPTOP_CUA_NAM/AndroidStudioProjects/Code-Cup/app/src/main/java/com/example/codecup/ui/components/LoyaltyCard.kt)
+- The existing logic already handles `stampsEarned >= totalStamps` for the "Full" state.
+- The stamp circles will remain all filled if `stampsEarned > 8`.
+- The text will show the actual count (e.g., "9 / 8"), which confirms to the user that their extra orders are being counted.
 
 ## Verification Plan
 
 ### Manual Verification
-1.  **Ongoing Orders**:
-    *   Navigate to "My Orders".
-    *   Verify that ongoing orders only show the header (ID, Price, Status).
-    *   Click the card.
-    *   Verify that the items, address, and progress bar appear with an animation.
-    *   Click again to collapse.
-2.  **History Orders**:
-    *   Verify that past orders only show the ID and Price (and date).
-    *   Click the card.
-    *   Verify that the item summary and reorder button appear.
-    *   Click again to collapse.
+1.  **Seed 8 Stamps**: Use the demo seeder or place enough orders to reach 8/8.
+2.  **Place 9th Order**: Complete one more order and mark it as "Picked Up".
+3.  **Check Balance**: Navigate to the Rewards screen and verify the card shows "9 / 8".
+4.  **Redeem Reward**: Tap the card and claim a reward (points or drink).
+5.  **Check Carry-over**: Verify the card now shows "1 / 8".
+6.  **Verify UI**: Ensure the "X stamps until..." text is hidden and the "Tap to redeem" message is shown whenever stamps >= 8.

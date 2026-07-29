@@ -1,4 +1,3 @@
-- [x] Implement expandable logic in `OngoingOrderCard`
-- [x] Implement expandable logic in `HistoryOrderCard`
-- [x] Add `AnimatedVisibility` for smooth transitions
-- [x] Verify expandable behavior manually (in theory) and via build
+- [x] Update `RewardsRepository.kt` to allow stamp carry-over
+- [x] Verify `LoyaltyCard.kt` UI handles overflow counts
+- [x] Build and verify logically

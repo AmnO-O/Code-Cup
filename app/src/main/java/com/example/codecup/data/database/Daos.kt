@@ -85,9 +85,6 @@ interface OrderDao {
         deleteOrderEntity(orderId)
     }
 
-    @Query("DELETE FROM orders")
-    suspend fun clearAll()
-
     @Query("SELECT COUNT(*) FROM orders")
     fun orderCount(): Flow<Int>
 }

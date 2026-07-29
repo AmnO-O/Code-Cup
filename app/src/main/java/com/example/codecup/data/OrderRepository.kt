@@ -54,10 +54,6 @@ class OrderRepository(private val orderDao: OrderDao) {
     suspend fun deleteOrder(orderId: String) {
         orderDao.deleteOrder(orderId)
     }
-
-    suspend fun clearOrderHistory() {
-        orderDao.clearAll()
-    }
 }
 
 private fun OrderWithItems.toDomain() = Order(

@@ -58,8 +58,6 @@ fun ProfileScreen(
     var editedEmail by remember(user.email) { mutableStateOf(user.email) }
     var editedPhone by remember(user.phone) { mutableStateOf(user.phone) }
 
-    var showResetDialog by remember { mutableStateOf(false) }
-
     // System photo picker — no runtime permission needed
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -322,72 +320,9 @@ fun ProfileScreen(
                         Text("Save Changes")
                     }
                 }
-            } else {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Danger Zone
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f))
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        Text(
-                            text = "Danger Zone",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Permanently clear your order history. This cannot be undone.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedButton(
-                            onClick = { showResetDialog = true },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            ),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-                        ) {
-                            Icon(Icons.Default.DeleteForever, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Reset Order History")
-                        }
-                    }
-                }
             }
             
             Spacer(modifier = Modifier.height(32.dp))
-        }
-
-        if (showResetDialog) {
-            AlertDialog(
-                onDismissRequest = { showResetDialog = false },
-                title = { Text("Clear Order History?") },
-                text = { Text("This will permanently delete all your past and ongoing orders. Are you sure you want to proceed?") },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            viewModel.resetOrderHistory()
-                            showResetDialog = false
-                        },
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                    ) {
-                        Text("Clear All")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showResetDialog = false }) {
-                        Text("Cancel")
-                    }
-                }
-            )
         }
     }
 }

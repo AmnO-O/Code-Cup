@@ -25,7 +25,7 @@ data class ProfileUiState(
 class ProfileViewModel(
     private val profileRepository: ProfileRepository,
     rewardsRepository: RewardsRepository,
-    private val orderRepository: OrderRepository,
+    orderRepository: OrderRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -81,13 +81,6 @@ class ProfileViewModel(
         viewModelScope.launch {
             val saved = profileRepository.updateAvatarFromUri(pickedUri)
             _events.emit(if (saved) "Profile photo updated" else "Couldn't load that photo")
-        }
-    }
-
-    fun resetOrderHistory() {
-        viewModelScope.launch {
-            orderRepository.clearOrderHistory()
-            _events.emit("Order history cleared")
         }
     }
 }

@@ -1,6 +1,8 @@
-- [x] Delete `24125015.zip` (142MB)
-- [x] Delete `24125015/` directory
-- [x] Delete `screenshot_wg68fneb.png`
-- [x] Enable `isMinifyEnabled` and `isShrinkResources` in `app/build.gradle.kts`
-- [x] Run `./gradlew clean` to remove build artifacts
-- [x] Verify project size
+- [/] Revert "Reset" feature code
+    - [ ] Revert `Daos.kt`
+    - [ ] Revert `OrderRepository.kt`
+    - [ ] Revert `ProfileViewModel.kt`
+    - [ ] Revert `ProfileScreen.kt`
+- [ ] Run `./gradlew clean` to wipe `app/build`
+- [ ] Clear app data on device via ADB
+- [ ] Verify final project size

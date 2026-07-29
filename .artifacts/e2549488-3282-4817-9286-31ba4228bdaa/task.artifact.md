@@ -1,0 +1,6 @@
+- `[x]` Refine HTML layout for better PDF conversion
+    - `[x]` Standardize section spacing
+    - `[x]` Center and balance header elements
+    - `[x]` Adjust table scaling for print
+- `[x]` Verify content integrity
+- `[x]` Create walkthrough

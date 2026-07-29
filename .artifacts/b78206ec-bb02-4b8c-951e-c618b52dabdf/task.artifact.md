@@ -1,0 +1,6 @@
+- [x] Modify `PriceCalculator.kt` to handle categories and cake units
+- [x] Update `SeedData.kt` to include Cake products
+- [x] Update `CartItem.kt` to improve customization summary
+- [x] Modify `ProductDetailsViewModel.kt` for category-based logic
+- [x] Modify `ProductDetailsScreen.kt` for conditional rendering
+- [x] Update `PriceCalculatorTest.kt` and verify changes

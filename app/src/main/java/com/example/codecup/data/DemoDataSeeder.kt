@@ -26,7 +26,7 @@ class DemoDataSeeder(
 
     private data class DemoLine(val product: Product, val quantity: Int, val size: String, val shots: String, val ice: String) {
         val linePrice: Double
-            get() = PriceCalculator.totalPrice(product.price, size, shots, quantity)
+            get() = PriceCalculator.totalPrice(product.price, size, shots, quantity, product.category)
     }
 
     private data class DemoOrder(val id: String, val daysAgo: Int, val lines: List<DemoLine>) {

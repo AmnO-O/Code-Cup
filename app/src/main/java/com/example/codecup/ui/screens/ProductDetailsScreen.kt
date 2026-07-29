@@ -152,35 +152,37 @@ fun ProductDetailsScreen(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Customization: Size
-                CustomizationSection(
-                    title = "Size",
-                    options = PriceCalculator.SIZE_OPTIONS,
-                    selectedOption = uiState.selectedSize,
-                    onOptionSelected = { viewModel.updateSize(it) }
-                )
+                // Customization: Size (Dynamic options based on category)
+                val sizeOptions = PriceCalculator.getOptionsForCategory(product.category)
+                if (sizeOptions.isNotEmpty()) {
+                    CustomizationSection(
+                        title = "Size",
+                        options = sizeOptions,
+                        selectedOption = uiState.selectedSize,
+                        onOptionSelected = { viewModel.updateSize(it) }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                // Customization: Espresso Shots (Only for drinks)
+                if (PriceCalculator.isDrink(product.category)) {
+                    CustomizationSection(
+                        title = "Espresso Shots",
+                        options = PriceCalculator.SHOT_OPTIONS,
+                        selectedOption = uiState.selectedShots,
+                        onOptionSelected = { viewModel.updateShots(it) }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                // Customization: Espresso Shots
-                CustomizationSection(
-                    title = "Espresso Shots",
-                    options = PriceCalculator.SHOT_OPTIONS,
-                    selectedOption = uiState.selectedShots,
-                    onOptionSelected = { viewModel.updateShots(it) }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Customization: Ice Level
-                CustomizationSection(
-                    title = "Ice Level",
-                    options = PriceCalculator.ICE_OPTIONS,
-                    selectedOption = uiState.selectedIce,
-                    onOptionSelected = { viewModel.updateIce(it) }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
+                    // Customization: Ice Level
+                    CustomizationSection(
+                        title = "Ice Level",
+                        options = PriceCalculator.ICE_OPTIONS,
+                        selectedOption = uiState.selectedIce,
+                        onOptionSelected = { viewModel.updateIce(it) }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
                 // Quantity
                 Row(

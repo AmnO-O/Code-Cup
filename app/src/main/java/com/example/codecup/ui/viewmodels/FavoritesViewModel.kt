@@ -58,15 +58,16 @@ class FavoritesViewModel(
     /** Same default-configuration quick add as the Home grid. */
     fun quickAddToCart(product: Product) {
         viewModelScope.launch {
+            val size = if (product.category == "Cakes") PriceCalculator.SIZE_SLICE else PriceCalculator.SIZE_MEDIUM
             cartRepository.addToCart(
                 CartItem(
                     product = product,
                     quantity = 1,
-                    size = PriceCalculator.SIZE_MEDIUM,
+                    size = size,
                     shots = PriceCalculator.SHOTS_DOUBLE,
                     iceLevel = PriceCalculator.ICE_REGULAR,
                     totalPrice = PriceCalculator.totalPrice(
-                        product.price, PriceCalculator.SIZE_MEDIUM, PriceCalculator.SHOTS_DOUBLE, 1
+                        product.price, size, PriceCalculator.SHOTS_DOUBLE, 1, product.category
                     )
                 )
             )

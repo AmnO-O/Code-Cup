@@ -12,5 +12,9 @@ data class CartItem(
     val totalPrice: Double
 ) {
     val customizationSummary: String
-        get() = "$size, $shots Shots, $iceLevel"
+        get() = when (product.category) {
+            "Cakes" -> size
+            "Pastries" -> "Regular"
+            else -> "$size, $shots Shots, $iceLevel"
+        }
 }

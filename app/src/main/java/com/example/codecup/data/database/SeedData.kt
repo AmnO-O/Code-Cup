@@ -27,6 +27,10 @@ object SeedData {
         "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&q=80&fm=jpg"
     private const val IMAGE_ALMOND_CROISSANT =
         "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&q=80&fm=jpg"
+    private const val IMAGE_CHOCOLATE_CAKE =
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80&fm=jpg"
+    private const val IMAGE_CHEESECAKE =
+        "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=800&q=80&fm=jpg"
 
     val products = listOf(
         Product(1, "Artisan Cappuccino", "Rich espresso layered with deeply frothed milk.", 4.50, IMAGE_CAPPUCCINO, "Espresso"),
@@ -36,6 +40,8 @@ object SeedData {
         Product(5, "Classic Espresso", "A bold double shot with a golden crema.", 3.00, IMAGE_ESPRESSO, "Espresso"),
         Product(6, "Iced Americano", "Espresso over cold water and ice — crisp and clean.", 4.00, IMAGE_ICED_AMERICANO, "Cold Brew"),
         Product(7, "Oat Milk Latte", "Silky oat milk poured over a smooth double shot.", 5.25, IMAGE_OAT_LATTE, "Latte"),
-        Product(8, "Almond Croissant", "Twice-baked with almond cream and toasted flakes.", 4.00, IMAGE_ALMOND_CROISSANT, "Pastries")
+        Product(8, "Almond Croissant", "Twice-baked with almond cream and toasted flakes.", 4.00, IMAGE_ALMOND_CROISSANT, "Pastries"),
+        Product(9, "Chocolate Truffle Cake", "Rich, dark chocolate layers with silk ganache.", 4.50, IMAGE_CHOCOLATE_CAKE, "Cakes"),
+        Product(10, "NY Cheesecake", "Classic creamy cheesecake with a graham cracker crust.", 5.00, IMAGE_CHEESECAKE, "Cakes")
     )
 }

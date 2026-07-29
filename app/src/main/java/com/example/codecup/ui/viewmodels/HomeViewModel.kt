@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val products: List<Product> = emptyList(),
-    val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Latte", "Pastries"),
+    val categories: List<String> = listOf("All Coffee", "Espresso", "Cold Brew", "Latte", "Pastries", "Cakes"),
     val selectedCategory: String = "All Coffee",
     val searchQuery: String = "",
     val cartItemsCount: Int = 0,
@@ -117,13 +117,14 @@ class HomeViewModel(
     }
 
     fun quickAddToCart(product: Product) {
+        val size = if (product.category == "Cakes") PriceCalculator.SIZE_SLICE else PriceCalculator.SIZE_MEDIUM
         val cartItem = CartItem(
             product = product,
             quantity = 1,
-            size = PriceCalculator.SIZE_MEDIUM,
+            size = size,
             shots = PriceCalculator.SHOTS_DOUBLE,
             iceLevel = PriceCalculator.ICE_REGULAR,
-            totalPrice = PriceCalculator.totalPrice(product.price, PriceCalculator.SIZE_MEDIUM, PriceCalculator.SHOTS_DOUBLE, 1)
+            totalPrice = PriceCalculator.totalPrice(product.price, size, PriceCalculator.SHOTS_DOUBLE, 1, product.category)
         )
         viewModelScope.launch {
             cartRepository.addToCart(cartItem)

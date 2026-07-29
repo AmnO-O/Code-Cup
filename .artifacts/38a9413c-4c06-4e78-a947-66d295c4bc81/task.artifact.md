@@ -1,3 +1,5 @@
-- [x] Update `RewardsRepository.kt` to allow stamp carry-over
-- [x] Verify `LoyaltyCard.kt` UI handles overflow counts
-- [x] Build and verify logically
+- [x] Add `clearAllOrders` to `OrderDao`
+- [x] Add `clearOrderHistory` to `OrderRepository`
+- [x] Implement `resetOrderHistory` in `ProfileViewModel`
+- [x] Add "Danger Zone" section and confirmation dialog to `ProfileScreen`
+- [x] Verify order history reset functionality

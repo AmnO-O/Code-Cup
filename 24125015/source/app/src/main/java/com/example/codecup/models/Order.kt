@@ -24,4 +24,14 @@ data class Order(
 
     val itemsSummary: String
         get() = items.joinToString(", ") { "${it.quantity}x ${it.product.name}" }
+
+    val isCancellable: Boolean
+        get() = when (status) {
+            OrderStatus.Received -> true
+            OrderStatus.Preparing -> {
+                val elapsed = System.currentTimeMillis() - dateMillis
+                elapsed < 8_000 // 5s simulation delay + 3s grace
+            }
+            else -> false
+        }
 }

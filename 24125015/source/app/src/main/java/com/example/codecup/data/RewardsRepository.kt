@@ -57,7 +57,7 @@ class RewardsRepository(
     suspend fun awardForCompletedOrder(order: Order): Int {
         val earnedPoints = (order.totalPrice * POINTS_PER_DOLLAR).toInt()
         context.rewardsDataStore.edit { prefs ->
-            prefs[Keys.STAMPS] = ((prefs[Keys.STAMPS] ?: 0) + 1).coerceAtMost(STAMPS_PER_CARD)
+            prefs[Keys.STAMPS] = (prefs[Keys.STAMPS] ?: 0) + 1
             prefs[Keys.POINTS] = (prefs[Keys.POINTS] ?: 0) + earnedPoints
         }
         if (earnedPoints > 0) {
@@ -92,7 +92,9 @@ class RewardsRepository(
 
     /** Explicit user action once the card is full (rubric: Loyalty Card Reset). */
     suspend fun clearStamps() {
-        context.rewardsDataStore.edit { prefs -> prefs[Keys.STAMPS] = 0 }
+        context.rewardsDataStore.edit { prefs -> 
+            prefs[Keys.STAMPS] = ((prefs[Keys.STAMPS] ?: 0) - STAMPS_PER_CARD).coerceAtLeast(0)
+        }
     }
 
     /** True once the one-time demo account seed has run (see [DemoDataSeeder]). */

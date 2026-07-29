@@ -73,6 +73,18 @@ interface OrderDao {
     @Query("UPDATE orders SET deliveryAddress = :address WHERE id = :orderId")
     suspend fun updateAddress(orderId: String, address: String)
 
+    @Query("DELETE FROM orders WHERE id = :orderId")
+    suspend fun deleteOrderEntity(orderId: String)
+
+    @Query("DELETE FROM order_items WHERE orderId = :orderId")
+    suspend fun deleteOrderItems(orderId: String)
+
+    @Transaction
+    suspend fun deleteOrder(orderId: String) {
+        deleteOrderItems(orderId)
+        deleteOrderEntity(orderId)
+    }
+
     @Query("SELECT COUNT(*) FROM orders")
     fun orderCount(): Flow<Int>
 }

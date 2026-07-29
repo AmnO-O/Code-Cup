@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DeliveryAddressSection(
     address: String,
-    onEditClick: () -> Unit,
+    onEditClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     titleStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleMedium,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
@@ -56,14 +56,16 @@ fun DeliveryAddressSection(
                     modifier = Modifier.weight(1f)
                 )
                 
-                Text(
-                    text = "Edit",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-                        .clickable(onClick = onEditClick)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
+                if (onEditClick != null) {
+                    Text(
+                        text = "Edit",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier
+                            .clickable(onClick = onEditClick)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
             }
         }
     }
